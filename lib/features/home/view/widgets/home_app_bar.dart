@@ -2,10 +2,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:count_it_items/core/theme/app_colors.dart';
-import 'package:count_it_items/core/localization/l10n/app_localizations.dart';
-import 'package:count_it_items/features/home/view_model/map_cubit.dart';
-import 'package:count_it_items/features/home/view_model/map_state.dart';
+import 'package:youwu/core/theme/app_colors.dart';
+import 'package:youwu/core/localization/l10n/app_localizations.dart';
+import 'package:youwu/features/home/view_model/map_cubit.dart';
+import 'package:youwu/features/home/view_model/map_state.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});

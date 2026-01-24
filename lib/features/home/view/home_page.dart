@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:count_it_items/core/theme/app_colors.dart';
-import 'package:count_it_items/features/home/view_model/map_cubit.dart';
-import 'package:count_it_items/features/home/view_model/map_event.dart';
-import 'package:count_it_items/features/home/view_model/map_state.dart';
-import 'package:count_it_items/features/home/view/widgets/home_app_bar.dart';
-import 'package:count_it_items/features/home/view/widgets/home_bottom_dock.dart';
-import 'package:count_it_items/features/home/view/widgets/map_painter.dart';
+import 'package:youwu/core/theme/app_colors.dart';
+import 'package:youwu/features/home/view_model/map_cubit.dart';
+import 'package:youwu/features/home/view_model/map_event.dart';
+import 'package:youwu/features/home/view_model/map_state.dart';
+import 'package:youwu/features/home/view/widgets/home_app_bar.dart';
+import 'package:youwu/features/home/view/widgets/home_bottom_dock.dart';
+import 'package:youwu/features/home/view/widgets/map_painter.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

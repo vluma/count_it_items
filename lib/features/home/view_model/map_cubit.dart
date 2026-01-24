@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:count_it_items/domain/repositories/space_repository.dart';
-import 'package:count_it_items/features/home/view_model/map_event.dart';
-import 'package:count_it_items/features/home/view_model/map_state.dart';
+import 'package:youwu/domain/repositories/space_repository.dart';
+import 'package:youwu/features/home/view_model/map_event.dart';
+import 'package:youwu/features/home/view_model/map_state.dart';
 
 class MapCubit extends Bloc<MapEvent, MapState> {
   final SpaceRepository spaceRepository;

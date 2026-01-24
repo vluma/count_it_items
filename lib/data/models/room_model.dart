@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
-import 'package:count_it_items/domain/entities/room_entity.dart';
+import 'package:youwu/domain/entities/room_entity.dart';
 
 part 'room_model.g.dart';
 

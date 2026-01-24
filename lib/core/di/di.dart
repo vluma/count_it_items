@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
-import 'package:count_it_items/domain/repositories/space_repository.dart';
-import 'package:count_it_items/data/repositories/mock_space_repository_impl.dart';
-import 'package:count_it_items/features/home/view_model/map_cubit.dart';
+import 'package:youwu/domain/repositories/space_repository.dart';
+import 'package:youwu/data/repositories/mock_space_repository_impl.dart';
+import 'package:youwu/features/home/view_model/map_cubit.dart';
 
 // 创建全局GetIt实例
 final GetIt sl = GetIt.instance;

@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:count_it_items/core/theme/app_colors.dart';
-import 'package:count_it_items/core/localization/l10n/app_localizations.dart';
+import 'package:youwu/core/theme/app_colors.dart';
+import 'package:youwu/core/localization/l10n/app_localizations.dart';
 
 class HomeBottomDock extends StatelessWidget {
   const HomeBottomDock({super.key});

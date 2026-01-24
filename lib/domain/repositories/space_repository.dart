@@ -1,5 +1,5 @@
-import 'package:count_it_items/domain/entities/room_entity.dart';
-import 'package:count_it_items/domain/entities/space_entity.dart';
+import 'package:youwu/domain/entities/room_entity.dart';
+import 'package:youwu/domain/entities/space_entity.dart';
 
 abstract class SpaceRepository {
   /// 获取空间数据

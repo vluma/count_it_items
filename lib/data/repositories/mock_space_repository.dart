@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:count_it_items/domain/entities/room_entity.dart';
-import 'package:count_it_items/domain/entities/space_entity.dart';
+import 'package:youwu/domain/entities/room_entity.dart';
+import 'package:youwu/domain/entities/space_entity.dart';
 
 class MockSpaceRepository {
   static SpaceEntity getMockSpace() {

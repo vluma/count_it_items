@@ -1,7 +1,7 @@
-import 'package:count_it_items/domain/entities/room_entity.dart';
-import 'package:count_it_items/domain/entities/space_entity.dart';
-import 'package:count_it_items/domain/repositories/space_repository.dart';
-import 'package:count_it_items/data/repositories/mock_space_repository.dart';
+import 'package:youwu/domain/entities/room_entity.dart';
+import 'package:youwu/domain/entities/space_entity.dart';
+import 'package:youwu/domain/repositories/space_repository.dart';
+import 'package:youwu/data/repositories/mock_space_repository.dart';
 
 class MockSpaceRepositoryImpl implements SpaceRepository {
   late SpaceEntity _mockSpace;

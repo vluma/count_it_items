@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:count_it_items/domain/entities/space_entity.dart';
+import 'package:youwu/domain/entities/space_entity.dart';
 import 'room_model.dart';
 
 part 'space_model.g.dart';

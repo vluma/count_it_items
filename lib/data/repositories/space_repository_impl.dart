@@ -1,8 +1,8 @@
-import 'package:count_it_items/domain/entities/room_entity.dart';
-import 'package:count_it_items/domain/entities/space_entity.dart';
-import 'package:count_it_items/domain/repositories/space_repository.dart';
-import 'package:count_it_items/data/models/room_model.dart';
-import 'package:count_it_items/data/models/space_model.dart';
+import 'package:youwu/domain/entities/room_entity.dart';
+import 'package:youwu/domain/entities/space_entity.dart';
+import 'package:youwu/domain/repositories/space_repository.dart';
+import 'package:youwu/data/models/room_model.dart';
+import 'package:youwu/data/models/space_model.dart';
 import 'package:flutter/material.dart';
 
 class SpaceRepositoryImpl implements SpaceRepository {
