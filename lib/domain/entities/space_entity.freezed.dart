@@ -20,6 +20,8 @@ mixin _$SpaceEntity {
   String get name => throw _privateConstructorUsedError; // 空间名称（如：我的家）
   List<RoomEntity> get rooms => throw _privateConstructorUsedError; // 房间列表
   String get description => throw _privateConstructorUsedError; // 空间描述
+  int get totalItems => throw _privateConstructorUsedError; // 物品总数
+  DateTime get lastUpdated => throw _privateConstructorUsedError; // 最后更新时间
   double get scale => throw _privateConstructorUsedError; // 当前缩放比例
   double get offsetX => throw _privateConstructorUsedError; // 当前X偏移
   double get offsetY => throw _privateConstructorUsedError;
@@ -40,6 +42,8 @@ abstract class $SpaceEntityCopyWith<$Res> {
       String name,
       List<RoomEntity> rooms,
       String description,
+      int totalItems,
+      DateTime lastUpdated,
       double scale,
       double offsetX,
       double offsetY});
@@ -62,6 +66,8 @@ class _$SpaceEntityCopyWithImpl<$Res, $Val extends SpaceEntity>
     Object? name = null,
     Object? rooms = null,
     Object? description = null,
+    Object? totalItems = null,
+    Object? lastUpdated = null,
     Object? scale = null,
     Object? offsetX = null,
     Object? offsetY = null,
@@ -83,6 +89,14 @@ class _$SpaceEntityCopyWithImpl<$Res, $Val extends SpaceEntity>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      totalItems: null == totalItems
+          ? _value.totalItems
+          : totalItems // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastUpdated: null == lastUpdated
+          ? _value.lastUpdated
+          : lastUpdated // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       scale: null == scale
           ? _value.scale
           : scale // ignore: cast_nullable_to_non_nullable
@@ -112,6 +126,8 @@ abstract class _$$SpaceEntityImplCopyWith<$Res>
       String name,
       List<RoomEntity> rooms,
       String description,
+      int totalItems,
+      DateTime lastUpdated,
       double scale,
       double offsetX,
       double offsetY});
@@ -132,6 +148,8 @@ class __$$SpaceEntityImplCopyWithImpl<$Res>
     Object? name = null,
     Object? rooms = null,
     Object? description = null,
+    Object? totalItems = null,
+    Object? lastUpdated = null,
     Object? scale = null,
     Object? offsetX = null,
     Object? offsetY = null,
@@ -153,6 +171,14 @@ class __$$SpaceEntityImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
+      totalItems: null == totalItems
+          ? _value.totalItems
+          : totalItems // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastUpdated: null == lastUpdated
+          ? _value.lastUpdated
+          : lastUpdated // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       scale: null == scale
           ? _value.scale
           : scale // ignore: cast_nullable_to_non_nullable
@@ -177,6 +203,8 @@ class _$SpaceEntityImpl implements _SpaceEntity {
       required this.name,
       required final List<RoomEntity> rooms,
       required this.description,
+      required this.totalItems,
+      required this.lastUpdated,
       this.scale = 0,
       this.offsetX = 0,
       this.offsetY = 0})
@@ -202,6 +230,12 @@ class _$SpaceEntityImpl implements _SpaceEntity {
   final String description;
 // 空间描述
   @override
+  final int totalItems;
+// 物品总数
+  @override
+  final DateTime lastUpdated;
+// 最后更新时间
+  @override
   @JsonKey()
   final double scale;
 // 当前缩放比例
@@ -215,7 +249,7 @@ class _$SpaceEntityImpl implements _SpaceEntity {
 
   @override
   String toString() {
-    return 'SpaceEntity(id: $id, name: $name, rooms: $rooms, description: $description, scale: $scale, offsetX: $offsetX, offsetY: $offsetY)';
+    return 'SpaceEntity(id: $id, name: $name, rooms: $rooms, description: $description, totalItems: $totalItems, lastUpdated: $lastUpdated, scale: $scale, offsetX: $offsetX, offsetY: $offsetY)';
   }
 
   @override
@@ -228,6 +262,10 @@ class _$SpaceEntityImpl implements _SpaceEntity {
             const DeepCollectionEquality().equals(other._rooms, _rooms) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.totalItems, totalItems) ||
+                other.totalItems == totalItems) &&
+            (identical(other.lastUpdated, lastUpdated) ||
+                other.lastUpdated == lastUpdated) &&
             (identical(other.scale, scale) || other.scale == scale) &&
             (identical(other.offsetX, offsetX) || other.offsetX == offsetX) &&
             (identical(other.offsetY, offsetY) || other.offsetY == offsetY));
@@ -240,6 +278,8 @@ class _$SpaceEntityImpl implements _SpaceEntity {
       name,
       const DeepCollectionEquality().hash(_rooms),
       description,
+      totalItems,
+      lastUpdated,
       scale,
       offsetX,
       offsetY);
@@ -257,6 +297,8 @@ abstract class _SpaceEntity implements SpaceEntity {
       required final String name,
       required final List<RoomEntity> rooms,
       required final String description,
+      required final int totalItems,
+      required final DateTime lastUpdated,
       final double scale,
       final double offsetX,
       final double offsetY}) = _$SpaceEntityImpl;
@@ -270,6 +312,10 @@ abstract class _SpaceEntity implements SpaceEntity {
   @override // 房间列表
   String get description;
   @override // 空间描述
+  int get totalItems;
+  @override // 物品总数
+  DateTime get lastUpdated;
+  @override // 最后更新时间
   double get scale;
   @override // 当前缩放比例
   double get offsetX;

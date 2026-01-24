@@ -4,7 +4,7 @@ import 'package:count_it_items/core/theme/app_colors.dart';
 import 'package:count_it_items/features/home/view_model/map_cubit.dart';
 import 'package:count_it_items/features/home/view_model/map_event.dart';
 import 'package:count_it_items/features/home/view_model/map_state.dart';
-import 'package:count_it_items/features/home/view/widgets/home_header.dart';
+import 'package:count_it_items/features/home/view/widgets/home_app_bar.dart';
 import 'package:count_it_items/features/home/view/widgets/home_bottom_dock.dart';
 import 'package:count_it_items/features/home/view/widgets/map_painter.dart';
 
@@ -13,7 +13,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final EdgeInsets safePadding = MediaQuery.of(context).padding;
     return Scaffold(
+      appBar: const HomeAppBar(), 
       backgroundColor: AppColors.background,
       body: BlocProvider.value(
         value: context.read<MapCubit>()..add(const LoadMap()),
@@ -21,22 +23,30 @@ class HomePage extends StatelessWidget {
           builder: (context, state) {
             return Stack(
               children: [
+                // 最底层：背景渐变
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.background.withValues(alpha: 1.0),
+                        AppColors.background.withValues(alpha: 0.98),
+                        AppColors.background.withValues(alpha: 0.96),
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
+                    ),
+                  ),
+                ),
+
                 // 中层：动态平面图画布
                 _buildCanvas(state, context),
-                
-                // 顶层：状态感应区
-                Positioned(
-                  top: 60,
-                  left: 24,
-                  right: 24,
-                  child: const HomeHeader(),
-                ),
-                
+
                 // 底层：全局搜索与快捷工具
                 Positioned(
-                  bottom: 40,
-                  left: 24,
-                  right: 24,
+                  bottom: safePadding.bottom + 16,
+                  left: 16,
+                  right: 16,
                   child: const HomeBottomDock(),
                 ),
               ],
@@ -46,7 +56,7 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-  
+
   // 构建画布
   Widget _buildCanvas(MapState state, BuildContext context) {
     return GestureDetector(
@@ -55,20 +65,27 @@ class HomePage extends StatelessWidget {
         context.read<MapCubit>().add(const DoubleTapEmpty());
       },
       child: InteractiveViewer(
-        boundaryMargin: const EdgeInsets.all(100),
-        minScale: 0.5,
-        maxScale: 2.0,
+        boundaryMargin: const EdgeInsets.all(200),
+        minScale: 0.1,
+        maxScale: 5.0,
         // 支持惯性平移
         panEnabled: true,
         scaleEnabled: true,
-        child: CustomPaint(
-          painter: MapPainter(
-            state: state,
-            onRoomTap: (roomId) {
-              context.read<MapCubit>().add(SelectRoom(roomId: roomId));
+        child: RepaintBoundary(
+          child: AnimatedBuilder(
+            animation: AlwaysStoppedAnimation(1.0), // 基础动画，后续可扩展为动态动画
+            builder: (context, child) {
+              return CustomPaint(
+                painter: MapPainter(
+                  state: state,
+                  onRoomTap: (roomId) {
+                    context.read<MapCubit>().add(SelectRoom(roomId: roomId));
+                  },
+                ),
+                size: Size.infinite,
+              );
             },
           ),
-          size: Size.infinite,
         ),
       ),
     );

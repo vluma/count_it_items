@@ -13,13 +13,13 @@ class AppTheme {
         primary: AppColors.primary,
         onPrimary: AppColors.onPrimary,
         background: AppColors.background,
-        onBackground: AppColors.onBackground,
+        onBackground: AppColors.textPrimary,
         surface: AppColors.surface,
-        onSurface: AppColors.onSurface,
+        onSurface: AppColors.textPrimary,
         error: AppColors.error,
         onError: Colors.white,
         secondary: AppColors.secondary,
-        onSecondary: AppColors.onBackground,
+        onSecondary: AppColors.textPrimary,
       ),
       
       // 文本主题

@@ -20,6 +20,7 @@ Map<String, dynamic> _$PointModelToJson(PointModel instance) =>
 RoomModel _$RoomModelFromJson(Map<String, dynamic> json) => RoomModel(
       id: json['id'] as String,
       name: json['name'] as String,
+      type: json['type'] as String,
       points: (json['points'] as List<dynamic>)
           .map((e) => PointModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -30,6 +31,7 @@ RoomModel _$RoomModelFromJson(Map<String, dynamic> json) => RoomModel(
 Map<String, dynamic> _$RoomModelToJson(RoomModel instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
+      'type': instance.type,
       'points': instance.points,
       'itemCount': instance.itemCount,
       'load': instance.load,

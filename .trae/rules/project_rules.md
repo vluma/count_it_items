@@ -42,6 +42,8 @@ class MapState with _$MapState {
 * **磨砂效果**：跨模块 UI 优先封装 `GlassCard` 组件，统一 `glassmorphism` 参数。
 * **动画**：简单的状态切换优先使用 `flutter_animate`。
 * **图片加载**：对于网络图片，必须封装带占位图和错误处理的 `NetworkImage`。
+* **颜色透明度**：禁止 `withOpacity()`，**必须**使用 `withValues(alpha: value)`。
+
 
 ## 5. 目录与命名规范
 * **功能导向 (Feature-First)**：新功能必须在 `features/` 下创建独立文件夹。

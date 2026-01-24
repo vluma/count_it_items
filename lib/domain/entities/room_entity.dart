@@ -15,9 +15,11 @@ class RoomEntity with _$RoomEntity {
   const factory RoomEntity({
     required String id,               // 房间唯一标识
     required String name,             // 房间名称
+    required String type,             // 房间类型（卧室、厨房等）
     required List<Offset> points,     // 房间多边形坐标点
     required int itemCount,           // 物品数量
     required SpaceLoadStatus load,    // 装载状态
+    @Default(Offset.zero) Offset centerPoint, // 预计算的中心点
     @Default(false) bool isSelected,  // 是否被选中
     @Default(false) bool isHighlighted, // 是否被高亮
   }) = _RoomEntity;

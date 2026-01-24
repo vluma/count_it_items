@@ -1,0 +1,9 @@
+{
+  "@@locale": "en",
+  "appTitle": "CountIt",
+  "exist": "Exist.",
+  "rooms": "Rooms",
+  "itemsTracked": "Items Tracked",
+  "loading": "Loading...",
+  "searchItems": "Search items..."
+}

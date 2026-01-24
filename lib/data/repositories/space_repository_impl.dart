@@ -11,10 +11,13 @@ class SpaceRepositoryImpl implements SpaceRepository {
     id: 'space_001',
     name: '我的家',
     description: 'All is in order.',
+    totalItems: 53,
+    lastUpdated: DateTime.now().toIso8601String(),
     rooms: [
       RoomModel(
         id: 'room_001',
         name: '客厅',
+        type: 'living_room',
         points: [
           PointModel(x: 100, y: 100),
           PointModel(x: 300, y: 100),
@@ -27,6 +30,7 @@ class SpaceRepositoryImpl implements SpaceRepository {
       RoomModel(
         id: 'room_002',
         name: '厨房',
+        type: 'kitchen',
         points: [
           PointModel(x: 300, y: 100),
           PointModel(x: 450, y: 100),
@@ -39,6 +43,7 @@ class SpaceRepositoryImpl implements SpaceRepository {
       RoomModel(
         id: 'room_003',
         name: '卧室',
+        type: 'bedroom',
         points: [
           PointModel(x: 100, y: 250),
           PointModel(x: 300, y: 250),
@@ -51,6 +56,7 @@ class SpaceRepositoryImpl implements SpaceRepository {
       RoomModel(
         id: 'room_004',
         name: '浴室',
+        type: 'bathroom',
         points: [
           PointModel(x: 300, y: 250),
           PointModel(x: 400, y: 250),

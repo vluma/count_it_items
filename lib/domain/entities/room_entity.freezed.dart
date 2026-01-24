@@ -18,9 +18,11 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$RoomEntity {
   String get id => throw _privateConstructorUsedError; // 房间唯一标识
   String get name => throw _privateConstructorUsedError; // 房间名称
+  String get type => throw _privateConstructorUsedError; // 房间类型（卧室、厨房等）
   List<Offset> get points => throw _privateConstructorUsedError; // 房间多边形坐标点
   int get itemCount => throw _privateConstructorUsedError; // 物品数量
   SpaceLoadStatus get load => throw _privateConstructorUsedError; // 装载状态
+  Offset get centerPoint => throw _privateConstructorUsedError; // 预计算的中心点
   bool get isSelected => throw _privateConstructorUsedError; // 是否被选中
   bool get isHighlighted => throw _privateConstructorUsedError;
 
@@ -38,9 +40,11 @@ abstract class $RoomEntityCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
+      String type,
       List<Offset> points,
       int itemCount,
       SpaceLoadStatus load,
+      Offset centerPoint,
       bool isSelected,
       bool isHighlighted});
 }
@@ -60,9 +64,11 @@ class _$RoomEntityCopyWithImpl<$Res, $Val extends RoomEntity>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? type = null,
     Object? points = null,
     Object? itemCount = null,
     Object? load = null,
+    Object? centerPoint = null,
     Object? isSelected = null,
     Object? isHighlighted = null,
   }) {
@@ -74,6 +80,10 @@ class _$RoomEntityCopyWithImpl<$Res, $Val extends RoomEntity>
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String,
       points: null == points
           ? _value.points
@@ -87,6 +97,10 @@ class _$RoomEntityCopyWithImpl<$Res, $Val extends RoomEntity>
           ? _value.load
           : load // ignore: cast_nullable_to_non_nullable
               as SpaceLoadStatus,
+      centerPoint: null == centerPoint
+          ? _value.centerPoint
+          : centerPoint // ignore: cast_nullable_to_non_nullable
+              as Offset,
       isSelected: null == isSelected
           ? _value.isSelected
           : isSelected // ignore: cast_nullable_to_non_nullable
@@ -110,9 +124,11 @@ abstract class _$$RoomEntityImplCopyWith<$Res>
   $Res call(
       {String id,
       String name,
+      String type,
       List<Offset> points,
       int itemCount,
       SpaceLoadStatus load,
+      Offset centerPoint,
       bool isSelected,
       bool isHighlighted});
 }
@@ -130,9 +146,11 @@ class __$$RoomEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? type = null,
     Object? points = null,
     Object? itemCount = null,
     Object? load = null,
+    Object? centerPoint = null,
     Object? isSelected = null,
     Object? isHighlighted = null,
   }) {
@@ -144,6 +162,10 @@ class __$$RoomEntityImplCopyWithImpl<$Res>
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as String,
       points: null == points
           ? _value._points
@@ -157,6 +179,10 @@ class __$$RoomEntityImplCopyWithImpl<$Res>
           ? _value.load
           : load // ignore: cast_nullable_to_non_nullable
               as SpaceLoadStatus,
+      centerPoint: null == centerPoint
+          ? _value.centerPoint
+          : centerPoint // ignore: cast_nullable_to_non_nullable
+              as Offset,
       isSelected: null == isSelected
           ? _value.isSelected
           : isSelected // ignore: cast_nullable_to_non_nullable
@@ -175,9 +201,11 @@ class _$RoomEntityImpl implements _RoomEntity {
   const _$RoomEntityImpl(
       {required this.id,
       required this.name,
+      required this.type,
       required final List<Offset> points,
       required this.itemCount,
       required this.load,
+      this.centerPoint = Offset.zero,
       this.isSelected = false,
       this.isHighlighted = false})
       : _points = points;
@@ -188,8 +216,11 @@ class _$RoomEntityImpl implements _RoomEntity {
   @override
   final String name;
 // 房间名称
+  @override
+  final String type;
+// 房间类型（卧室、厨房等）
   final List<Offset> _points;
-// 房间名称
+// 房间类型（卧室、厨房等）
   @override
   List<Offset> get points {
     if (_points is EqualUnmodifiableListView) return _points;
@@ -206,6 +237,10 @@ class _$RoomEntityImpl implements _RoomEntity {
 // 装载状态
   @override
   @JsonKey()
+  final Offset centerPoint;
+// 预计算的中心点
+  @override
+  @JsonKey()
   final bool isSelected;
 // 是否被选中
   @override
@@ -214,7 +249,7 @@ class _$RoomEntityImpl implements _RoomEntity {
 
   @override
   String toString() {
-    return 'RoomEntity(id: $id, name: $name, points: $points, itemCount: $itemCount, load: $load, isSelected: $isSelected, isHighlighted: $isHighlighted)';
+    return 'RoomEntity(id: $id, name: $name, type: $type, points: $points, itemCount: $itemCount, load: $load, centerPoint: $centerPoint, isSelected: $isSelected, isHighlighted: $isHighlighted)';
   }
 
   @override
@@ -224,10 +259,13 @@ class _$RoomEntityImpl implements _RoomEntity {
             other is _$RoomEntityImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.type, type) || other.type == type) &&
             const DeepCollectionEquality().equals(other._points, _points) &&
             (identical(other.itemCount, itemCount) ||
                 other.itemCount == itemCount) &&
             (identical(other.load, load) || other.load == load) &&
+            (identical(other.centerPoint, centerPoint) ||
+                other.centerPoint == centerPoint) &&
             (identical(other.isSelected, isSelected) ||
                 other.isSelected == isSelected) &&
             (identical(other.isHighlighted, isHighlighted) ||
@@ -239,9 +277,11 @@ class _$RoomEntityImpl implements _RoomEntity {
       runtimeType,
       id,
       name,
+      type,
       const DeepCollectionEquality().hash(_points),
       itemCount,
       load,
+      centerPoint,
       isSelected,
       isHighlighted);
 
@@ -256,9 +296,11 @@ abstract class _RoomEntity implements RoomEntity {
   const factory _RoomEntity(
       {required final String id,
       required final String name,
+      required final String type,
       required final List<Offset> points,
       required final int itemCount,
       required final SpaceLoadStatus load,
+      final Offset centerPoint,
       final bool isSelected,
       final bool isHighlighted}) = _$RoomEntityImpl;
 
@@ -267,12 +309,16 @@ abstract class _RoomEntity implements RoomEntity {
   @override // 房间唯一标识
   String get name;
   @override // 房间名称
+  String get type;
+  @override // 房间类型（卧室、厨房等）
   List<Offset> get points;
   @override // 房间多边形坐标点
   int get itemCount;
   @override // 物品数量
   SpaceLoadStatus get load;
   @override // 装载状态
+  Offset get centerPoint;
+  @override // 预计算的中心点
   bool get isSelected;
   @override // 是否被选中
   bool get isHighlighted;

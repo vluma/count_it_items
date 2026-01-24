@@ -11,12 +11,16 @@ class SpaceModel {
   final String name;
   final List<RoomModel> rooms;
   final String description;
+  final int totalItems;
+  final String lastUpdated;
   
   SpaceModel({
     required this.id,
     required this.name,
     required this.rooms,
     required this.description,
+    required this.totalItems,
+    required this.lastUpdated,
   });
   
   factory SpaceModel.fromJson(Map<String, dynamic> json) => _$SpaceModelFromJson(json);
@@ -28,6 +32,8 @@ class SpaceModel {
     name: name,
     rooms: rooms.map((room) => room.toEntity()).toList(),
     description: description,
+    totalItems: totalItems,
+    lastUpdated: DateTime.parse(lastUpdated),
   );
   
   // 从领域实体创建
@@ -36,5 +42,7 @@ class SpaceModel {
     name: entity.name,
     rooms: entity.rooms.map((room) => RoomModel.fromEntity(room)).toList(),
     description: entity.description,
+    totalItems: entity.totalItems,
+    lastUpdated: entity.lastUpdated.toIso8601String(),
   );
 }

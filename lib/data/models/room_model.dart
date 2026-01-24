@@ -30,6 +30,7 @@ class PointModel {
 class RoomModel {
   final String id;
   final String name;
+  final String type;
   final List<PointModel> points;
   final int itemCount;
   final String load;
@@ -37,6 +38,7 @@ class RoomModel {
   RoomModel({
     required this.id,
     required this.name,
+    required this.type,
     required this.points,
     required this.itemCount,
     required this.load,
@@ -49,6 +51,7 @@ class RoomModel {
   RoomEntity toEntity() => RoomEntity(
     id: id,
     name: name,
+    type: type,
     points: points.map((p) => p.toOffset()).toList(),
     itemCount: itemCount,
     load: _parseLoadStatus(load),
@@ -58,6 +61,7 @@ class RoomModel {
   factory RoomModel.fromEntity(RoomEntity entity) => RoomModel(
     id: entity.id,
     name: entity.name,
+    type: entity.type,
     points: entity.points.map((p) => PointModel.fromOffset(p)).toList(),
     itemCount: entity.itemCount,
     load: entity.load.name,

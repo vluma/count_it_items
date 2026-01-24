@@ -13,6 +13,8 @@ SpaceModel _$SpaceModelFromJson(Map<String, dynamic> json) => SpaceModel(
           .map((e) => RoomModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       description: json['description'] as String,
+      totalItems: (json['totalItems'] as num).toInt(),
+      lastUpdated: json['lastUpdated'] as String,
     );
 
 Map<String, dynamic> _$SpaceModelToJson(SpaceModel instance) =>
@@ -21,4 +23,6 @@ Map<String, dynamic> _$SpaceModelToJson(SpaceModel instance) =>
       'name': instance.name,
       'rooms': instance.rooms,
       'description': instance.description,
+      'totalItems': instance.totalItems,
+      'lastUpdated': instance.lastUpdated,
     };
