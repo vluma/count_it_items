@@ -10,28 +10,27 @@ class MapPainter extends CustomPainter {
 
   MapPainter({required this.state, required this.onRoomTap});
 
-  static const double wallDepth = 10.0;
+  static const double wallDepth = 12.0;
   static const double isoAngle = math.pi / 6;
+  static const double cornerRadius = 8.0;
+  static const double roomScale = 0.96; // 产生 4% 的间距
 
   @override
   void paint(Canvas canvas, Size size) {
     state.maybeWhen(
       success: (space, showOverlay, isSearching) {
         // --- 自动居中适配 ---
-        // 计算所有房间点的 BoundingBox
         final allPoints = <Offset>[];
         for (final room in space.rooms) {
-          allPoints.addAll(room.points.map(_toIso));
+          final center = _getCenter(room.points);
+          final scaledPoints = room.points.map((p) => _shrinkPoint(p, center)).toList();
+          allPoints.addAll(scaledPoints.map(_toIso));
         }
         
-        // 计算 BoundingBox
         final boundingBox = _calculateBoundingBox(allPoints);
-        
-        // 计算图形中心点
         final centerX = (boundingBox.left + boundingBox.right) / 2;
         final centerY = (boundingBox.top + boundingBox.bottom) / 2;
         
-        // 将图形中心点对齐到屏幕中心
         canvas.translate(
           size.width / 2 - centerX,
           size.height / 2 - centerY,
@@ -47,12 +46,51 @@ class MapPainter extends CustomPainter {
 
         for (final room in space.rooms) {
           _drawRoomFloor(canvas, room);
-          // 只有在没有搜索或者搜索匹配时才绘制文字
           _drawRoomData(canvas, room);
         }
       },
       orElse: () {},
     );
+  }
+
+  // 将点向中心收缩，产生间距
+  Offset _shrinkPoint(Offset p, Offset center) {
+    return center + (p - center) * roomScale;
+  }
+
+  // 构建圆角路径
+  Path _buildRoundedPath(List<Offset> points) {
+    final path = Path();
+    if (points.length < 3) return path;
+
+    for (int i = 0; i < points.length; i++) {
+      final p1 = points[i];
+      final p2 = points[(i + 1) % points.length];
+      final p3 = points[(i + 2) % points.length];
+
+      // 计算向量
+      final v1 = p1 - p2;
+      final v2 = p3 - p2;
+
+      // 归一化
+      final v1n = v1 / v1.distance;
+      final v2n = v2 / v2.distance;
+
+      // 计算圆角切点偏移
+      final double currentRadius = math.min(cornerRadius, math.min(v1.distance / 2, v2.distance / 2));
+      
+      final cornerP1 = p2 + v1n * currentRadius;
+      final cornerP2 = p2 + v2n * currentRadius;
+
+      if (i == 0) {
+        path.moveTo(cornerP1.dx, cornerP1.dy);
+      } else {
+        path.lineTo(cornerP1.dx, cornerP1.dy);
+      }
+      path.quadraticBezierTo(p2.dx, p2.dy, cornerP2.dx, cornerP2.dy);
+    }
+    path.close();
+    return path;
   }
   
   // 计算所有点的边界框
@@ -86,9 +124,10 @@ class MapPainter extends CustomPainter {
 
   // 绘制数据层（解决“空”的问题）
   void _drawRoomData(Canvas canvas, RoomEntity room) {
-    final center = _getCenter(room.points.map(_toIso).toList());
+    final center = _getCenter(room.points);
+    final isoCenter = _toIso(center);
 
-    // 1. 房间名称（使用较小的字体，增强精致感）
+    // 1. 房间名称
     final textPainter = TextPainter(
       text: TextSpan(
         text: room.name.toUpperCase(),
@@ -102,8 +141,7 @@ class MapPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     )..layout();
 
-    // 将文字放置在房间中心偏上
-    textPainter.paint(canvas, center.translate(-textPainter.width / 2, -25));
+    textPainter.paint(canvas, isoCenter.translate(-textPainter.width / 2, -25));
 
     // 2. 空间状态标识
     String statusText;
@@ -132,9 +170,9 @@ class MapPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     )..layout();
     
-    statusPainter.paint(canvas, center.translate(-statusPainter.width / 2, -15));
+    statusPainter.paint(canvas, isoCenter.translate(-statusPainter.width / 2, -15));
 
-    // 3. 数据支撑：物品数量（Badge 样式）
+    // 3. 数据支撑：物品数量
     if (room.itemCount > 0) {
       final countPainter = TextPainter(
         text: TextSpan(
@@ -148,18 +186,18 @@ class MapPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
       
-      countPainter.paint(canvas, center.translate(-countPainter.width / 2, 0));
+      countPainter.paint(canvas, isoCenter.translate(-countPainter.width / 2, 0));
     }
 
-    // 4. 状态灯：如果物品较多，显示一个克莱因蓝圆点
+    // 4. 状态灯
     if (room.isSelected) {
       final dotPaint = Paint()..color = AppColors.primary;
-      canvas.drawCircle(center.translate(0, -35), 2, dotPaint);
+      canvas.drawCircle(isoCenter.translate(0, -35), 2, dotPaint);
     }
     
-    // 5. 空状态处理：显示 + 号
+    // 5. 空状态处理
     if (room.itemCount == 0) {
-      _drawEmptyState(canvas, center);
+      _drawEmptyState(canvas, isoCenter);
     }
   }
   
@@ -170,7 +208,6 @@ class MapPainter extends CustomPainter {
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
     
-    // 绘制 + 号
     final size = 12.0;
     canvas.drawLine(
       center.translate(-size / 2, 0),
@@ -185,12 +222,22 @@ class MapPainter extends CustomPainter {
   }
 
   void _drawRoomFloor(Canvas canvas, RoomEntity room) {
-    final Path path = Path();
-    final List<Offset> isoPoints = room.points.map(_toIso).toList();
-    path.addPolygon(isoPoints, true);
+    final center = _getCenter(room.points);
+    final List<Offset> isoPoints = room.points
+        .map((p) => _toIso(_shrinkPoint(p, center)))
+        .toList();
+    
+    final path = _buildRoundedPath(isoPoints);
 
     final paint = Paint()
-      ..color = room.isSelected ? Colors.white : AppColors.surface
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          room.isSelected ? Colors.white : AppColors.surface,
+          room.isSelected ? Colors.white.withValues(alpha: 0.9) : AppColors.surface.withValues(alpha: 0.95),
+        ],
+      ).createShader(path.getBounds())
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(path, paint);
@@ -198,24 +245,36 @@ class MapPainter extends CustomPainter {
     // 极细边框
     final borderPaint = Paint()
       ..color = room.isSelected 
-          ? AppColors.primary.withValues(alpha: 0.4) 
-          : AppColors.textPrimary.withValues(alpha: 0.08)
+          ? AppColors.primary.withValues(alpha: 0.6) 
+          : AppColors.textPrimary.withValues(alpha: 0.1)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5;
+      ..strokeWidth = room.isSelected ? 1.5 : 0.5;
     
     canvas.drawPath(path, borderPaint);
   }
 
   void _drawRoomWalls(Canvas canvas, RoomEntity room) {
-    final List<Offset> topPoints = room.points.map(_toIso).toList();
-    final List<Offset> bottomPoints = room.points.map((p) => _toIso(p.translate(0, wallDepth))).toList();
-
-    final wallPaint = Paint()
-      ..color = AppColors.textPrimary.withValues(alpha: 0.04)
-      ..style = PaintingStyle.fill;
+    final center = _getCenter(room.points);
+    final List<Offset> topPoints = room.points
+        .map((p) => _toIso(_shrinkPoint(p, center)))
+        .toList();
+    final List<Offset> bottomPoints = room.points
+        .map((p) => _toIso(_shrinkPoint(p.translate(0, wallDepth), center)))
+        .toList();
 
     for (int i = 0; i < topPoints.length; i++) {
       int next = (i + 1) % topPoints.length;
+      
+      // 计算墙体方向以应用不同的阴影
+      final vector = topPoints[next] - topPoints[i];
+      final isRightWall = vector.dx > 0;
+
+      final wallPaint = Paint()
+        ..color = isRightWall 
+            ? AppColors.textPrimary.withValues(alpha: 0.08) // 右侧墙稍深
+            : AppColors.textPrimary.withValues(alpha: 0.04) // 左侧墙稍浅
+        ..style = PaintingStyle.fill;
+
       Path wallPath = Path()
         ..moveTo(topPoints[i].dx, topPoints[i].dy)
         ..lineTo(topPoints[next].dx, topPoints[next].dy)
@@ -227,9 +286,19 @@ class MapPainter extends CustomPainter {
   }
 
   void _drawRoomShadow(Canvas canvas, RoomEntity room) {
-    final List<Offset> shadowPoints = room.points.map((p) => _toIso(p.translate(5, 5))).toList();
-    final Path path = Path()..addPolygon(shadowPoints, true);
-    canvas.drawPath(path, Paint()..color = Colors.black.withValues(alpha: 0.02)..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+    final center = _getCenter(room.points);
+    final List<Offset> shadowPoints = room.points
+        .map((p) => _toIso(_shrinkPoint(p.translate(6, 6), center)))
+        .toList();
+    
+    final path = _buildRoundedPath(shadowPoints);
+    
+    canvas.drawPath(
+      path, 
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.03)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12)
+    );
   }
 
   Offset _getCenter(List<Offset> points) {
