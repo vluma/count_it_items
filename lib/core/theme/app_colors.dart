@@ -2,42 +2,77 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
-  
-  // --- 主题品牌色 --- 
-  static const Color primary = Color(0xFF3B82F6); 
-  static const Color onPrimary = Colors.white; 
-  static const Color onBackground = Color(0xFF000000); 
-  static const Color onSurface = Color(0xFF000000); 
 
-  // --- 背景系统 --- 
-  static const Color background = Color(0xFFF8FAFC); // 一级背景色 (用于页面底层) 
-  static const Color surface = Color(0xFFFFFFFF);    // 二级背景色 (用于卡片、Cell) 
-  static const Color secondary = Color(0xFFE5E5EA);  // 三级背景色 (用于组件内嵌入) 
+  // --- 核心品牌色 ---
+  static const Color primary = Color(0xFF3B82F6); // 科技蓝，用于高亮和选中
+  static const Color accentRed = Color(0xFFEF4444); // 警告红，用于过期和紧急状态
+  static const Color accentOrange = Color(0xFFF97316); // 提醒橙，用于次要警告
 
-  // --- 2.5D 与阴影 --- 
-  static const Color wallSide = Color(0xFFD1D1D6);   // 墙体侧面 
-  static const Color shadow = Color(0x1F000000);     // 12% 不透明度的黑，极其温润 
-  static const Color transparent = Color(0x00000000); // 完全透明 
-  
-  // --- 状态色 --- 
-  static const Color error = Color(0xFFEF4444);      // accent-red 
-  static const Color success = Color(0xFF34C759);    // 成功色 
-  static const Color warning = Color(0xFFF97316);    // accent-orange 
-  static const Color empty = Color(0xFF8E8E93);      // 空状态色 
+  // --- 背景系统 (Light) ---
+  static const Color backgroundLight = Color(0xFFF8FAFC); // 极浅灰蓝底色
+  static const Color surfaceLight = Colors.white; // 纯白卡片色
+  static const Color glassLight = Color(0xB3FFFFFF); // 70% 透明度白色，用于毛玻璃面板
 
-  // --- 文字系统 --- 
-  static const Color textPrimary = Color(0xFF000000);   // 主文字色 
-  static const Color textSecondary = Color(0xFF8E8E93); // 次要文字色 
-  static const Color textDisabled = Color(0xFFC7C7CC);  // 禁用文字色 
+  // --- 背景系统 (Dark) ---
+  static const Color backgroundDark = Color(0xFF0F172A); // 深邃蓝黑底色
+  static const Color surfaceDark = Color(0xFF1E293B); // 深色卡片色
+  static const Color glassDark = Color(0xB30F172A); // 70% 透明度深色，用于深色毛玻璃
 
-  // --- 边框与磨砂 --- 
-  static const Color border = Color(0x4D3C3C43);       // 标准分隔线色 (18% Opacity) 
-  static const Color glassEffect = Color(0xCCFFFFFF);   // 80% 白色，用于 BackdropFilter 
-  
-  // --- 新增颜色常量 --- 
-  static const Color accentRed = Color(0xFFEF4444);     // accent-red 
-  static const Color accentOrange = Color(0xFFF97316);  // accent-orange 
-  static const Color backgroundDark = Color(0xFF0F172A); // 深色背景 
-  static const Color glassLight = Color(0x7FFFFFFF);    // 70% 不透明度的白色 
-  static const Color glassDark = Color(0x7F0F172A);     // 70% 不透明度的深色背景 
+  // --- 文字系统 (Light) ---
+  static const Color textPrimaryLight = Color(0xFF1E293B); // 深蓝灰文字 (主要)
+  static const Color textSecondaryLight = Color(0xFF94A3B8); // 灰蓝文字 (次要/说明)
+  static const Color textDisabledLight = Color(0xFFCBD5E1); // 禁用态文字
+
+  // --- 文字系统 (Dark) ---
+  static const Color textPrimaryDark = Color(0xFFF8FAFC); // 浅色文字 (主要)
+  static const Color textSecondaryDark = Color(0xFF94A3B8); // 灰蓝文字 (次要/说明)
+  static const Color textDisabledDark = Color(0xFF475569); // 禁用态文字
+
+  // --- 辅助色/边框 ---
+  static const Color borderLight = Color(0x66FFFFFF); // 40% 透明度白边框
+  static const Color borderDark = Color(0x0DFFFFFF); // 5% 透明度白边框 (适配深色)
+  static const Color shadowColor = Color(0x0D000000); // 极淡阴影 (5% Opacity)
+
+  // --- 状态阴影 (Glow Effects) ---
+  static const List<BoxShadow> glowBlue = [
+    BoxShadow(color: Color(0x663B82F6), blurRadius: 15, spreadRadius: -2)
+  ];
+  static const List<BoxShadow> glowRed = [
+    BoxShadow(color: Color(0x66EF4444), blurRadius: 10, spreadRadius: 0)
+  ];
+
+  // --- 主题感知颜色获取 ---
+  static AppColorsData of(BuildContext context) {
+    return AppColorsData._(context);
+  }
+}
+
+class AppColorsData {
+  final BuildContext _context;
+  final bool _isDarkMode;
+
+  AppColorsData._(this._context) : _isDarkMode = Theme.of(_context).brightness == Brightness.dark;
+
+  // 核心品牌色
+  Color get primary => AppColors.primary;
+  Color get accentRed => AppColors.accentRed;
+  Color get accentOrange => AppColors.accentOrange;
+
+  // 背景系统
+  Color get background => _isDarkMode ? AppColors.backgroundDark : AppColors.backgroundLight;
+  Color get surface => _isDarkMode ? AppColors.surfaceDark : AppColors.surfaceLight;
+  Color get glass => _isDarkMode ? AppColors.glassDark : AppColors.glassLight;
+
+  // 文字系统
+  Color get textPrimary => _isDarkMode ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+  Color get textSecondary => _isDarkMode ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+  Color get textDisabled => _isDarkMode ? AppColors.textDisabledDark : AppColors.textDisabledLight;
+
+  // 辅助色/边框
+  Color get border => _isDarkMode ? AppColors.borderDark : AppColors.borderLight;
+  Color get shadowColor => AppColors.shadowColor;
+
+  // 状态阴影
+  List<BoxShadow> get glowBlue => AppColors.glowBlue;
+  List<BoxShadow> get glowRed => AppColors.glowRed;
 }

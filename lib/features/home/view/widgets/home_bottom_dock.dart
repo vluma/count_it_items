@@ -9,6 +9,7 @@ class HomeBottomDock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Padding(
       // 这里的 Padding 应该配合 HomePage 的 MediaQuery.padding.bottom
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -20,15 +21,15 @@ class HomeBottomDock extends StatelessWidget {
             height: 64.h,
             padding: EdgeInsets.symmetric(horizontal: 8.w),
             decoration: BoxDecoration(
-              color: AppColors.surface.withValues(alpha: 0.85),
+              color: colors.glass,
               borderRadius: BorderRadius.circular(32.w),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2), // 模拟玻璃边缘反光
+                color: colors.border, // 模拟玻璃边缘反光
                 width: 0.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: colors.shadowColor,
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
@@ -40,12 +41,12 @@ class HomeBottomDock extends StatelessWidget {
                 SizedBox(width: 12.w),
                 Expanded(
                   child: TextField(
-                    cursorColor: AppColors.primary,
+                    cursorColor: colors.primary,
                     decoration: InputDecoration(
                       hintText: AppLocalizations.of(context)!.searchItems,
                       hintStyle: TextStyle(
                         fontSize: 15.sp,
-                        color: AppColors.textSecondary.withValues(alpha: 0.5),
+                        color: colors.textSecondary.withOpacity(0.5),
                       ),
                       border: InputBorder.none,
                       isDense: true,
@@ -54,7 +55,7 @@ class HomeBottomDock extends StatelessWidget {
                       prefixIcon: Icon(
                         Icons.search_rounded,
                         size: 22.sp,
-                        color: AppColors.textSecondary.withValues(alpha: 0.8),
+                        color: colors.textSecondary.withOpacity(0.8),
                       ),
                       prefixIconConstraints: BoxConstraints(
                         minWidth: 0,
@@ -71,7 +72,7 @@ class HomeBottomDock extends StatelessWidget {
                         icon: Icon(
                           Icons.mic_rounded,
                           size: 22.sp,
-                          color: AppColors.textSecondary.withValues(alpha: 0.9),
+                          color: colors.textSecondary.withOpacity(0.9),
                         ),
                       ),
                       suffixIconConstraints: BoxConstraints(
@@ -79,7 +80,7 @@ class HomeBottomDock extends StatelessWidget {
                         minHeight: 0,
                       ),
                     ),
-                    style: TextStyle(fontSize: 15.sp),
+                    style: TextStyle(fontSize: 15.sp, color: colors.textPrimary),
                   ),
                 ),
 
@@ -88,14 +89,14 @@ class HomeBottomDock extends StatelessWidget {
                   height: 24.h,
                   width: 1,
                   margin: EdgeInsets.symmetric(horizontal: 8.w),
-                  color: AppColors.textSecondary.withValues(alpha: 0.1),
+                  color: colors.textSecondary.withOpacity(0.1),
                 ),
 
                 // 3. 拍照按钮 (右侧整合)
                 _buildIconButton(
                   icon: Icons.camera_alt_rounded,
                   onTap: () => _handleCamera(),
-                  color: AppColors.primary, // 使用系统蓝色
+                  color: colors.primary, // 使用系统蓝色
                   isLarge: true,
                 ),
                 SizedBox(width: 4.w),
@@ -120,7 +121,7 @@ class HomeBottomDock extends StatelessWidget {
       icon: Icon(
         icon,
         size: isLarge ? 26.sp : 22.sp,
-        color: color.withValues(alpha: 0.9),
+        color: color.withOpacity(0.9),
       ),
     );
   }

@@ -16,17 +16,17 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$RoomEntity {
-  String get id => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError;
-  List<Offset> get points => throw _privateConstructorUsedError;
-  int get itemCount => throw _privateConstructorUsedError;
-  SpaceLoadStatus get load => throw _privateConstructorUsedError;
-  Offset get centerPoint => throw _privateConstructorUsedError;
-  bool get isSelected => throw _privateConstructorUsedError;
-  bool get isHighlighted => throw _privateConstructorUsedError;
-  int get urgentExpiredItems => throw _privateConstructorUsedError;
-  int get pendingTasks => throw _privateConstructorUsedError;
+  String get id => throw _privateConstructorUsedError; // 房间唯一标识
+  String get name => throw _privateConstructorUsedError; // 房间名称
+  String get type => throw _privateConstructorUsedError; // 房间类型（卧室、厨房等）
+  List<Offset> get points => throw _privateConstructorUsedError; // 房间多边形坐标点
+  int get itemCount => throw _privateConstructorUsedError; // 物品数量
+  SpaceLoadStatus get load => throw _privateConstructorUsedError; // 装载状态
+  Offset get centerPoint => throw _privateConstructorUsedError; // 预计算的中心点
+  bool get isSelected => throw _privateConstructorUsedError; // 是否被选中
+  bool get isHighlighted => throw _privateConstructorUsedError; // 是否被高亮
+  bool get hasExpiredItems => throw _privateConstructorUsedError; // 是否有紧急过期物品
+  bool get hasPendingTasks => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $RoomEntityCopyWith<RoomEntity> get copyWith =>
@@ -49,8 +49,8 @@ abstract class $RoomEntityCopyWith<$Res> {
       Offset centerPoint,
       bool isSelected,
       bool isHighlighted,
-      int urgentExpiredItems,
-      int pendingTasks});
+      bool hasExpiredItems,
+      bool hasPendingTasks});
 }
 
 /// @nodoc
@@ -75,8 +75,8 @@ class _$RoomEntityCopyWithImpl<$Res, $Val extends RoomEntity>
     Object? centerPoint = null,
     Object? isSelected = null,
     Object? isHighlighted = null,
-    Object? urgentExpiredItems = null,
-    Object? pendingTasks = null,
+    Object? hasExpiredItems = null,
+    Object? hasPendingTasks = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -115,14 +115,14 @@ class _$RoomEntityCopyWithImpl<$Res, $Val extends RoomEntity>
           ? _value.isHighlighted
           : isHighlighted // ignore: cast_nullable_to_non_nullable
               as bool,
-      urgentExpiredItems: null == urgentExpiredItems
-          ? _value.urgentExpiredItems
-          : urgentExpiredItems // ignore: cast_nullable_to_non_nullable
-              as int,
-      pendingTasks: null == pendingTasks
-          ? _value.pendingTasks
-          : pendingTasks // ignore: cast_nullable_to_non_nullable
-              as int,
+      hasExpiredItems: null == hasExpiredItems
+          ? _value.hasExpiredItems
+          : hasExpiredItems // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasPendingTasks: null == hasPendingTasks
+          ? _value.hasPendingTasks
+          : hasPendingTasks // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -145,8 +145,8 @@ abstract class _$$RoomEntityImplCopyWith<$Res>
       Offset centerPoint,
       bool isSelected,
       bool isHighlighted,
-      int urgentExpiredItems,
-      int pendingTasks});
+      bool hasExpiredItems,
+      bool hasPendingTasks});
 }
 
 /// @nodoc
@@ -169,8 +169,8 @@ class __$$RoomEntityImplCopyWithImpl<$Res>
     Object? centerPoint = null,
     Object? isSelected = null,
     Object? isHighlighted = null,
-    Object? urgentExpiredItems = null,
-    Object? pendingTasks = null,
+    Object? hasExpiredItems = null,
+    Object? hasPendingTasks = null,
   }) {
     return _then(_$RoomEntityImpl(
       id: null == id
@@ -209,14 +209,14 @@ class __$$RoomEntityImplCopyWithImpl<$Res>
           ? _value.isHighlighted
           : isHighlighted // ignore: cast_nullable_to_non_nullable
               as bool,
-      urgentExpiredItems: null == urgentExpiredItems
-          ? _value.urgentExpiredItems
-          : urgentExpiredItems // ignore: cast_nullable_to_non_nullable
-              as int,
-      pendingTasks: null == pendingTasks
-          ? _value.pendingTasks
-          : pendingTasks // ignore: cast_nullable_to_non_nullable
-              as int,
+      hasExpiredItems: null == hasExpiredItems
+          ? _value.hasExpiredItems
+          : hasExpiredItems // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasPendingTasks: null == hasPendingTasks
+          ? _value.hasPendingTasks
+          : hasPendingTasks // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -234,17 +234,21 @@ class _$RoomEntityImpl implements _RoomEntity {
       this.centerPoint = Offset.zero,
       this.isSelected = false,
       this.isHighlighted = false,
-      this.urgentExpiredItems = 0,
-      this.pendingTasks = 0})
+      this.hasExpiredItems = false,
+      this.hasPendingTasks = false})
       : _points = points;
 
   @override
   final String id;
+// 房间唯一标识
   @override
   final String name;
+// 房间名称
   @override
   final String type;
+// 房间类型（卧室、厨房等）
   final List<Offset> _points;
+// 房间类型（卧室、厨房等）
   @override
   List<Offset> get points {
     if (_points is EqualUnmodifiableListView) return _points;
@@ -252,29 +256,36 @@ class _$RoomEntityImpl implements _RoomEntity {
     return EqualUnmodifiableListView(_points);
   }
 
+// 房间多边形坐标点
   @override
   final int itemCount;
+// 物品数量
   @override
   final SpaceLoadStatus load;
+// 装载状态
   @override
   @JsonKey()
   final Offset centerPoint;
+// 预计算的中心点
   @override
   @JsonKey()
   final bool isSelected;
+// 是否被选中
   @override
   @JsonKey()
   final bool isHighlighted;
+// 是否被高亮
   @override
   @JsonKey()
-  final int urgentExpiredItems;
+  final bool hasExpiredItems;
+// 是否有紧急过期物品
   @override
   @JsonKey()
-  final int pendingTasks;
+  final bool hasPendingTasks;
 
   @override
   String toString() {
-    return 'RoomEntity(id: $id, name: $name, type: $type, points: $points, itemCount: $itemCount, load: $load, centerPoint: $centerPoint, isSelected: $isSelected, isHighlighted: $isHighlighted, urgentExpiredItems: $urgentExpiredItems, pendingTasks: $pendingTasks)';
+    return 'RoomEntity(id: $id, name: $name, type: $type, points: $points, itemCount: $itemCount, load: $load, centerPoint: $centerPoint, isSelected: $isSelected, isHighlighted: $isHighlighted, hasExpiredItems: $hasExpiredItems, hasPendingTasks: $hasPendingTasks)';
   }
 
   @override
@@ -295,10 +306,10 @@ class _$RoomEntityImpl implements _RoomEntity {
                 other.isSelected == isSelected) &&
             (identical(other.isHighlighted, isHighlighted) ||
                 other.isHighlighted == isHighlighted) &&
-            (identical(other.urgentExpiredItems, urgentExpiredItems) ||
-                other.urgentExpiredItems == urgentExpiredItems) &&
-            (identical(other.pendingTasks, pendingTasks) ||
-                other.pendingTasks == pendingTasks));
+            (identical(other.hasExpiredItems, hasExpiredItems) ||
+                other.hasExpiredItems == hasExpiredItems) &&
+            (identical(other.hasPendingTasks, hasPendingTasks) ||
+                other.hasPendingTasks == hasPendingTasks));
   }
 
   @override
@@ -313,8 +324,8 @@ class _$RoomEntityImpl implements _RoomEntity {
       centerPoint,
       isSelected,
       isHighlighted,
-      urgentExpiredItems,
-      pendingTasks);
+      hasExpiredItems,
+      hasPendingTasks);
 
   @JsonKey(ignore: true)
   @override
@@ -334,31 +345,31 @@ abstract class _RoomEntity implements RoomEntity {
       final Offset centerPoint,
       final bool isSelected,
       final bool isHighlighted,
-      final int urgentExpiredItems,
-      final int pendingTasks}) = _$RoomEntityImpl;
+      final bool hasExpiredItems,
+      final bool hasPendingTasks}) = _$RoomEntityImpl;
 
   @override
   String get id;
-  @override
+  @override // 房间唯一标识
   String get name;
-  @override
+  @override // 房间名称
   String get type;
-  @override
+  @override // 房间类型（卧室、厨房等）
   List<Offset> get points;
-  @override
+  @override // 房间多边形坐标点
   int get itemCount;
-  @override
+  @override // 物品数量
   SpaceLoadStatus get load;
-  @override
+  @override // 装载状态
   Offset get centerPoint;
-  @override
+  @override // 预计算的中心点
   bool get isSelected;
-  @override
+  @override // 是否被选中
   bool get isHighlighted;
-  @override
-  int get urgentExpiredItems;
-  @override
-  int get pendingTasks;
+  @override // 是否被高亮
+  bool get hasExpiredItems;
+  @override // 是否有紧急过期物品
+  bool get hasPendingTasks;
   @override
   @JsonKey(ignore: true)
   _$$RoomEntityImplCopyWith<_$RoomEntityImpl> get copyWith =>

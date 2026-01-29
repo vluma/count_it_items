@@ -15,6 +15,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return AppBar(
       // 1. 基础配置：透明并移除阴影
       backgroundColor: Colors.transparent,
@@ -28,7 +29,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Container(
-            color: AppColors.background.withValues(alpha: 0.7),
+            color: colors.glass,
           ),
         ),
       ),
@@ -44,7 +45,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 style: TextStyle(
                   fontSize: 28.sp,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                   letterSpacing: -0.5,
                 ),
               ),
@@ -54,14 +55,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary.withValues(alpha: 0.6),
+                    color: colors.textSecondary.withOpacity(0.6),
                   ),
                 ),
                 orElse: () => Text(
                   AppLocalizations.of(context)!.loading,
                   style: TextStyle(
                     fontSize: 10.sp,
-                    color: AppColors.textSecondary.withValues(alpha: 0.6),
+                    color: colors.textSecondary.withOpacity(0.6),
                   ),
                 ),
               ),
@@ -74,13 +75,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         _buildWeatherIndicator(context),
         SizedBox(width: 8.w),
-        _buildNotificationButton(),
+        _buildNotificationButton(context),
         SizedBox(width: 16.w), // 保持 Apple 边缘间距
       ],
     );
   }
 
-  Widget _buildNotificationButton() {
+  Widget _buildNotificationButton(BuildContext context) {
+    final colors = AppColors.of(context);
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -89,7 +91,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(
             Icons.notifications_none_rounded,
             size: 22.sp,
-            color: AppColors.textPrimary,
+            color: colors.textPrimary,
           ),
         ),
         Positioned(
@@ -99,7 +101,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             width: 7.w,
             height: 7.h,
             decoration: const BoxDecoration(
-              color: AppColors.error, // 使用你主题中的错误红
+              color: AppColors.accentRed, // 使用你主题中的错误红
               shape: BoxShape.circle,
             ),
           ),
@@ -109,6 +111,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildWeatherIndicator(BuildContext context) {
+    final colors = AppColors.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -116,14 +119,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.wb_sunny_rounded, size: 14.sp, color: Colors.orange),
+            Icon(Icons.wb_sunny_rounded, size: 14.sp, color: AppColors.accentOrange),
             SizedBox(width: 4.w),
             Text(
               '23°',
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w300,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ],
@@ -133,7 +136,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
             fontSize: 9.sp,
             fontWeight: FontWeight.w600,
-            color: AppColors.textSecondary.withValues(alpha: 0.5),
+            color: colors.textSecondary.withOpacity(0.5),
           ),
         ),
       ],

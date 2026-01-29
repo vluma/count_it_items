@@ -15,8 +15,8 @@ class GlassCard extends StatelessWidget {
     super.key,
     required this.child,
     this.borderRadius = 16,
-    this.blurRadius = 10,
-    this.backgroundColor = const Color(0xFFFFFFFF),
+    this.blurRadius = 16,
+    this.backgroundColor = AppColors.glassLight,
     this.padding = const EdgeInsets.all(16),
     this.margin = EdgeInsets.zero,
     this.onTap,
@@ -33,15 +33,15 @@ class GlassCard extends StatelessWidget {
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              color: backgroundColor.withOpacity(0.8),
+              color: backgroundColor,
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: AppColors.borderLight,
                 width: 1,
               ),
-              boxShadow: [
+              boxShadow: AppColors.shadowColor == null ? [] : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppColors.shadowColor,
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),

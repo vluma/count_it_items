@@ -7,8 +7,19 @@ import 'package:youwu/features/home/view_model/map_state.dart';
 class MapPainter extends CustomPainter {
   final MapState state;
   final Function(String roomId) onRoomTap;
+  final Color primaryColor;
+  final Color textPrimaryColor;
+  final Color textSecondaryColor;
+  final Color surfaceColor;
 
-  MapPainter({required this.state, required this.onRoomTap});
+  MapPainter({
+    required this.state,
+    required this.onRoomTap,
+    required this.primaryColor,
+    required this.textPrimaryColor,
+    required this.textSecondaryColor,
+    required this.surfaceColor,
+  });
 
   static const double wallDepth = 12.0;
   static const double isoAngle = math.pi / 6;
@@ -132,7 +143,7 @@ class MapPainter extends CustomPainter {
       text: TextSpan(
         text: room.name.toUpperCase(),
         style: TextStyle(
-          color: AppColors.textPrimary.withValues(alpha: 0.8),
+          color: textPrimaryColor.withOpacity(0.8),
           fontSize: 10,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
@@ -161,7 +172,7 @@ class MapPainter extends CustomPainter {
       text: TextSpan(
         text: statusText,
         style: TextStyle(
-          color: AppColors.textSecondary.withValues(alpha: 0.6),
+          color: textSecondaryColor.withOpacity(0.6),
           fontSize: 7,
           fontWeight: FontWeight.w500,
           letterSpacing: 1.0,
@@ -178,7 +189,7 @@ class MapPainter extends CustomPainter {
         text: TextSpan(
           text: '${room.itemCount} ITEMS',
           style: TextStyle(
-            color: AppColors.textSecondary.withValues(alpha: 0.5),
+            color: textSecondaryColor.withOpacity(0.5),
             fontSize: 8,
             fontWeight: FontWeight.w500,
           ),
@@ -191,7 +202,7 @@ class MapPainter extends CustomPainter {
 
     // 4. 状态灯
     if (room.isSelected) {
-      final dotPaint = Paint()..color = AppColors.primary;
+      final dotPaint = Paint()..color = primaryColor;
       canvas.drawCircle(isoCenter.translate(0, -35), 2, dotPaint);
     }
     
@@ -204,7 +215,7 @@ class MapPainter extends CustomPainter {
   // 绘制空状态
   void _drawEmptyState(Canvas canvas, Offset center) {
     final plusPaint = Paint()
-      ..color = AppColors.textSecondary.withValues(alpha: 0.3)
+      ..color = textSecondaryColor.withOpacity(0.3)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
     
@@ -234,8 +245,8 @@ class MapPainter extends CustomPainter {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          room.isSelected ? Colors.white : AppColors.surface,
-          room.isSelected ? Colors.white.withValues(alpha: 0.9) : AppColors.surface.withValues(alpha: 0.95),
+          room.isSelected ? Colors.white : surfaceColor,
+          room.isSelected ? Colors.white.withOpacity(0.9) : surfaceColor.withOpacity(0.95),
         ],
       ).createShader(path.getBounds())
       ..style = PaintingStyle.fill;
@@ -245,8 +256,8 @@ class MapPainter extends CustomPainter {
     // 极细边框
     final borderPaint = Paint()
       ..color = room.isSelected 
-          ? AppColors.primary.withValues(alpha: 0.6) 
-          : AppColors.textPrimary.withValues(alpha: 0.1)
+          ? primaryColor.withOpacity(0.6) 
+          : textPrimaryColor.withOpacity(0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = room.isSelected ? 1.5 : 0.5;
     
@@ -271,8 +282,8 @@ class MapPainter extends CustomPainter {
 
       final wallPaint = Paint()
         ..color = isRightWall 
-            ? AppColors.textPrimary.withValues(alpha: 0.08) // 右侧墙稍深
-            : AppColors.textPrimary.withValues(alpha: 0.04) // 左侧墙稍浅
+            ? textPrimaryColor.withOpacity(0.08) // 右侧墙稍深
+            : textPrimaryColor.withOpacity(0.04) // 左侧墙稍浅
         ..style = PaintingStyle.fill;
 
       Path wallPath = Path()
@@ -296,7 +307,7 @@ class MapPainter extends CustomPainter {
     canvas.drawPath(
       path, 
       Paint()
-        ..color = Colors.black.withValues(alpha: 0.03)
+        ..color = Colors.black.withOpacity(0.03)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12)
     );
   }

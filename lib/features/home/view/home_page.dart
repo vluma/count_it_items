@@ -14,9 +14,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final EdgeInsets safePadding = MediaQuery.of(context).padding;
+    final colors = AppColors.of(context);
     return Scaffold(
       appBar: const HomeAppBar(), 
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: BlocProvider.value(
         value: context.read<MapCubit>()..add(const LoadMap()),
         child: BlocBuilder<MapCubit, MapState>(
@@ -30,9 +31,9 @@ class HomePage extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        AppColors.background.withValues(alpha: 1.0),
-                        AppColors.background.withValues(alpha: 0.98),
-                        AppColors.background.withValues(alpha: 0.96),
+                        colors.background.withOpacity(1.0),
+                        colors.background.withOpacity(0.98),
+                        colors.background.withOpacity(0.96),
                       ],
                       stops: const [0.0, 0.5, 1.0],
                     ),
@@ -59,6 +60,7 @@ class HomePage extends StatelessWidget {
 
   // 构建画布
   Widget _buildCanvas(MapState state, BuildContext context) {
+    final colors = AppColors.of(context);
     return GestureDetector(
       // 双击空白处回归中心
       onDoubleTap: () {
@@ -81,6 +83,10 @@ class HomePage extends StatelessWidget {
                   onRoomTap: (roomId) {
                     context.read<MapCubit>().add(SelectRoom(roomId: roomId));
                   },
+                  primaryColor: colors.primary,
+                  textPrimaryColor: colors.textPrimary,
+                  textSecondaryColor: colors.textSecondary,
+                  surfaceColor: colors.surface,
                 ),
                 size: Size.infinite,
               );
