@@ -22,6 +22,9 @@ class MapCubit extends Bloc<MapEvent, MapState> {
     on<ClearSearch>(_onClearSearch);
     on<UpdateTransform>(_onUpdateTransform);
     on<DoubleTapEmpty>(_onDoubleTapEmpty);
+    on<AddRoom>(_onAddRoom);
+    on<UpdateRoom>(_onUpdateRoom);
+    on<DeleteRoom>(_onDeleteRoom);
   }
   
   // 处理加载地图事件
@@ -178,6 +181,60 @@ class MapCubit extends Bloc<MapEvent, MapState> {
       await spaceRepository.deselectRoom();
       
       // 重新加载空间数据，更新UI
+      final space = await spaceRepository.getSpaceData();
+      emit(MapState.success(
+        space: space,
+        showOverlay: _showOverlay,
+        isSearching: _isSearching,
+      ));
+    } catch (e) {
+      emit(MapState.error(message: e.toString()));
+    }
+  }
+  
+  // 处理添加房间事件
+  Future<void> _onAddRoom(AddRoom event, Emitter<MapState> emit) async {
+    try {
+      emit(const MapState.loading());
+      
+      await spaceRepository.addRoom(event.room);
+      
+      final space = await spaceRepository.getSpaceData();
+      emit(MapState.success(
+        space: space,
+        showOverlay: _showOverlay,
+        isSearching: _isSearching,
+      ));
+    } catch (e) {
+      emit(MapState.error(message: e.toString()));
+    }
+  }
+  
+  // 处理更新房间事件
+  Future<void> _onUpdateRoom(UpdateRoom event, Emitter<MapState> emit) async {
+    try {
+      emit(const MapState.loading());
+      
+      await spaceRepository.updateRoom(event.room);
+      
+      final space = await spaceRepository.getSpaceData();
+      emit(MapState.success(
+        space: space,
+        showOverlay: _showOverlay,
+        isSearching: _isSearching,
+      ));
+    } catch (e) {
+      emit(MapState.error(message: e.toString()));
+    }
+  }
+  
+  // 处理删除房间事件
+  Future<void> _onDeleteRoom(DeleteRoom event, Emitter<MapState> emit) async {
+    try {
+      emit(const MapState.loading());
+      
+      await spaceRepository.deleteRoom(event.roomId);
+      
       final space = await spaceRepository.getSpaceData();
       emit(MapState.success(
         space: space,

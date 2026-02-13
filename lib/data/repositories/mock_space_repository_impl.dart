@@ -123,4 +123,52 @@ class MockSpaceRepositoryImpl implements SpaceRepository {
       offsetY: offsetY,
     );
   }
+  
+  @override
+  Future<RoomEntity> addRoom(RoomEntity room) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    final newRoom = room.copyWith(
+      id: 'room_${DateTime.now().millisecondsSinceEpoch}',
+    );
+    
+    _mockSpace = _mockSpace.copyWith(
+      rooms: [..._mockSpace.rooms, newRoom],
+      totalItems: _mockSpace.totalItems + newRoom.itemCount,
+      lastUpdated: DateTime.now(),
+    );
+    
+    return newRoom;
+  }
+  
+  @override
+  Future<RoomEntity> updateRoom(RoomEntity room) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    final oldRoom = _mockSpace.rooms.firstWhere((r) => r.id == room.id);
+    final itemDiff = room.itemCount - oldRoom.itemCount;
+    
+    _mockSpace = _mockSpace.copyWith(
+      rooms: _mockSpace.rooms.map((r) {
+        return r.id == room.id ? room : r;
+      }).toList(),
+      totalItems: _mockSpace.totalItems + itemDiff,
+      lastUpdated: DateTime.now(),
+    );
+    
+    return room;
+  }
+  
+  @override
+  Future<void> deleteRoom(String roomId) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    final roomToDelete = _mockSpace.rooms.firstWhere((r) => r.id == roomId);
+    
+    _mockSpace = _mockSpace.copyWith(
+      rooms: _mockSpace.rooms.where((r) => r.id != roomId).toList(),
+      totalItems: _mockSpace.totalItems - roomToDelete.itemCount,
+      lastUpdated: DateTime.now(),
+    );
+  }
 }

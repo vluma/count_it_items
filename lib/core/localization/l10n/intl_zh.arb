@@ -1,7 +1,7 @@
 {
   "@@locale": "zh",
   "appTitle": "物品计数",
-  "exist": "存在.",
+  "exist": "有物",
   "rooms": "房间",
   "itemsTracked": "已追踪物品",
   "loading": "加载中...",

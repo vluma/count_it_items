@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @exist.
   ///
   /// In en, this message translates to:
-  /// **'Exist.'**
+  /// **'Youwu'**
   String get exist;
 
   /// No description provided for @rooms.

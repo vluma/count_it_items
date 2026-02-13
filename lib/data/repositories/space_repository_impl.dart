@@ -241,14 +241,53 @@ class SpaceRepositoryImpl implements SpaceRepository {
   
   @override
   Future<void> updateSpaceTransform(double scale, double offsetX, double offsetY) async {
-    // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 100));
     
-    // 更新当前空间状态
     _currentSpace = _currentSpace?.copyWith(
       scale: scale,
       offsetX: offsetX,
       offsetY: offsetY,
+    );
+  }
+  
+  @override
+  Future<RoomEntity> addRoom(RoomEntity room) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    
+    final roomModel = RoomModel.fromEntity(room);
+    _mockSpace.rooms.add(roomModel);
+    
+    _currentSpace = _currentSpace?.copyWith(
+      rooms: [..._currentSpace!.rooms, room],
+    );
+    
+    return room;
+  }
+  
+  @override
+  Future<RoomEntity> updateRoom(RoomEntity room) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    
+    final index = _mockSpace.rooms.indexWhere((r) => r.id == room.id);
+    if (index != -1) {
+      _mockSpace.rooms[index] = RoomModel.fromEntity(room);
+    }
+    
+    _currentSpace = _currentSpace?.copyWith(
+      rooms: _currentSpace!.rooms.map((r) => r.id == room.id ? room : r).toList(),
+    );
+    
+    return room;
+  }
+  
+  @override
+  Future<void> deleteRoom(String roomId) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    
+    _mockSpace.rooms.removeWhere((r) => r.id == roomId);
+    
+    _currentSpace = _currentSpace?.copyWith(
+      rooms: _currentSpace!.rooms.where((r) => r.id != roomId).toList(),
     );
   }
 }

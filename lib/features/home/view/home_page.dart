@@ -1,22 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youwu/core/theme/app_colors.dart';
+import 'package:youwu/domain/entities/room_entity.dart';
 import 'package:youwu/features/home/view_model/map_cubit.dart';
 import 'package:youwu/features/home/view_model/map_event.dart';
 import 'package:youwu/features/home/view_model/map_state.dart';
 import 'package:youwu/features/home/view/widgets/home_app_bar.dart';
-import 'package:youwu/features/home/view/widgets/home_bottom_dock.dart';
 import 'package:youwu/features/home/view/widgets/map_painter.dart';
+import 'package:youwu/features/home/view/widgets/room_card.dart';
+import 'package:youwu/features/home/view/widgets/stats_panel.dart';
+import 'package:youwu/features/home/view/widgets/floating_action_button.dart';
 
-class HomePage extends StatelessWidget {
+enum ViewMode { map, list }
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  ViewMode _viewMode = ViewMode.map;
+  late AnimationController _fabAnimationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _fabAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _fabAnimationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final EdgeInsets safePadding = MediaQuery.of(context).padding;
     final colors = AppColors.of(context);
+
     return Scaffold(
-      appBar: const HomeAppBar(), 
       backgroundColor: colors.background,
       body: BlocProvider.value(
         value: context.read<MapCubit>()..add(const LoadMap()),
@@ -24,31 +53,27 @@ class HomePage extends StatelessWidget {
           builder: (context, state) {
             return Stack(
               children: [
-                // 最底层：背景渐变
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        colors.background.withOpacity(1.0),
-                        colors.background.withOpacity(0.98),
-                        colors.background.withOpacity(0.96),
-                      ],
-                      stops: const [0.0, 0.5, 1.0],
-                    ),
+                _buildBackground(colors),
+                _buildMainContent(state, colors, safePadding),
+                Positioned(
+                  top: safePadding.top,
+                  left: 0,
+                  right: 0,
+                  child: HomeAppBar(
+                    viewMode: _viewMode,
+                    onViewModeChanged: (mode) {
+                      setState(() {
+                        _viewMode = mode;
+                      });
+                    },
                   ),
                 ),
-
-                // 中层：动态平面图画布
-                _buildCanvas(state, context),
-
-                // 底层：全局搜索与快捷工具
                 Positioned(
-                  bottom: safePadding.bottom + 16,
-                  left: 16,
-                  right: 16,
-                  child: const HomeBottomDock(),
+                  bottom: safePadding.bottom + 100.h,
+                  right: 20.w,
+                  child: HomeFloatingActionButton(
+                    animationController: _fabAnimationController,
+                  ),
                 ),
               ],
             );
@@ -58,11 +83,47 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // 构建画布
-  Widget _buildCanvas(MapState state, BuildContext context) {
+  Widget _buildBackground(AppColorsData colors) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            colors.background,
+            colors.background.withValues(alpha: 0.95),
+            colors.surface.withValues(alpha: 0.3),
+          ],
+          stops: const [0.0, 0.6, 1.0],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainContent(MapState state, AppColorsData colors, EdgeInsets safePadding) {
+    return Positioned.fill(
+      top: 100.h + safePadding.top,
+      child: state.maybeWhen(
+        success: (space, showOverlay, isSearching) {
+          return Column(
+            children: [
+              StatsPanel(space: space),
+              Expanded(
+                child: _viewMode == ViewMode.map
+                    ? _buildMapView(state, context)
+                    : _buildListView(space.rooms, colors),
+              ),
+            ],
+          );
+        },
+        orElse: () => const Center(child: CircularProgressIndicator()),
+      ),
+    );
+  }
+
+  Widget _buildMapView(MapState state, BuildContext context) {
     final colors = AppColors.of(context);
     return GestureDetector(
-      // 双击空白处回归中心
       onDoubleTap: () {
         context.read<MapCubit>().add(const DoubleTapEmpty());
       },
@@ -70,30 +131,34 @@ class HomePage extends StatelessWidget {
         boundaryMargin: const EdgeInsets.all(200),
         minScale: 0.1,
         maxScale: 5.0,
-        // 支持惯性平移
         panEnabled: true,
         scaleEnabled: true,
         child: RepaintBoundary(
-          child: AnimatedBuilder(
-            animation: AlwaysStoppedAnimation(1.0), // 基础动画，后续可扩展为动态动画
-            builder: (context, child) {
-              return CustomPaint(
-                painter: MapPainter(
-                  state: state,
-                  onRoomTap: (roomId) {
-                    context.read<MapCubit>().add(SelectRoom(roomId: roomId));
-                  },
-                  primaryColor: colors.primary,
-                  textPrimaryColor: colors.textPrimary,
-                  textSecondaryColor: colors.textSecondary,
-                  surfaceColor: colors.surface,
-                ),
-                size: Size.infinite,
-              );
-            },
+          child: CustomPaint(
+            painter: MapPainter(
+              state: state,
+              onRoomTap: (roomId) {
+                context.read<MapCubit>().add(SelectRoom(roomId: roomId));
+              },
+              colors: colors,
+            ),
+            size: Size.infinite,
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildListView(List<RoomEntity> rooms, AppColorsData colors) {
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+      itemCount: rooms.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: 12.h),
+          child: RoomCard(room: rooms[index]),
+        );
+      },
     );
   }
 }

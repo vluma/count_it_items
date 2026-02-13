@@ -12,7 +12,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTitle => '物品计数';
 
   @override
-  String get exist => '存在.';
+  String get exist => '有物';
 
   @override
   String get rooms => '房间';

@@ -1,18 +1,23 @@
 import 'package:get_it/get_it.dart';
 import 'package:youwu/domain/repositories/space_repository.dart';
+import 'package:youwu/domain/repositories/item_repository.dart';
 import 'package:youwu/data/repositories/mock_space_repository_impl.dart';
+import 'package:youwu/data/repositories/item_repository_impl.dart';
 import 'package:youwu/features/home/view_model/map_cubit.dart';
+import 'package:youwu/features/chat/view_model/chat_cubit.dart';
 
-// 创建全局GetIt实例
 final GetIt sl = GetIt.instance;
 
-/// 初始化依赖注入
 Future<void> initDependencies() async {
-  // 注册仓库 - 使用Mock实现
   sl.registerSingleton<SpaceRepository>(MockSpaceRepositoryImpl());
   
-  // 注册Cubit/Bloc
+  sl.registerSingleton<ItemRepository>(ItemRepositoryImpl());
+  
   sl.registerFactory<MapCubit>(() => MapCubit(
     spaceRepository: sl(),
+  ));
+  
+  sl.registerFactory<ChatCubit>(() => ChatCubit(
+    itemRepository: sl(),
   ));
 }

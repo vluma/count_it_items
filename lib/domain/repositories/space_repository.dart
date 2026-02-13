@@ -28,4 +28,13 @@ abstract class SpaceRepository {
   
   /// 更新空间缩放和偏移
   Future<void> updateSpaceTransform(double scale, double offsetX, double offsetY);
+  
+  /// 添加房间
+  Future<RoomEntity> addRoom(RoomEntity room);
+  
+  /// 更新房间
+  Future<RoomEntity> updateRoom(RoomEntity room);
+  
+  /// 删除房间
+  Future<void> deleteRoom(String roomId);
 }

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:youwu/domain/entities/room_entity.dart';
 
 part 'map_event.freezed.dart';
 
@@ -31,4 +32,13 @@ class MapEvent with _$MapEvent {
   
   // 双击空白处事件
   const factory MapEvent.doubleTapEmpty() = DoubleTapEmpty;
+  
+  // 添加房间事件
+  const factory MapEvent.addRoom({required RoomEntity room}) = AddRoom;
+  
+  // 更新房间事件
+  const factory MapEvent.updateRoom({required RoomEntity room}) = UpdateRoom;
+  
+  // 删除房间事件
+  const factory MapEvent.deleteRoom({required String roomId}) = DeleteRoom;
 }

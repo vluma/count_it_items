@@ -1,47 +1,40 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/domain/entities/room_entity.dart';
 import 'package:youwu/features/home/view_model/map_state.dart';
+import 'package:youwu/core/theme/app_colors.dart';
 
 class MapPainter extends CustomPainter {
   final MapState state;
   final Function(String roomId) onRoomTap;
-  final Color primaryColor;
-  final Color textPrimaryColor;
-  final Color textSecondaryColor;
-  final Color surfaceColor;
+  final AppColorsData colors;
 
   MapPainter({
     required this.state,
     required this.onRoomTap,
-    required this.primaryColor,
-    required this.textPrimaryColor,
-    required this.textSecondaryColor,
-    required this.surfaceColor,
+    required this.colors,
   });
 
   static const double wallDepth = 12.0;
   static const double isoAngle = math.pi / 6;
-  static const double cornerRadius = 8.0;
-  static const double roomScale = 0.96; // 产生 4% 的间距
+  static const double cornerRadius = 12.0;
+  static const double roomScale = 0.94;
 
   @override
   void paint(Canvas canvas, Size size) {
     state.maybeWhen(
       success: (space, showOverlay, isSearching) {
-        // --- 自动居中适配 ---
         final allPoints = <Offset>[];
         for (final room in space.rooms) {
           final center = _getCenter(room.points);
           final scaledPoints = room.points.map((p) => _shrinkPoint(p, center)).toList();
           allPoints.addAll(scaledPoints.map(_toIso));
         }
-        
+
         final boundingBox = _calculateBoundingBox(allPoints);
         final centerX = (boundingBox.left + boundingBox.right) / 2;
         final centerY = (boundingBox.top + boundingBox.bottom) / 2;
-        
+
         canvas.translate(
           size.width / 2 - centerX,
           size.height / 2 - centerY,
@@ -64,12 +57,10 @@ class MapPainter extends CustomPainter {
     );
   }
 
-  // 将点向中心收缩，产生间距
   Offset _shrinkPoint(Offset p, Offset center) {
     return center + (p - center) * roomScale;
   }
 
-  // 构建圆角路径
   Path _buildRoundedPath(List<Offset> points) {
     final path = Path();
     if (points.length < 3) return path;
@@ -79,17 +70,14 @@ class MapPainter extends CustomPainter {
       final p2 = points[(i + 1) % points.length];
       final p3 = points[(i + 2) % points.length];
 
-      // 计算向量
       final v1 = p1 - p2;
       final v2 = p3 - p2;
 
-      // 归一化
       final v1n = v1 / v1.distance;
       final v2n = v2 / v2.distance;
 
-      // 计算圆角切点偏移
       final double currentRadius = math.min(cornerRadius, math.min(v1.distance / 2, v2.distance / 2));
-      
+
       final cornerP1 = p2 + v1n * currentRadius;
       final cornerP2 = p2 + v2n * currentRadius;
 
@@ -103,29 +91,27 @@ class MapPainter extends CustomPainter {
     path.close();
     return path;
   }
-  
-  // 计算所有点的边界框
+
   Rect _calculateBoundingBox(List<Offset> points) {
     if (points.isEmpty) {
       return Rect.zero;
     }
-    
+
     double minX = points[0].dx;
     double maxX = points[0].dx;
     double minY = points[0].dy;
     double maxY = points[0].dy;
-    
+
     for (final point in points) {
       if (point.dx < minX) minX = point.dx;
       if (point.dx > maxX) maxX = point.dx;
       if (point.dy < minY) minY = point.dy;
       if (point.dy > maxY) maxY = point.dy;
     }
-    
+
     return Rect.fromLTRB(minX, minY, maxX, maxY);
   }
 
-  // 2.5D 坐标转换
   Offset _toIso(Offset p) {
     return Offset(
       (p.dx - p.dy) * math.cos(isoAngle),
@@ -133,101 +119,88 @@ class MapPainter extends CustomPainter {
     );
   }
 
-  // 绘制数据层（解决“空”的问题）
   void _drawRoomData(Canvas canvas, RoomEntity room) {
     final center = _getCenter(room.points);
     final isoCenter = _toIso(center);
+    final statusColor = _getStatusColor(room.load);
 
-    // 1. 房间名称
     final textPainter = TextPainter(
       text: TextSpan(
-        text: room.name.toUpperCase(),
+        text: room.name,
         style: TextStyle(
-          color: textPrimaryColor.withOpacity(0.8),
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
+          color: colors.textPrimary,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
 
-    textPainter.paint(canvas, isoCenter.translate(-textPainter.width / 2, -25));
+    textPainter.paint(canvas, isoCenter.translate(-textPainter.width / 2, -30));
 
-    // 2. 空间状态标识
-    String statusText;
-    switch (room.load) {
-      case SpaceLoadStatus.empty:
-        statusText = 'EMPTY';
-        break;
-      case SpaceLoadStatus.normal:
-        statusText = 'COMFORTABLE';
-        break;
-      case SpaceLoadStatus.crowded:
-        statusText = 'FULL';
-        break;
-    }
-    
+    final statusText = _getStatusText(room.load);
     final statusPainter = TextPainter(
       text: TextSpan(
         text: statusText,
         style: TextStyle(
-          color: textSecondaryColor.withOpacity(0.6),
-          fontSize: 7,
+          color: statusColor,
+          fontSize: 9,
           fontWeight: FontWeight.w500,
-          letterSpacing: 1.0,
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    
-    statusPainter.paint(canvas, isoCenter.translate(-statusPainter.width / 2, -15));
 
-    // 3. 数据支撑：物品数量
+    statusPainter.paint(canvas, isoCenter.translate(-statusPainter.width / 2, -16));
+
     if (room.itemCount > 0) {
       final countPainter = TextPainter(
         text: TextSpan(
-          text: '${room.itemCount} ITEMS',
+          text: '${room.itemCount} 件',
           style: TextStyle(
-            color: textSecondaryColor.withOpacity(0.5),
-            fontSize: 8,
-            fontWeight: FontWeight.w500,
+            color: colors.textSecondary,
+            fontSize: 10,
+            fontWeight: FontWeight.w400,
           ),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
-      
-      countPainter.paint(canvas, isoCenter.translate(-countPainter.width / 2, 0));
+
+      countPainter.paint(canvas, isoCenter.translate(-countPainter.width / 2, -2));
     }
 
-    // 4. 状态灯
     if (room.isSelected) {
-      final dotPaint = Paint()..color = primaryColor;
-      canvas.drawCircle(isoCenter.translate(0, -35), 2, dotPaint);
+      final dotPaint = Paint()
+        ..color = colors.primary
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(isoCenter.translate(0, -42), 4, dotPaint);
+
+      final glowPaint = Paint()
+        ..color = colors.primary.withValues(alpha: 0.3)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+      canvas.drawCircle(isoCenter.translate(0, -42), 8, glowPaint);
     }
-    
-    // 5. 空状态处理
+
     if (room.itemCount == 0) {
       _drawEmptyState(canvas, isoCenter);
     }
   }
-  
-  // 绘制空状态
+
   void _drawEmptyState(Canvas canvas, Offset center) {
     final plusPaint = Paint()
-      ..color = textSecondaryColor.withOpacity(0.3)
-      ..strokeWidth = 1.5
+      ..color = colors.textTertiary.withValues(alpha: 0.4)
+      ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
-    
-    final size = 12.0;
+
+    final size = 16.0;
     canvas.drawLine(
-      center.translate(-size / 2, 0),
-      center.translate(size / 2, 0),
+      center.translate(-size / 2, 12),
+      center.translate(size / 2, 12),
       plusPaint,
     );
     canvas.drawLine(
-      center.translate(0, -size / 2),
-      center.translate(0, size / 2),
+      center.translate(0, 12 - size / 2),
+      center.translate(0, 12 + size / 2),
       plusPaint,
     );
   }
@@ -237,30 +210,25 @@ class MapPainter extends CustomPainter {
     final List<Offset> isoPoints = room.points
         .map((p) => _toIso(_shrinkPoint(p, center)))
         .toList();
-    
+
     final path = _buildRoundedPath(isoPoints);
+    final statusColor = _getStatusColor(room.load);
 
     final paint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          room.isSelected ? Colors.white : surfaceColor,
-          room.isSelected ? Colors.white.withOpacity(0.9) : surfaceColor.withOpacity(0.95),
-        ],
-      ).createShader(path.getBounds())
+      ..color = room.isSelected
+          ? colors.primaryLight.withValues(alpha: 0.95)
+          : statusColor.withValues(alpha: 0.12)
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(path, paint);
 
-    // 极细边框
     final borderPaint = Paint()
-      ..color = room.isSelected 
-          ? primaryColor.withOpacity(0.6) 
-          : textPrimaryColor.withOpacity(0.1)
+      ..color = room.isSelected
+          ? colors.primary
+          : statusColor.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = room.isSelected ? 1.5 : 0.5;
-    
+      ..strokeWidth = room.isSelected ? 2 : 1;
+
     canvas.drawPath(path, borderPaint);
   }
 
@@ -275,15 +243,14 @@ class MapPainter extends CustomPainter {
 
     for (int i = 0; i < topPoints.length; i++) {
       int next = (i + 1) % topPoints.length;
-      
-      // 计算墙体方向以应用不同的阴影
+
       final vector = topPoints[next] - topPoints[i];
       final isRightWall = vector.dx > 0;
 
       final wallPaint = Paint()
-        ..color = isRightWall 
-            ? textPrimaryColor.withOpacity(0.08) // 右侧墙稍深
-            : textPrimaryColor.withOpacity(0.04) // 左侧墙稍浅
+        ..color = isRightWall
+            ? colors.textPrimary.withValues(alpha: 0.06)
+            : colors.textPrimary.withValues(alpha: 0.03)
         ..style = PaintingStyle.fill;
 
       Path wallPath = Path()
@@ -301,14 +268,14 @@ class MapPainter extends CustomPainter {
     final List<Offset> shadowPoints = room.points
         .map((p) => _toIso(_shrinkPoint(p.translate(6, 6), center)))
         .toList();
-    
+
     final path = _buildRoundedPath(shadowPoints);
-    
+
     canvas.drawPath(
-      path, 
+      path,
       Paint()
-        ..color = Colors.black.withOpacity(0.03)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12)
+        ..color = colors.shadow.withValues(alpha: 0.2)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
     );
   }
 
@@ -319,6 +286,29 @@ class MapPainter extends CustomPainter {
     return Offset(x, y);
   }
 
+  Color _getStatusColor(SpaceLoadStatus status) {
+    switch (status) {
+      case SpaceLoadStatus.empty:
+        return colors.roomEmpty;
+      case SpaceLoadStatus.normal:
+        return colors.roomNormal;
+      case SpaceLoadStatus.crowded:
+        return colors.roomCrowded;
+    }
+  }
+
+  String _getStatusText(SpaceLoadStatus status) {
+    switch (status) {
+      case SpaceLoadStatus.empty:
+        return '空置';
+      case SpaceLoadStatus.normal:
+        return '正常';
+      case SpaceLoadStatus.crowded:
+        return '拥挤';
+    }
+  }
+
   @override
-  bool shouldRepaint(covariant MapPainter oldDelegate) => oldDelegate.state != state;
+  bool shouldRepaint(covariant MapPainter oldDelegate) =>
+      oldDelegate.state != state || oldDelegate.colors != colors;
 }

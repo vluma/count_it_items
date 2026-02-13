@@ -12,7 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'CountIt';
 
   @override
-  String get exist => 'Exist.';
+  String get exist => 'Youwu';
 
   @override
   String get rooms => 'Rooms';

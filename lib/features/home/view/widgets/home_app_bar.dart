@@ -1,108 +1,178 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/core/localization/l10n/app_localizations.dart';
-import 'package:youwu/features/home/view_model/map_cubit.dart';
-import 'package:youwu/features/home/view_model/map_state.dart';
+import 'package:youwu/features/home/view/home_page.dart';
 
-class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const HomeAppBar({super.key});
+class HomeAppBar extends StatelessWidget {
+  final ViewMode viewMode;
+  final ValueChanged<ViewMode> onViewModeChanged;
 
-  @override
-  Size get preferredSize => Size.fromHeight(60.h); // 动态高度适配
+  const HomeAppBar({
+    super.key,
+    required this.viewMode,
+    required this.onViewModeChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    return AppBar(
-      // 1. 基础配置：透明并移除阴影
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      automaticallyImplyLeading: false,
-      centerTitle: false,
-      
-      // 2. 核心：实现 Apple 风格的毛玻璃背景
-      flexibleSpace: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Container(
-            color: colors.glass,
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: colors.glass,
+        border: Border(
+          bottom: BorderSide(
+            color: colors.border.withValues(alpha: 0.5),
+            width: 0.5,
           ),
         ),
       ),
-
-      // 3. 左侧：大标题与动态数据
-      title: BlocBuilder<MapCubit, MapState>(
-        builder: (context, state) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Row(
             children: [
-              Text(
-                AppLocalizations.of(context)!.exist,
-                style: TextStyle(
-                  fontSize: 28.sp,
-                  fontWeight: FontWeight.w800,
-                  color: colors.textPrimary,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              state.maybeWhen(
-                success: (space, _, __) => Text(
-                  '${space.rooms.length} ${AppLocalizations.of(context)!.rooms} · ${space.totalItems} ${AppLocalizations.of(context)!.itemsTracked}',
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w500,
-                    color: colors.textSecondary.withOpacity(0.6),
-                  ),
-                ),
-                orElse: () => Text(
-                  AppLocalizations.of(context)!.loading,
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    color: colors.textSecondary.withOpacity(0.6),
-                  ),
-                ),
-              ),
+              _buildTitle(context, colors),
+              const Spacer(),
+              _buildViewToggle(colors),
+              SizedBox(width: 12.w),
+              _buildNotificationButton(colors),
+              SizedBox(width: 8.w),
+              _buildSettingsButton(colors),
             ],
-          );
-        },
+          ),
+        ),
       ),
+    );
+  }
 
-      // 4. 右侧：功能按钮与状态
-      actions: [
-        _buildWeatherIndicator(context),
-        SizedBox(width: 8.w),
-        _buildNotificationButton(context),
-        SizedBox(width: 16.w), // 保持 Apple 边缘间距
+  Widget _buildTitle(BuildContext context, AppColorsData colors) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.exist,
+          style: TextStyle(
+            fontSize: 24.sp,
+            fontWeight: FontWeight.w700,
+            color: colors.textPrimary,
+            letterSpacing: -0.5,
+          ),
+        ),
+        SizedBox(height: 2.h),
+        Text(
+          AppLocalizations.of(context)!.itemsTracked,
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w400,
+            color: colors.textSecondary,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildNotificationButton(BuildContext context) {
-    final colors = AppColors.of(context);
+  Widget _buildViewToggle(AppColorsData colors) {
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: colors.surface.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildToggleButton(
+            icon: Icons.map_outlined,
+            isSelected: viewMode == ViewMode.map,
+            onTap: () => onViewModeChanged(ViewMode.map),
+            colors: colors,
+          ),
+          SizedBox(width: 4.w),
+          _buildToggleButton(
+            icon: Icons.list_rounded,
+            isSelected: viewMode == ViewMode.list,
+            onTap: () => onViewModeChanged(ViewMode.list),
+            colors: colors,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToggleButton({
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required AppColorsData colors,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isSelected ? colors.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(8.r),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: colors.primary.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Icon(
+          icon,
+          size: 18.sp,
+          color: isSelected ? Colors.white : colors.textSecondary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotificationButton(AppColorsData colors) {
     return Stack(
-      alignment: Alignment.center,
       children: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
+        Container(
+          padding: EdgeInsets.all(10.w),
+          decoration: BoxDecoration(
+            color: colors.surface.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: colors.border.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          child: Icon(
             Icons.notifications_none_rounded,
-            size: 22.sp,
+            size: 20.sp,
             color: colors.textPrimary,
           ),
         ),
         Positioned(
-          top: 12.h,
-          right: 12.w,
+          top: 8.h,
+          right: 8.w,
           child: Container(
-            width: 7.w,
-            height: 7.h,
-            decoration: const BoxDecoration(
-              color: AppColors.accentRed, // 使用你主题中的错误红
+            width: 8.w,
+            height: 8.w,
+            decoration: BoxDecoration(
+              color: colors.error,
               shape: BoxShape.circle,
+              border: Border.all(
+                color: colors.surface,
+                width: 1.5,
+              ),
             ),
           ),
         ),
@@ -110,36 +180,22 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildWeatherIndicator(BuildContext context) {
-    final colors = AppColors.of(context);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.wb_sunny_rounded, size: 14.sp, color: AppColors.accentOrange),
-            SizedBox(width: 4.w),
-            Text(
-              '23°',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w300,
-                color: colors.textPrimary,
-              ),
-            ),
-          ],
+  Widget _buildSettingsButton(AppColorsData colors) {
+    return Container(
+      padding: EdgeInsets.all(10.w),
+      decoration: BoxDecoration(
+        color: colors.surface.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: colors.border.withValues(alpha: 0.3),
+          width: 1,
         ),
-        Text(
-          'SAT, JAN 24',
-          style: TextStyle(
-            fontSize: 9.sp,
-            fontWeight: FontWeight.w600,
-            color: colors.textSecondary.withOpacity(0.5),
-          ),
-        ),
-      ],
+      ),
+      child: Icon(
+        Icons.settings_outlined,
+        size: 20.sp,
+        color: colors.textPrimary,
+      ),
     );
   }
 }
