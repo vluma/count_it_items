@@ -25,5 +25,6 @@ class ItemEntity with _$ItemEntity {
     required DateTime createdAt,
     required DateTime updatedAt,
     @Default(false) bool isFavorite,
+    DateTime? expirationDate,
   }) = _ItemEntity;
 }

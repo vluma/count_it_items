@@ -23,6 +23,7 @@
 - **极简风格**：使用 `AppColors` 中定义的白色调
 - **磨砂效果**：跨模块 UI 使用 `GlassCard` 组件
 - **颜色透明度**：使用 `withValues(alpha: value)`
+- **废弃颜色**：`background` 已废弃，使用 `surface` 替代
 
 ## 代码规范
 - **功能导向**：新功能在 `features/` 下创建独立文件夹

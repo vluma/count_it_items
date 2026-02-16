@@ -133,6 +133,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search items...'**
   String get searchItems;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @appearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get languageSystem;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// No description provided for @developer.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get developer;
+
+  /// No description provided for @feishuSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Feishu Settings'**
+  String get feishuSettings;
+
+  /// No description provided for @feishuAppId.
+  ///
+  /// In en, this message translates to:
+  /// **'App ID'**
+  String get feishuAppId;
+
+  /// No description provided for @feishuAppSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'App Secret'**
+  String get feishuAppSecret;
+
+  /// No description provided for @feishuAppIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Feishu App ID'**
+  String get feishuAppIdHint;
+
+  /// No description provided for @feishuAppSecretHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Feishu App Secret'**
+  String get feishuAppSecretHint;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @aiSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Settings'**
+  String get aiSettings;
+
+  /// No description provided for @aiProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Provider'**
+  String get aiProvider;
+
+  /// No description provided for @aiApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'API Key'**
+  String get aiApiKey;
+
+  /// No description provided for @aiApiEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'API Endpoint'**
+  String get aiApiEndpoint;
+
+  /// No description provided for @aiApiKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter API Key'**
+  String get aiApiKeyHint;
+
+  /// No description provided for @aiApiEndpointHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter API Endpoint (Optional)'**
+  String get aiApiEndpointHint;
+
+  /// No description provided for @aiProviderZhipu.
+  ///
+  /// In en, this message translates to:
+  /// **'Zhipu AI'**
+  String get aiProviderZhipu;
+
+  /// No description provided for @aiProviderQwen.
+  ///
+  /// In en, this message translates to:
+  /// **'Qwen'**
+  String get aiProviderQwen;
+
+  /// No description provided for @aiProviderDeepseek.
+  ///
+  /// In en, this message translates to:
+  /// **'DeepSeek'**
+  String get aiProviderDeepseek;
+
+  /// No description provided for @aiProviderBaidu.
+  ///
+  /// In en, this message translates to:
+  /// **'Baidu Wenxin'**
+  String get aiProviderBaidu;
+
+  /// No description provided for @aiProviderXunfei.
+  ///
+  /// In en, this message translates to:
+  /// **'iFlytek Xinghuo'**
+  String get aiProviderXunfei;
 }
 
 class _AppLocalizationsDelegate

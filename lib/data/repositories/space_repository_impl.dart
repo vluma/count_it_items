@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:youwu/domain/entities/room_entity.dart';
 import 'package:youwu/domain/entities/space_entity.dart';
 import 'package:youwu/domain/repositories/space_repository.dart';
@@ -289,5 +290,36 @@ class SpaceRepositoryImpl implements SpaceRepository {
     _currentSpace = _currentSpace?.copyWith(
       rooms: _currentSpace!.rooms.where((r) => r.id != roomId).toList(),
     );
+  }
+  
+  @override
+  Future<RoomEntity> updateRoomPoints(String roomId, List<Offset> points) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    
+    final pointModels = points.map((p) => PointModel(x: p.dx, y: p.dy)).toList();
+    
+    final index = _mockSpace.rooms.indexWhere((r) => r.id == roomId);
+    if (index != -1) {
+      final oldRoom = _mockSpace.rooms[index];
+      _mockSpace.rooms[index] = RoomModel(
+        id: oldRoom.id,
+        name: oldRoom.name,
+        type: oldRoom.type,
+        points: pointModels,
+        itemCount: oldRoom.itemCount,
+        load: oldRoom.load,
+      );
+    }
+    
+    _currentSpace = _currentSpace?.copyWith(
+      rooms: _currentSpace!.rooms.map((r) {
+        if (r.id == roomId) {
+          return r.copyWith(points: points);
+        }
+        return r;
+      }).toList(),
+    );
+    
+    return _currentSpace!.rooms.firstWhere((r) => r.id == roomId);
   }
 }

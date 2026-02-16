@@ -113,10 +113,9 @@ class AppColors {
 }
 
 class AppColorsData {
-  final BuildContext _context;
   final bool _isDarkMode;
 
-  AppColorsData._(this._context) : _isDarkMode = Theme.of(_context).brightness == Brightness.dark;
+  AppColorsData._(BuildContext context) : _isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
   Color get primary => AppColors.primary;
   Color get primaryLight => AppColors.primaryLight;

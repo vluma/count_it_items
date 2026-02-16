@@ -57,9 +57,19 @@ dependencies:
   # 本地存储
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.5
   
   # 触感反馈
   vibration: ^3.1.5
+  
+  # 语音功能
+  speech_to_text: ^7.0.0
+  flutter_tts: ^4.2.0
+  permission_handler: ^11.3.0
+  
+  # 拍照和扫码
+  image_picker: ^1.0.7
+  mobile_scanner: ^5.1.1
 
 dev_dependencies:
   flutter_test:

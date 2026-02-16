@@ -25,6 +25,7 @@ mixin _$ItemEntity {
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime get updatedAt => throw _privateConstructorUsedError;
   bool get isFavorite => throw _privateConstructorUsedError;
+  DateTime? get expirationDate => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ItemEntityCopyWith<ItemEntity> get copyWith =>
@@ -46,7 +47,8 @@ abstract class $ItemEntityCopyWith<$Res> {
       String description,
       DateTime createdAt,
       DateTime updatedAt,
-      bool isFavorite});
+      bool isFavorite,
+      DateTime? expirationDate});
 }
 
 /// @nodoc
@@ -71,6 +73,7 @@ class _$ItemEntityCopyWithImpl<$Res, $Val extends ItemEntity>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? isFavorite = null,
+    Object? expirationDate = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -109,6 +112,10 @@ class _$ItemEntityCopyWithImpl<$Res, $Val extends ItemEntity>
           ? _value.isFavorite
           : isFavorite // ignore: cast_nullable_to_non_nullable
               as bool,
+      expirationDate: freezed == expirationDate
+          ? _value.expirationDate
+          : expirationDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -130,7 +137,8 @@ abstract class _$$ItemEntityImplCopyWith<$Res>
       String description,
       DateTime createdAt,
       DateTime updatedAt,
-      bool isFavorite});
+      bool isFavorite,
+      DateTime? expirationDate});
 }
 
 /// @nodoc
@@ -153,6 +161,7 @@ class __$$ItemEntityImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = null,
     Object? isFavorite = null,
+    Object? expirationDate = freezed,
   }) {
     return _then(_$ItemEntityImpl(
       id: null == id
@@ -191,6 +200,10 @@ class __$$ItemEntityImplCopyWithImpl<$Res>
           ? _value.isFavorite
           : isFavorite // ignore: cast_nullable_to_non_nullable
               as bool,
+      expirationDate: freezed == expirationDate
+          ? _value.expirationDate
+          : expirationDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -207,7 +220,8 @@ class _$ItemEntityImpl implements _ItemEntity {
       this.description = '',
       required this.createdAt,
       required this.updatedAt,
-      this.isFavorite = false});
+      this.isFavorite = false,
+      this.expirationDate});
 
   @override
   final String id;
@@ -229,10 +243,12 @@ class _$ItemEntityImpl implements _ItemEntity {
   @override
   @JsonKey()
   final bool isFavorite;
+  @override
+  final DateTime? expirationDate;
 
   @override
   String toString() {
-    return 'ItemEntity(id: $id, name: $name, roomId: $roomId, category: $category, quantity: $quantity, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, isFavorite: $isFavorite)';
+    return 'ItemEntity(id: $id, name: $name, roomId: $roomId, category: $category, quantity: $quantity, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, isFavorite: $isFavorite, expirationDate: $expirationDate)';
   }
 
   @override
@@ -254,12 +270,14 @@ class _$ItemEntityImpl implements _ItemEntity {
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.isFavorite, isFavorite) ||
-                other.isFavorite == isFavorite));
+                other.isFavorite == isFavorite) &&
+            (identical(other.expirationDate, expirationDate) ||
+                other.expirationDate == expirationDate));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, id, name, roomId, category,
-      quantity, description, createdAt, updatedAt, isFavorite);
+      quantity, description, createdAt, updatedAt, isFavorite, expirationDate);
 
   @JsonKey(ignore: true)
   @override
@@ -278,7 +296,8 @@ abstract class _ItemEntity implements ItemEntity {
       final String description,
       required final DateTime createdAt,
       required final DateTime updatedAt,
-      final bool isFavorite}) = _$ItemEntityImpl;
+      final bool isFavorite,
+      final DateTime? expirationDate}) = _$ItemEntityImpl;
 
   @override
   String get id;
@@ -298,6 +317,8 @@ abstract class _ItemEntity implements ItemEntity {
   DateTime get updatedAt;
   @override
   bool get isFavorite;
+  @override
+  DateTime? get expirationDate;
   @override
   @JsonKey(ignore: true)
   _$$ItemEntityImplCopyWith<_$ItemEntityImpl> get copyWith =>

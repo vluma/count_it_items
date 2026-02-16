@@ -9,8 +9,9 @@ import 'package:youwu/shared/widgets/glass_card.dart';
 
 class RoomFormPage extends StatefulWidget {
   final RoomEntity? room;
+  final List<Offset>? initialPoints;
   
-  const RoomFormPage({super.key, this.room});
+  const RoomFormPage({super.key, this.room, this.initialPoints});
   
   @override
   State<RoomFormPage> createState() => _RoomFormPageState();
@@ -38,6 +39,20 @@ class _RoomFormPageState extends State<RoomFormPage> {
   
   bool get _isEditing => widget.room != null;
   
+  String _mapRoomTypeToChinese(String type) {
+    final typeMap = {
+      'bedroom': '卧室',
+      'kitchen': '厨房',
+      'living room': '客厅',
+      'bathroom': '浴室',
+      'study': '书房',
+      'storage': '储藏室',
+      'balcony': '阳台',
+      'garage': '车库',
+    };
+    return typeMap[type.toLowerCase()] ?? type;
+  }
+  
   @override
   void initState() {
     super.initState();
@@ -47,7 +62,7 @@ class _RoomFormPageState extends State<RoomFormPage> {
     );
     
     if (widget.room != null) {
-      _selectedType = widget.room!.type;
+      _selectedType = _mapRoomTypeToChinese(widget.room!.type);
       _selectedStatus = widget.room!.load;
     }
   }
@@ -66,7 +81,7 @@ class _RoomFormPageState extends State<RoomFormPage> {
       id: widget.room?.id ?? '',
       name: _nameController.text.trim(),
       type: _selectedType,
-      points: widget.room?.points ?? _generateDefaultPoints(),
+      points: widget.room?.points ?? widget.initialPoints ?? _generateDefaultPoints(),
       itemCount: int.parse(_itemCountController.text),
       load: _selectedStatus,
       centerPoint: widget.room?.centerPoint ?? Offset.zero,

@@ -18,7 +18,10 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$ChatEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -28,11 +31,18 @@ mixin _$ChatEvent {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -42,11 +52,18 @@ mixin _$ChatEvent {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -56,12 +73,19 @@ mixin _$ChatEvent {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -71,11 +95,20 @@ mixin _$ChatEvent {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -85,11 +118,18 @@ mixin _$ChatEvent {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -99,6 +139,10 @@ mixin _$ChatEvent {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -119,6 +163,200 @@ class _$ChatEventCopyWithImpl<$Res, $Val extends ChatEvent>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+}
+
+/// @nodoc
+abstract class _$$InitializeImplCopyWith<$Res> {
+  factory _$$InitializeImplCopyWith(
+          _$InitializeImpl value, $Res Function(_$InitializeImpl) then) =
+      __$$InitializeImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$InitializeImplCopyWithImpl<$Res>
+    extends _$ChatEventCopyWithImpl<$Res, _$InitializeImpl>
+    implements _$$InitializeImplCopyWith<$Res> {
+  __$$InitializeImplCopyWithImpl(
+      _$InitializeImpl _value, $Res Function(_$InitializeImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$InitializeImpl implements Initialize {
+  const _$InitializeImpl();
+
+  @override
+  String toString() {
+    return 'ChatEvent.initialize()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$InitializeImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
+    required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
+    required TResult Function() loadItems,
+    required TResult Function(String roomId) loadItemsByRoom,
+    required TResult Function(ItemEntity item) addItem,
+    required TResult Function(ItemEntity item) updateItem,
+    required TResult Function(String itemId) deleteItem,
+    required TResult Function(String query) searchItems,
+    required TResult Function(ItemEntity item) showItemDetail,
+    required TResult Function(ItemEntity? item, String? roomId) showItemForm,
+    required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
+  }) {
+    return initialize();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
+    TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
+    TResult? Function()? loadItems,
+    TResult? Function(String roomId)? loadItemsByRoom,
+    TResult? Function(ItemEntity item)? addItem,
+    TResult? Function(ItemEntity item)? updateItem,
+    TResult? Function(String itemId)? deleteItem,
+    TResult? Function(String query)? searchItems,
+    TResult? Function(ItemEntity item)? showItemDetail,
+    TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
+  }) {
+    return initialize?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
+    TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
+    TResult Function()? loadItems,
+    TResult Function(String roomId)? loadItemsByRoom,
+    TResult Function(ItemEntity item)? addItem,
+    TResult Function(ItemEntity item)? updateItem,
+    TResult Function(String itemId)? deleteItem,
+    TResult Function(String query)? searchItems,
+    TResult Function(ItemEntity item)? showItemDetail,
+    TResult Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (initialize != null) {
+      return initialize();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
+    required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
+    required TResult Function(LoadItems value) loadItems,
+    required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
+    required TResult Function(AddItem value) addItem,
+    required TResult Function(UpdateItem value) updateItem,
+    required TResult Function(DeleteItem value) deleteItem,
+    required TResult Function(SearchItems value) searchItems,
+    required TResult Function(ShowItemDetail value) showItemDetail,
+    required TResult Function(ShowItemForm value) showItemForm,
+    required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
+  }) {
+    return initialize(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
+    TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
+    TResult? Function(LoadItems value)? loadItems,
+    TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult? Function(AddItem value)? addItem,
+    TResult? Function(UpdateItem value)? updateItem,
+    TResult? Function(DeleteItem value)? deleteItem,
+    TResult? Function(SearchItems value)? searchItems,
+    TResult? Function(ShowItemDetail value)? showItemDetail,
+    TResult? Function(ShowItemForm value)? showItemForm,
+    TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
+  }) {
+    return initialize?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
+    TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
+    TResult Function(LoadItems value)? loadItems,
+    TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult Function(AddItem value)? addItem,
+    TResult Function(UpdateItem value)? updateItem,
+    TResult Function(DeleteItem value)? deleteItem,
+    TResult Function(SearchItems value)? searchItems,
+    TResult Function(ShowItemDetail value)? showItemDetail,
+    TResult Function(ShowItemForm value)? showItemForm,
+    TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (initialize != null) {
+      return initialize(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class Initialize implements ChatEvent {
+  const factory Initialize() = _$InitializeImpl;
 }
 
 /// @nodoc
@@ -185,7 +423,10 @@ class _$SendMessageImpl implements SendMessage {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -195,6 +436,10 @@ class _$SendMessageImpl implements SendMessage {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return sendMessage(content);
   }
@@ -202,7 +447,10 @@ class _$SendMessageImpl implements SendMessage {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -212,6 +460,10 @@ class _$SendMessageImpl implements SendMessage {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return sendMessage?.call(content);
   }
@@ -219,7 +471,10 @@ class _$SendMessageImpl implements SendMessage {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -229,6 +484,10 @@ class _$SendMessageImpl implements SendMessage {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (sendMessage != null) {
@@ -240,7 +499,10 @@ class _$SendMessageImpl implements SendMessage {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -250,6 +512,12 @@ class _$SendMessageImpl implements SendMessage {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return sendMessage(this);
   }
@@ -257,7 +525,10 @@ class _$SendMessageImpl implements SendMessage {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -267,6 +538,10 @@ class _$SendMessageImpl implements SendMessage {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return sendMessage?.call(this);
   }
@@ -274,7 +549,10 @@ class _$SendMessageImpl implements SendMessage {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -284,6 +562,10 @@ class _$SendMessageImpl implements SendMessage {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (sendMessage != null) {
@@ -300,6 +582,469 @@ abstract class SendMessage implements ChatEvent {
   String get content;
   @JsonKey(ignore: true)
   _$$SendMessageImplCopyWith<_$SendMessageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SendImageImplCopyWith<$Res> {
+  factory _$$SendImageImplCopyWith(
+          _$SendImageImpl value, $Res Function(_$SendImageImpl) then) =
+      __$$SendImageImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String imagePath});
+}
+
+/// @nodoc
+class __$$SendImageImplCopyWithImpl<$Res>
+    extends _$ChatEventCopyWithImpl<$Res, _$SendImageImpl>
+    implements _$$SendImageImplCopyWith<$Res> {
+  __$$SendImageImplCopyWithImpl(
+      _$SendImageImpl _value, $Res Function(_$SendImageImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? imagePath = null,
+  }) {
+    return _then(_$SendImageImpl(
+      imagePath: null == imagePath
+          ? _value.imagePath
+          : imagePath // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SendImageImpl implements SendImage {
+  const _$SendImageImpl({required this.imagePath});
+
+  @override
+  final String imagePath;
+
+  @override
+  String toString() {
+    return 'ChatEvent.sendImage(imagePath: $imagePath)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SendImageImpl &&
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, imagePath);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SendImageImplCopyWith<_$SendImageImpl> get copyWith =>
+      __$$SendImageImplCopyWithImpl<_$SendImageImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
+    required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
+    required TResult Function() loadItems,
+    required TResult Function(String roomId) loadItemsByRoom,
+    required TResult Function(ItemEntity item) addItem,
+    required TResult Function(ItemEntity item) updateItem,
+    required TResult Function(String itemId) deleteItem,
+    required TResult Function(String query) searchItems,
+    required TResult Function(ItemEntity item) showItemDetail,
+    required TResult Function(ItemEntity? item, String? roomId) showItemForm,
+    required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
+  }) {
+    return sendImage(imagePath);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
+    TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
+    TResult? Function()? loadItems,
+    TResult? Function(String roomId)? loadItemsByRoom,
+    TResult? Function(ItemEntity item)? addItem,
+    TResult? Function(ItemEntity item)? updateItem,
+    TResult? Function(String itemId)? deleteItem,
+    TResult? Function(String query)? searchItems,
+    TResult? Function(ItemEntity item)? showItemDetail,
+    TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
+  }) {
+    return sendImage?.call(imagePath);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
+    TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
+    TResult Function()? loadItems,
+    TResult Function(String roomId)? loadItemsByRoom,
+    TResult Function(ItemEntity item)? addItem,
+    TResult Function(ItemEntity item)? updateItem,
+    TResult Function(String itemId)? deleteItem,
+    TResult Function(String query)? searchItems,
+    TResult Function(ItemEntity item)? showItemDetail,
+    TResult Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (sendImage != null) {
+      return sendImage(imagePath);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
+    required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
+    required TResult Function(LoadItems value) loadItems,
+    required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
+    required TResult Function(AddItem value) addItem,
+    required TResult Function(UpdateItem value) updateItem,
+    required TResult Function(DeleteItem value) deleteItem,
+    required TResult Function(SearchItems value) searchItems,
+    required TResult Function(ShowItemDetail value) showItemDetail,
+    required TResult Function(ShowItemForm value) showItemForm,
+    required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
+  }) {
+    return sendImage(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
+    TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
+    TResult? Function(LoadItems value)? loadItems,
+    TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult? Function(AddItem value)? addItem,
+    TResult? Function(UpdateItem value)? updateItem,
+    TResult? Function(DeleteItem value)? deleteItem,
+    TResult? Function(SearchItems value)? searchItems,
+    TResult? Function(ShowItemDetail value)? showItemDetail,
+    TResult? Function(ShowItemForm value)? showItemForm,
+    TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
+  }) {
+    return sendImage?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
+    TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
+    TResult Function(LoadItems value)? loadItems,
+    TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult Function(AddItem value)? addItem,
+    TResult Function(UpdateItem value)? updateItem,
+    TResult Function(DeleteItem value)? deleteItem,
+    TResult Function(SearchItems value)? searchItems,
+    TResult Function(ShowItemDetail value)? showItemDetail,
+    TResult Function(ShowItemForm value)? showItemForm,
+    TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (sendImage != null) {
+      return sendImage(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SendImage implements ChatEvent {
+  const factory SendImage({required final String imagePath}) = _$SendImageImpl;
+
+  String get imagePath;
+  @JsonKey(ignore: true)
+  _$$SendImageImplCopyWith<_$SendImageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$SendScanResultImplCopyWith<$Res> {
+  factory _$$SendScanResultImplCopyWith(_$SendScanResultImpl value,
+          $Res Function(_$SendScanResultImpl) then) =
+      __$$SendScanResultImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String value, String type});
+}
+
+/// @nodoc
+class __$$SendScanResultImplCopyWithImpl<$Res>
+    extends _$ChatEventCopyWithImpl<$Res, _$SendScanResultImpl>
+    implements _$$SendScanResultImplCopyWith<$Res> {
+  __$$SendScanResultImplCopyWithImpl(
+      _$SendScanResultImpl _value, $Res Function(_$SendScanResultImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? value = null,
+    Object? type = null,
+  }) {
+    return _then(_$SendScanResultImpl(
+      value: null == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SendScanResultImpl implements SendScanResult {
+  const _$SendScanResultImpl({required this.value, required this.type});
+
+  @override
+  final String value;
+  @override
+  final String type;
+
+  @override
+  String toString() {
+    return 'ChatEvent.sendScanResult(value: $value, type: $type)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SendScanResultImpl &&
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.type, type) || other.type == type));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, value, type);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SendScanResultImplCopyWith<_$SendScanResultImpl> get copyWith =>
+      __$$SendScanResultImplCopyWithImpl<_$SendScanResultImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
+    required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
+    required TResult Function() loadItems,
+    required TResult Function(String roomId) loadItemsByRoom,
+    required TResult Function(ItemEntity item) addItem,
+    required TResult Function(ItemEntity item) updateItem,
+    required TResult Function(String itemId) deleteItem,
+    required TResult Function(String query) searchItems,
+    required TResult Function(ItemEntity item) showItemDetail,
+    required TResult Function(ItemEntity? item, String? roomId) showItemForm,
+    required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
+  }) {
+    return sendScanResult(value, type);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
+    TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
+    TResult? Function()? loadItems,
+    TResult? Function(String roomId)? loadItemsByRoom,
+    TResult? Function(ItemEntity item)? addItem,
+    TResult? Function(ItemEntity item)? updateItem,
+    TResult? Function(String itemId)? deleteItem,
+    TResult? Function(String query)? searchItems,
+    TResult? Function(ItemEntity item)? showItemDetail,
+    TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
+  }) {
+    return sendScanResult?.call(value, type);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
+    TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
+    TResult Function()? loadItems,
+    TResult Function(String roomId)? loadItemsByRoom,
+    TResult Function(ItemEntity item)? addItem,
+    TResult Function(ItemEntity item)? updateItem,
+    TResult Function(String itemId)? deleteItem,
+    TResult Function(String query)? searchItems,
+    TResult Function(ItemEntity item)? showItemDetail,
+    TResult Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (sendScanResult != null) {
+      return sendScanResult(value, type);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
+    required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
+    required TResult Function(LoadItems value) loadItems,
+    required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
+    required TResult Function(AddItem value) addItem,
+    required TResult Function(UpdateItem value) updateItem,
+    required TResult Function(DeleteItem value) deleteItem,
+    required TResult Function(SearchItems value) searchItems,
+    required TResult Function(ShowItemDetail value) showItemDetail,
+    required TResult Function(ShowItemForm value) showItemForm,
+    required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
+  }) {
+    return sendScanResult(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
+    TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
+    TResult? Function(LoadItems value)? loadItems,
+    TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult? Function(AddItem value)? addItem,
+    TResult? Function(UpdateItem value)? updateItem,
+    TResult? Function(DeleteItem value)? deleteItem,
+    TResult? Function(SearchItems value)? searchItems,
+    TResult? Function(ShowItemDetail value)? showItemDetail,
+    TResult? Function(ShowItemForm value)? showItemForm,
+    TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
+  }) {
+    return sendScanResult?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
+    TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
+    TResult Function(LoadItems value)? loadItems,
+    TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult Function(AddItem value)? addItem,
+    TResult Function(UpdateItem value)? updateItem,
+    TResult Function(DeleteItem value)? deleteItem,
+    TResult Function(SearchItems value)? searchItems,
+    TResult Function(ShowItemDetail value)? showItemDetail,
+    TResult Function(ShowItemForm value)? showItemForm,
+    TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (sendScanResult != null) {
+      return sendScanResult(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SendScanResult implements ChatEvent {
+  const factory SendScanResult(
+      {required final String value,
+      required final String type}) = _$SendScanResultImpl;
+
+  String get value;
+  String get type;
+  @JsonKey(ignore: true)
+  _$$SendScanResultImplCopyWith<_$SendScanResultImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -341,7 +1086,10 @@ class _$LoadItemsImpl implements LoadItems {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -351,6 +1099,10 @@ class _$LoadItemsImpl implements LoadItems {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return loadItems();
   }
@@ -358,7 +1110,10 @@ class _$LoadItemsImpl implements LoadItems {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -368,6 +1123,10 @@ class _$LoadItemsImpl implements LoadItems {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return loadItems?.call();
   }
@@ -375,7 +1134,10 @@ class _$LoadItemsImpl implements LoadItems {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -385,6 +1147,10 @@ class _$LoadItemsImpl implements LoadItems {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (loadItems != null) {
@@ -396,7 +1162,10 @@ class _$LoadItemsImpl implements LoadItems {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -406,6 +1175,12 @@ class _$LoadItemsImpl implements LoadItems {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return loadItems(this);
   }
@@ -413,7 +1188,10 @@ class _$LoadItemsImpl implements LoadItems {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -423,6 +1201,10 @@ class _$LoadItemsImpl implements LoadItems {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return loadItems?.call(this);
   }
@@ -430,7 +1212,10 @@ class _$LoadItemsImpl implements LoadItems {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -440,6 +1225,10 @@ class _$LoadItemsImpl implements LoadItems {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (loadItems != null) {
@@ -518,7 +1307,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -528,6 +1320,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return loadItemsByRoom(roomId);
   }
@@ -535,7 +1331,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -545,6 +1344,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return loadItemsByRoom?.call(roomId);
   }
@@ -552,7 +1355,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -562,6 +1368,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (loadItemsByRoom != null) {
@@ -573,7 +1383,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -583,6 +1396,12 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return loadItemsByRoom(this);
   }
@@ -590,7 +1409,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -600,6 +1422,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return loadItemsByRoom?.call(this);
   }
@@ -607,7 +1433,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -617,6 +1446,10 @@ class _$LoadItemsByRoomImpl implements LoadItemsByRoom {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (loadItemsByRoom != null) {
@@ -710,7 +1543,10 @@ class _$AddItemImpl implements AddItem {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -720,6 +1556,10 @@ class _$AddItemImpl implements AddItem {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return addItem(item);
   }
@@ -727,7 +1567,10 @@ class _$AddItemImpl implements AddItem {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -737,6 +1580,10 @@ class _$AddItemImpl implements AddItem {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return addItem?.call(item);
   }
@@ -744,7 +1591,10 @@ class _$AddItemImpl implements AddItem {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -754,6 +1604,10 @@ class _$AddItemImpl implements AddItem {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (addItem != null) {
@@ -765,7 +1619,10 @@ class _$AddItemImpl implements AddItem {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -775,6 +1632,12 @@ class _$AddItemImpl implements AddItem {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return addItem(this);
   }
@@ -782,7 +1645,10 @@ class _$AddItemImpl implements AddItem {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -792,6 +1658,10 @@ class _$AddItemImpl implements AddItem {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return addItem?.call(this);
   }
@@ -799,7 +1669,10 @@ class _$AddItemImpl implements AddItem {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -809,6 +1682,10 @@ class _$AddItemImpl implements AddItem {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (addItem != null) {
@@ -901,7 +1778,10 @@ class _$UpdateItemImpl implements UpdateItem {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -911,6 +1791,10 @@ class _$UpdateItemImpl implements UpdateItem {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return updateItem(item);
   }
@@ -918,7 +1802,10 @@ class _$UpdateItemImpl implements UpdateItem {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -928,6 +1815,10 @@ class _$UpdateItemImpl implements UpdateItem {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return updateItem?.call(item);
   }
@@ -935,7 +1826,10 @@ class _$UpdateItemImpl implements UpdateItem {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -945,6 +1839,10 @@ class _$UpdateItemImpl implements UpdateItem {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (updateItem != null) {
@@ -956,7 +1854,10 @@ class _$UpdateItemImpl implements UpdateItem {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -966,6 +1867,12 @@ class _$UpdateItemImpl implements UpdateItem {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return updateItem(this);
   }
@@ -973,7 +1880,10 @@ class _$UpdateItemImpl implements UpdateItem {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -983,6 +1893,10 @@ class _$UpdateItemImpl implements UpdateItem {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return updateItem?.call(this);
   }
@@ -990,7 +1904,10 @@ class _$UpdateItemImpl implements UpdateItem {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -1000,6 +1917,10 @@ class _$UpdateItemImpl implements UpdateItem {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (updateItem != null) {
@@ -1082,7 +2003,10 @@ class _$DeleteItemImpl implements DeleteItem {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -1092,6 +2016,10 @@ class _$DeleteItemImpl implements DeleteItem {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return deleteItem(itemId);
   }
@@ -1099,7 +2027,10 @@ class _$DeleteItemImpl implements DeleteItem {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -1109,6 +2040,10 @@ class _$DeleteItemImpl implements DeleteItem {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return deleteItem?.call(itemId);
   }
@@ -1116,7 +2051,10 @@ class _$DeleteItemImpl implements DeleteItem {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -1126,6 +2064,10 @@ class _$DeleteItemImpl implements DeleteItem {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (deleteItem != null) {
@@ -1137,7 +2079,10 @@ class _$DeleteItemImpl implements DeleteItem {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -1147,6 +2092,12 @@ class _$DeleteItemImpl implements DeleteItem {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return deleteItem(this);
   }
@@ -1154,7 +2105,10 @@ class _$DeleteItemImpl implements DeleteItem {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -1164,6 +2118,10 @@ class _$DeleteItemImpl implements DeleteItem {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return deleteItem?.call(this);
   }
@@ -1171,7 +2129,10 @@ class _$DeleteItemImpl implements DeleteItem {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -1181,6 +2142,10 @@ class _$DeleteItemImpl implements DeleteItem {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (deleteItem != null) {
@@ -1263,7 +2228,10 @@ class _$SearchItemsImpl implements SearchItems {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -1273,6 +2241,10 @@ class _$SearchItemsImpl implements SearchItems {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return searchItems(query);
   }
@@ -1280,7 +2252,10 @@ class _$SearchItemsImpl implements SearchItems {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -1290,6 +2265,10 @@ class _$SearchItemsImpl implements SearchItems {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return searchItems?.call(query);
   }
@@ -1297,7 +2276,10 @@ class _$SearchItemsImpl implements SearchItems {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -1307,6 +2289,10 @@ class _$SearchItemsImpl implements SearchItems {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (searchItems != null) {
@@ -1318,7 +2304,10 @@ class _$SearchItemsImpl implements SearchItems {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -1328,6 +2317,12 @@ class _$SearchItemsImpl implements SearchItems {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return searchItems(this);
   }
@@ -1335,7 +2330,10 @@ class _$SearchItemsImpl implements SearchItems {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -1345,6 +2343,10 @@ class _$SearchItemsImpl implements SearchItems {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return searchItems?.call(this);
   }
@@ -1352,7 +2354,10 @@ class _$SearchItemsImpl implements SearchItems {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -1362,6 +2367,10 @@ class _$SearchItemsImpl implements SearchItems {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (searchItems != null) {
@@ -1455,7 +2464,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -1465,6 +2477,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return showItemDetail(item);
   }
@@ -1472,7 +2488,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -1482,6 +2501,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return showItemDetail?.call(item);
   }
@@ -1489,7 +2512,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -1499,6 +2525,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (showItemDetail != null) {
@@ -1510,7 +2540,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -1520,6 +2553,12 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return showItemDetail(this);
   }
@@ -1527,7 +2566,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -1537,6 +2579,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return showItemDetail?.call(this);
   }
@@ -1544,7 +2590,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -1554,6 +2603,10 @@ class _$ShowItemDetailImpl implements ShowItemDetail {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (showItemDetail != null) {
@@ -1659,7 +2712,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -1669,6 +2725,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return showItemForm(item, roomId);
   }
@@ -1676,7 +2736,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -1686,6 +2749,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return showItemForm?.call(item, roomId);
   }
@@ -1693,7 +2760,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -1703,6 +2773,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (showItemForm != null) {
@@ -1714,7 +2788,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -1724,6 +2801,12 @@ class _$ShowItemFormImpl implements ShowItemForm {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return showItemForm(this);
   }
@@ -1731,7 +2814,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -1741,6 +2827,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return showItemForm?.call(this);
   }
@@ -1748,7 +2838,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -1758,6 +2851,10 @@ class _$ShowItemFormImpl implements ShowItemForm {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (showItemForm != null) {
@@ -1816,7 +2913,10 @@ class _$ClearChatImpl implements ClearChat {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
     required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
     required TResult Function() loadItems,
     required TResult Function(String roomId) loadItemsByRoom,
     required TResult Function(ItemEntity item) addItem,
@@ -1826,6 +2926,10 @@ class _$ClearChatImpl implements ClearChat {
     required TResult Function(ItemEntity item) showItemDetail,
     required TResult Function(ItemEntity? item, String? roomId) showItemForm,
     required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
   }) {
     return clearChat();
   }
@@ -1833,7 +2937,10 @@ class _$ClearChatImpl implements ClearChat {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
     TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
     TResult? Function()? loadItems,
     TResult? Function(String roomId)? loadItemsByRoom,
     TResult? Function(ItemEntity item)? addItem,
@@ -1843,6 +2950,10 @@ class _$ClearChatImpl implements ClearChat {
     TResult? Function(ItemEntity item)? showItemDetail,
     TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
   }) {
     return clearChat?.call();
   }
@@ -1850,7 +2961,10 @@ class _$ClearChatImpl implements ClearChat {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
     TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
     TResult Function()? loadItems,
     TResult Function(String roomId)? loadItemsByRoom,
     TResult Function(ItemEntity item)? addItem,
@@ -1860,6 +2974,10 @@ class _$ClearChatImpl implements ClearChat {
     TResult Function(ItemEntity item)? showItemDetail,
     TResult Function(ItemEntity? item, String? roomId)? showItemForm,
     TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
     required TResult orElse(),
   }) {
     if (clearChat != null) {
@@ -1871,7 +2989,10 @@ class _$ClearChatImpl implements ClearChat {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
     required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
     required TResult Function(LoadItems value) loadItems,
     required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
     required TResult Function(AddItem value) addItem,
@@ -1881,6 +3002,12 @@ class _$ClearChatImpl implements ClearChat {
     required TResult Function(ShowItemDetail value) showItemDetail,
     required TResult Function(ShowItemForm value) showItemForm,
     required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
   }) {
     return clearChat(this);
   }
@@ -1888,7 +3015,10 @@ class _$ClearChatImpl implements ClearChat {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
     TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
     TResult? Function(LoadItems value)? loadItems,
     TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult? Function(AddItem value)? addItem,
@@ -1898,6 +3028,10 @@ class _$ClearChatImpl implements ClearChat {
     TResult? Function(ShowItemDetail value)? showItemDetail,
     TResult? Function(ShowItemForm value)? showItemForm,
     TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
   }) {
     return clearChat?.call(this);
   }
@@ -1905,7 +3039,10 @@ class _$ClearChatImpl implements ClearChat {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
     TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
     TResult Function(LoadItems value)? loadItems,
     TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
     TResult Function(AddItem value)? addItem,
@@ -1915,6 +3052,10 @@ class _$ClearChatImpl implements ClearChat {
     TResult Function(ShowItemDetail value)? showItemDetail,
     TResult Function(ShowItemForm value)? showItemForm,
     TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
     required TResult orElse(),
   }) {
     if (clearChat != null) {
@@ -1926,4 +3067,817 @@ class _$ClearChatImpl implements ClearChat {
 
 abstract class ClearChat implements ChatEvent {
   const factory ClearChat() = _$ClearChatImpl;
+}
+
+/// @nodoc
+abstract class _$$StartSpeechRecognitionImplCopyWith<$Res> {
+  factory _$$StartSpeechRecognitionImplCopyWith(
+          _$StartSpeechRecognitionImpl value,
+          $Res Function(_$StartSpeechRecognitionImpl) then) =
+      __$$StartSpeechRecognitionImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$StartSpeechRecognitionImplCopyWithImpl<$Res>
+    extends _$ChatEventCopyWithImpl<$Res, _$StartSpeechRecognitionImpl>
+    implements _$$StartSpeechRecognitionImplCopyWith<$Res> {
+  __$$StartSpeechRecognitionImplCopyWithImpl(
+      _$StartSpeechRecognitionImpl _value,
+      $Res Function(_$StartSpeechRecognitionImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$StartSpeechRecognitionImpl implements StartSpeechRecognition {
+  const _$StartSpeechRecognitionImpl();
+
+  @override
+  String toString() {
+    return 'ChatEvent.startSpeechRecognition()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$StartSpeechRecognitionImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
+    required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
+    required TResult Function() loadItems,
+    required TResult Function(String roomId) loadItemsByRoom,
+    required TResult Function(ItemEntity item) addItem,
+    required TResult Function(ItemEntity item) updateItem,
+    required TResult Function(String itemId) deleteItem,
+    required TResult Function(String query) searchItems,
+    required TResult Function(ItemEntity item) showItemDetail,
+    required TResult Function(ItemEntity? item, String? roomId) showItemForm,
+    required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
+  }) {
+    return startSpeechRecognition();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
+    TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
+    TResult? Function()? loadItems,
+    TResult? Function(String roomId)? loadItemsByRoom,
+    TResult? Function(ItemEntity item)? addItem,
+    TResult? Function(ItemEntity item)? updateItem,
+    TResult? Function(String itemId)? deleteItem,
+    TResult? Function(String query)? searchItems,
+    TResult? Function(ItemEntity item)? showItemDetail,
+    TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
+  }) {
+    return startSpeechRecognition?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
+    TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
+    TResult Function()? loadItems,
+    TResult Function(String roomId)? loadItemsByRoom,
+    TResult Function(ItemEntity item)? addItem,
+    TResult Function(ItemEntity item)? updateItem,
+    TResult Function(String itemId)? deleteItem,
+    TResult Function(String query)? searchItems,
+    TResult Function(ItemEntity item)? showItemDetail,
+    TResult Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (startSpeechRecognition != null) {
+      return startSpeechRecognition();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
+    required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
+    required TResult Function(LoadItems value) loadItems,
+    required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
+    required TResult Function(AddItem value) addItem,
+    required TResult Function(UpdateItem value) updateItem,
+    required TResult Function(DeleteItem value) deleteItem,
+    required TResult Function(SearchItems value) searchItems,
+    required TResult Function(ShowItemDetail value) showItemDetail,
+    required TResult Function(ShowItemForm value) showItemForm,
+    required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
+  }) {
+    return startSpeechRecognition(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
+    TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
+    TResult? Function(LoadItems value)? loadItems,
+    TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult? Function(AddItem value)? addItem,
+    TResult? Function(UpdateItem value)? updateItem,
+    TResult? Function(DeleteItem value)? deleteItem,
+    TResult? Function(SearchItems value)? searchItems,
+    TResult? Function(ShowItemDetail value)? showItemDetail,
+    TResult? Function(ShowItemForm value)? showItemForm,
+    TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
+  }) {
+    return startSpeechRecognition?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
+    TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
+    TResult Function(LoadItems value)? loadItems,
+    TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult Function(AddItem value)? addItem,
+    TResult Function(UpdateItem value)? updateItem,
+    TResult Function(DeleteItem value)? deleteItem,
+    TResult Function(SearchItems value)? searchItems,
+    TResult Function(ShowItemDetail value)? showItemDetail,
+    TResult Function(ShowItemForm value)? showItemForm,
+    TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (startSpeechRecognition != null) {
+      return startSpeechRecognition(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class StartSpeechRecognition implements ChatEvent {
+  const factory StartSpeechRecognition() = _$StartSpeechRecognitionImpl;
+}
+
+/// @nodoc
+abstract class _$$StopSpeechRecognitionImplCopyWith<$Res> {
+  factory _$$StopSpeechRecognitionImplCopyWith(
+          _$StopSpeechRecognitionImpl value,
+          $Res Function(_$StopSpeechRecognitionImpl) then) =
+      __$$StopSpeechRecognitionImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$StopSpeechRecognitionImplCopyWithImpl<$Res>
+    extends _$ChatEventCopyWithImpl<$Res, _$StopSpeechRecognitionImpl>
+    implements _$$StopSpeechRecognitionImplCopyWith<$Res> {
+  __$$StopSpeechRecognitionImplCopyWithImpl(_$StopSpeechRecognitionImpl _value,
+      $Res Function(_$StopSpeechRecognitionImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$StopSpeechRecognitionImpl implements StopSpeechRecognition {
+  const _$StopSpeechRecognitionImpl();
+
+  @override
+  String toString() {
+    return 'ChatEvent.stopSpeechRecognition()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$StopSpeechRecognitionImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
+    required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
+    required TResult Function() loadItems,
+    required TResult Function(String roomId) loadItemsByRoom,
+    required TResult Function(ItemEntity item) addItem,
+    required TResult Function(ItemEntity item) updateItem,
+    required TResult Function(String itemId) deleteItem,
+    required TResult Function(String query) searchItems,
+    required TResult Function(ItemEntity item) showItemDetail,
+    required TResult Function(ItemEntity? item, String? roomId) showItemForm,
+    required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
+  }) {
+    return stopSpeechRecognition();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
+    TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
+    TResult? Function()? loadItems,
+    TResult? Function(String roomId)? loadItemsByRoom,
+    TResult? Function(ItemEntity item)? addItem,
+    TResult? Function(ItemEntity item)? updateItem,
+    TResult? Function(String itemId)? deleteItem,
+    TResult? Function(String query)? searchItems,
+    TResult? Function(ItemEntity item)? showItemDetail,
+    TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
+  }) {
+    return stopSpeechRecognition?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
+    TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
+    TResult Function()? loadItems,
+    TResult Function(String roomId)? loadItemsByRoom,
+    TResult Function(ItemEntity item)? addItem,
+    TResult Function(ItemEntity item)? updateItem,
+    TResult Function(String itemId)? deleteItem,
+    TResult Function(String query)? searchItems,
+    TResult Function(ItemEntity item)? showItemDetail,
+    TResult Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (stopSpeechRecognition != null) {
+      return stopSpeechRecognition();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
+    required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
+    required TResult Function(LoadItems value) loadItems,
+    required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
+    required TResult Function(AddItem value) addItem,
+    required TResult Function(UpdateItem value) updateItem,
+    required TResult Function(DeleteItem value) deleteItem,
+    required TResult Function(SearchItems value) searchItems,
+    required TResult Function(ShowItemDetail value) showItemDetail,
+    required TResult Function(ShowItemForm value) showItemForm,
+    required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
+  }) {
+    return stopSpeechRecognition(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
+    TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
+    TResult? Function(LoadItems value)? loadItems,
+    TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult? Function(AddItem value)? addItem,
+    TResult? Function(UpdateItem value)? updateItem,
+    TResult? Function(DeleteItem value)? deleteItem,
+    TResult? Function(SearchItems value)? searchItems,
+    TResult? Function(ShowItemDetail value)? showItemDetail,
+    TResult? Function(ShowItemForm value)? showItemForm,
+    TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
+  }) {
+    return stopSpeechRecognition?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
+    TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
+    TResult Function(LoadItems value)? loadItems,
+    TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult Function(AddItem value)? addItem,
+    TResult Function(UpdateItem value)? updateItem,
+    TResult Function(DeleteItem value)? deleteItem,
+    TResult Function(SearchItems value)? searchItems,
+    TResult Function(ShowItemDetail value)? showItemDetail,
+    TResult Function(ShowItemForm value)? showItemForm,
+    TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (stopSpeechRecognition != null) {
+      return stopSpeechRecognition(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class StopSpeechRecognition implements ChatEvent {
+  const factory StopSpeechRecognition() = _$StopSpeechRecognitionImpl;
+}
+
+/// @nodoc
+abstract class _$$SpeakMessageImplCopyWith<$Res> {
+  factory _$$SpeakMessageImplCopyWith(
+          _$SpeakMessageImpl value, $Res Function(_$SpeakMessageImpl) then) =
+      __$$SpeakMessageImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$SpeakMessageImplCopyWithImpl<$Res>
+    extends _$ChatEventCopyWithImpl<$Res, _$SpeakMessageImpl>
+    implements _$$SpeakMessageImplCopyWith<$Res> {
+  __$$SpeakMessageImplCopyWithImpl(
+      _$SpeakMessageImpl _value, $Res Function(_$SpeakMessageImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(_$SpeakMessageImpl(
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SpeakMessageImpl implements SpeakMessage {
+  const _$SpeakMessageImpl({required this.message});
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'ChatEvent.speakMessage(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SpeakMessageImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SpeakMessageImplCopyWith<_$SpeakMessageImpl> get copyWith =>
+      __$$SpeakMessageImplCopyWithImpl<_$SpeakMessageImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
+    required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
+    required TResult Function() loadItems,
+    required TResult Function(String roomId) loadItemsByRoom,
+    required TResult Function(ItemEntity item) addItem,
+    required TResult Function(ItemEntity item) updateItem,
+    required TResult Function(String itemId) deleteItem,
+    required TResult Function(String query) searchItems,
+    required TResult Function(ItemEntity item) showItemDetail,
+    required TResult Function(ItemEntity? item, String? roomId) showItemForm,
+    required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
+  }) {
+    return speakMessage(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
+    TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
+    TResult? Function()? loadItems,
+    TResult? Function(String roomId)? loadItemsByRoom,
+    TResult? Function(ItemEntity item)? addItem,
+    TResult? Function(ItemEntity item)? updateItem,
+    TResult? Function(String itemId)? deleteItem,
+    TResult? Function(String query)? searchItems,
+    TResult? Function(ItemEntity item)? showItemDetail,
+    TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
+  }) {
+    return speakMessage?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
+    TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
+    TResult Function()? loadItems,
+    TResult Function(String roomId)? loadItemsByRoom,
+    TResult Function(ItemEntity item)? addItem,
+    TResult Function(ItemEntity item)? updateItem,
+    TResult Function(String itemId)? deleteItem,
+    TResult Function(String query)? searchItems,
+    TResult Function(ItemEntity item)? showItemDetail,
+    TResult Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (speakMessage != null) {
+      return speakMessage(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
+    required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
+    required TResult Function(LoadItems value) loadItems,
+    required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
+    required TResult Function(AddItem value) addItem,
+    required TResult Function(UpdateItem value) updateItem,
+    required TResult Function(DeleteItem value) deleteItem,
+    required TResult Function(SearchItems value) searchItems,
+    required TResult Function(ShowItemDetail value) showItemDetail,
+    required TResult Function(ShowItemForm value) showItemForm,
+    required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
+  }) {
+    return speakMessage(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
+    TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
+    TResult? Function(LoadItems value)? loadItems,
+    TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult? Function(AddItem value)? addItem,
+    TResult? Function(UpdateItem value)? updateItem,
+    TResult? Function(DeleteItem value)? deleteItem,
+    TResult? Function(SearchItems value)? searchItems,
+    TResult? Function(ShowItemDetail value)? showItemDetail,
+    TResult? Function(ShowItemForm value)? showItemForm,
+    TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
+  }) {
+    return speakMessage?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
+    TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
+    TResult Function(LoadItems value)? loadItems,
+    TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult Function(AddItem value)? addItem,
+    TResult Function(UpdateItem value)? updateItem,
+    TResult Function(DeleteItem value)? deleteItem,
+    TResult Function(SearchItems value)? searchItems,
+    TResult Function(ShowItemDetail value)? showItemDetail,
+    TResult Function(ShowItemForm value)? showItemForm,
+    TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (speakMessage != null) {
+      return speakMessage(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class SpeakMessage implements ChatEvent {
+  const factory SpeakMessage({required final String message}) =
+      _$SpeakMessageImpl;
+
+  String get message;
+  @JsonKey(ignore: true)
+  _$$SpeakMessageImplCopyWith<_$SpeakMessageImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$StopSpeakingImplCopyWith<$Res> {
+  factory _$$StopSpeakingImplCopyWith(
+          _$StopSpeakingImpl value, $Res Function(_$StopSpeakingImpl) then) =
+      __$$StopSpeakingImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$StopSpeakingImplCopyWithImpl<$Res>
+    extends _$ChatEventCopyWithImpl<$Res, _$StopSpeakingImpl>
+    implements _$$StopSpeakingImplCopyWith<$Res> {
+  __$$StopSpeakingImplCopyWithImpl(
+      _$StopSpeakingImpl _value, $Res Function(_$StopSpeakingImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$StopSpeakingImpl implements StopSpeaking {
+  const _$StopSpeakingImpl();
+
+  @override
+  String toString() {
+    return 'ChatEvent.stopSpeaking()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$StopSpeakingImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initialize,
+    required TResult Function(String content) sendMessage,
+    required TResult Function(String imagePath) sendImage,
+    required TResult Function(String value, String type) sendScanResult,
+    required TResult Function() loadItems,
+    required TResult Function(String roomId) loadItemsByRoom,
+    required TResult Function(ItemEntity item) addItem,
+    required TResult Function(ItemEntity item) updateItem,
+    required TResult Function(String itemId) deleteItem,
+    required TResult Function(String query) searchItems,
+    required TResult Function(ItemEntity item) showItemDetail,
+    required TResult Function(ItemEntity? item, String? roomId) showItemForm,
+    required TResult Function() clearChat,
+    required TResult Function() startSpeechRecognition,
+    required TResult Function() stopSpeechRecognition,
+    required TResult Function(String message) speakMessage,
+    required TResult Function() stopSpeaking,
+  }) {
+    return stopSpeaking();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initialize,
+    TResult? Function(String content)? sendMessage,
+    TResult? Function(String imagePath)? sendImage,
+    TResult? Function(String value, String type)? sendScanResult,
+    TResult? Function()? loadItems,
+    TResult? Function(String roomId)? loadItemsByRoom,
+    TResult? Function(ItemEntity item)? addItem,
+    TResult? Function(ItemEntity item)? updateItem,
+    TResult? Function(String itemId)? deleteItem,
+    TResult? Function(String query)? searchItems,
+    TResult? Function(ItemEntity item)? showItemDetail,
+    TResult? Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult? Function()? clearChat,
+    TResult? Function()? startSpeechRecognition,
+    TResult? Function()? stopSpeechRecognition,
+    TResult? Function(String message)? speakMessage,
+    TResult? Function()? stopSpeaking,
+  }) {
+    return stopSpeaking?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initialize,
+    TResult Function(String content)? sendMessage,
+    TResult Function(String imagePath)? sendImage,
+    TResult Function(String value, String type)? sendScanResult,
+    TResult Function()? loadItems,
+    TResult Function(String roomId)? loadItemsByRoom,
+    TResult Function(ItemEntity item)? addItem,
+    TResult Function(ItemEntity item)? updateItem,
+    TResult Function(String itemId)? deleteItem,
+    TResult Function(String query)? searchItems,
+    TResult Function(ItemEntity item)? showItemDetail,
+    TResult Function(ItemEntity? item, String? roomId)? showItemForm,
+    TResult Function()? clearChat,
+    TResult Function()? startSpeechRecognition,
+    TResult Function()? stopSpeechRecognition,
+    TResult Function(String message)? speakMessage,
+    TResult Function()? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (stopSpeaking != null) {
+      return stopSpeaking();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(Initialize value) initialize,
+    required TResult Function(SendMessage value) sendMessage,
+    required TResult Function(SendImage value) sendImage,
+    required TResult Function(SendScanResult value) sendScanResult,
+    required TResult Function(LoadItems value) loadItems,
+    required TResult Function(LoadItemsByRoom value) loadItemsByRoom,
+    required TResult Function(AddItem value) addItem,
+    required TResult Function(UpdateItem value) updateItem,
+    required TResult Function(DeleteItem value) deleteItem,
+    required TResult Function(SearchItems value) searchItems,
+    required TResult Function(ShowItemDetail value) showItemDetail,
+    required TResult Function(ShowItemForm value) showItemForm,
+    required TResult Function(ClearChat value) clearChat,
+    required TResult Function(StartSpeechRecognition value)
+        startSpeechRecognition,
+    required TResult Function(StopSpeechRecognition value)
+        stopSpeechRecognition,
+    required TResult Function(SpeakMessage value) speakMessage,
+    required TResult Function(StopSpeaking value) stopSpeaking,
+  }) {
+    return stopSpeaking(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(Initialize value)? initialize,
+    TResult? Function(SendMessage value)? sendMessage,
+    TResult? Function(SendImage value)? sendImage,
+    TResult? Function(SendScanResult value)? sendScanResult,
+    TResult? Function(LoadItems value)? loadItems,
+    TResult? Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult? Function(AddItem value)? addItem,
+    TResult? Function(UpdateItem value)? updateItem,
+    TResult? Function(DeleteItem value)? deleteItem,
+    TResult? Function(SearchItems value)? searchItems,
+    TResult? Function(ShowItemDetail value)? showItemDetail,
+    TResult? Function(ShowItemForm value)? showItemForm,
+    TResult? Function(ClearChat value)? clearChat,
+    TResult? Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult? Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult? Function(SpeakMessage value)? speakMessage,
+    TResult? Function(StopSpeaking value)? stopSpeaking,
+  }) {
+    return stopSpeaking?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(Initialize value)? initialize,
+    TResult Function(SendMessage value)? sendMessage,
+    TResult Function(SendImage value)? sendImage,
+    TResult Function(SendScanResult value)? sendScanResult,
+    TResult Function(LoadItems value)? loadItems,
+    TResult Function(LoadItemsByRoom value)? loadItemsByRoom,
+    TResult Function(AddItem value)? addItem,
+    TResult Function(UpdateItem value)? updateItem,
+    TResult Function(DeleteItem value)? deleteItem,
+    TResult Function(SearchItems value)? searchItems,
+    TResult Function(ShowItemDetail value)? showItemDetail,
+    TResult Function(ShowItemForm value)? showItemForm,
+    TResult Function(ClearChat value)? clearChat,
+    TResult Function(StartSpeechRecognition value)? startSpeechRecognition,
+    TResult Function(StopSpeechRecognition value)? stopSpeechRecognition,
+    TResult Function(SpeakMessage value)? speakMessage,
+    TResult Function(StopSpeaking value)? stopSpeaking,
+    required TResult orElse(),
+  }) {
+    if (stopSpeaking != null) {
+      return stopSpeaking(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class StopSpeaking implements ChatEvent {
+  const factory StopSpeaking() = _$StopSpeakingImpl;
 }

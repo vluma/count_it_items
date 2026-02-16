@@ -1,9 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/core/localization/l10n/app_localizations.dart';
 import 'package:youwu/features/home/view/home_page.dart';
+import 'package:youwu/features/settings/view/settings_page.dart';
+import 'package:youwu/features/notification/view/notification_page.dart';
+import 'package:youwu/features/notification/view_model/notification_cubit.dart';
+import 'package:youwu/features/notification/view_model/notification_state.dart';
 
 class HomeAppBar extends StatelessWidget {
   final ViewMode viewMode;
@@ -39,9 +44,9 @@ class HomeAppBar extends StatelessWidget {
               const Spacer(),
               _buildViewToggle(colors),
               SizedBox(width: 12.w),
-              _buildNotificationButton(colors),
+              _buildNotificationButton(context, colors),
               SizedBox(width: 8.w),
-              _buildSettingsButton(colors),
+              _buildSettingsButton(context, colors),
             ],
           ),
         ),
@@ -141,60 +146,100 @@ class HomeAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationButton(AppColorsData colors) {
-    return Stack(
-      children: [
-        Container(
-          padding: EdgeInsets.all(10.w),
-          decoration: BoxDecoration(
-            color: colors.surface.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(
-              color: colors.border.withValues(alpha: 0.3),
-              width: 1,
-            ),
-          ),
-          child: Icon(
-            Icons.notifications_none_rounded,
-            size: 20.sp,
-            color: colors.textPrimary,
-          ),
-        ),
-        Positioned(
-          top: 8.h,
-          right: 8.w,
-          child: Container(
-            width: 8.w,
-            height: 8.w,
-            decoration: BoxDecoration(
-              color: colors.error,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: colors.surface,
-                width: 1.5,
+  Widget _buildNotificationButton(BuildContext context, AppColorsData colors) {
+    return BlocBuilder<NotificationCubit, NotificationState>(
+      builder: (context, state) {
+        final unreadCount = state.maybeWhen(
+          loaded: (notifications, count) => count,
+          orElse: () => 0,
+        );
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => BlocProvider.value(
+                  value: context.read<NotificationCubit>(),
+                  child: const NotificationPage(),
+                ),
               ),
-            ),
+            );
+          },
+          child: Stack(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: colors.surface.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: colors.border.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Icon(
+                  Icons.notifications_none_rounded,
+                  size: 20.sp,
+                  color: colors.textPrimary,
+                ),
+              ),
+              if (unreadCount > 0)
+                Positioned(
+                  top: 6.h,
+                  right: 6.w,
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: 16.w,
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 4.w),
+                    height: 16.w,
+                    decoration: BoxDecoration(
+                      color: colors.error,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Center(
+                      child: Text(
+                        unreadCount > 99 ? '99+' : '$unreadCount',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildSettingsButton(AppColorsData colors) {
-    return Container(
-      padding: EdgeInsets.all(10.w),
-      decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: colors.border.withValues(alpha: 0.3),
-          width: 1,
+  Widget _buildSettingsButton(BuildContext context, AppColorsData colors) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const SettingsPage(),
+          ),
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.all(10.w),
+        decoration: BoxDecoration(
+          color: colors.surface.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.3),
+            width: 1,
+          ),
         ),
-      ),
-      child: Icon(
-        Icons.settings_outlined,
-        size: 20.sp,
-        color: colors.textPrimary,
+        child: Icon(
+          Icons.settings_outlined,
+          size: 20.sp,
+          color: colors.textPrimary,
+        ),
       ),
     );
   }

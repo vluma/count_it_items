@@ -9,8 +9,8 @@ import 'package:youwu/features/home/view_model/map_state.dart';
 import 'package:youwu/features/home/view/widgets/home_app_bar.dart';
 import 'package:youwu/features/home/view/widgets/map_painter.dart';
 import 'package:youwu/features/home/view/widgets/room_card.dart';
-import 'package:youwu/features/home/view/widgets/stats_panel.dart';
-import 'package:youwu/features/home/view/widgets/floating_action_button.dart';
+import 'package:youwu/features/home/view/widgets/ai_input_bar.dart';
+import 'package:youwu/features/home/view/widgets/expiration_alert_card.dart';
 
 enum ViewMode { map, list }
 
@@ -21,22 +21,24 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> {
   ViewMode _viewMode = ViewMode.map;
-  late AnimationController _fabAnimationController;
+  final TransformationController _transformationController = TransformationController();
+  final GlobalKey _customPaintKey = GlobalKey();
+  Offset? _pointerDownPosition;
+  int? _pointerDownTime;
 
   @override
   void initState() {
     super.initState();
-    _fabAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MapCubit>().add(const LoadMap());
+    });
   }
 
   @override
   void dispose() {
-    _fabAnimationController.dispose();
+    _transformationController.dispose();
     super.dispose();
   }
 
@@ -47,38 +49,35 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     return Scaffold(
       backgroundColor: colors.background,
-      body: BlocProvider.value(
-        value: context.read<MapCubit>()..add(const LoadMap()),
-        child: BlocBuilder<MapCubit, MapState>(
-          builder: (context, state) {
-            return Stack(
-              children: [
-                _buildBackground(colors),
-                _buildMainContent(state, colors, safePadding),
-                Positioned(
-                  top: safePadding.top,
-                  left: 0,
-                  right: 0,
-                  child: HomeAppBar(
-                    viewMode: _viewMode,
-                    onViewModeChanged: (mode) {
-                      setState(() {
-                        _viewMode = mode;
-                      });
-                    },
-                  ),
+      body: BlocBuilder<MapCubit, MapState>(
+        builder: (context, state) {
+          return Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    _buildBackground(colors),
+                    _buildMainContent(state, colors, safePadding),
+                    Positioned(
+                      top: safePadding.top,
+                      left: 0,
+                      right: 0,
+                      child: HomeAppBar(
+                        viewMode: _viewMode,
+                        onViewModeChanged: (mode) {
+                          setState(() {
+                            _viewMode = mode;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                Positioned(
-                  bottom: safePadding.bottom + 100.h,
-                  right: 20.w,
-                  child: HomeFloatingActionButton(
-                    animationController: _fabAnimationController,
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+              ),
+              const AiInputBar(),
+            ],
+          );
+        },
       ),
     );
   }
@@ -104,10 +103,17 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     return Positioned.fill(
       top: 100.h + safePadding.top,
       child: state.maybeWhen(
-        success: (space, showOverlay, isSearching) {
+        success: (space, showOverlay, isSearching, expiredItems, expiringItems) {
           return Column(
             children: [
-              StatsPanel(space: space),
+              if (expiredItems.isNotEmpty || expiringItems.isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  child: ExpirationAlertCard(
+                    expiredItems: expiredItems,
+                    expiringItems: expiringItems,
+                  ),
+                ),
               Expanded(
                 child: _viewMode == ViewMode.map
                     ? _buildMapView(state, context)
@@ -123,11 +129,45 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   Widget _buildMapView(MapState state, BuildContext context) {
     final colors = AppColors.of(context);
-    return GestureDetector(
-      onDoubleTap: () {
-        context.read<MapCubit>().add(const DoubleTapEmpty());
+    final painter = MapPainter(
+      state: state,
+      onRoomTap: (roomId) {
+        context.read<MapCubit>().add(SelectRoom(roomId: roomId));
+      },
+      colors: colors,
+    );
+
+    return Listener(
+      onPointerDown: (event) {
+        _pointerDownPosition = event.localPosition;
+        _pointerDownTime = DateTime.now().millisecondsSinceEpoch;
+      },
+      onPointerUp: (event) {
+        if (_pointerDownPosition == null || _pointerDownTime == null) return;
+        
+        final timeDiff = DateTime.now().millisecondsSinceEpoch - _pointerDownTime!;
+        final distance = (event.localPosition - _pointerDownPosition!).distance;
+        
+        if (timeDiff < 500 && distance < 20) {
+          final RenderBox? customPaintBox = _customPaintKey.currentContext?.findRenderObject() as RenderBox?;
+          if (customPaintBox == null) return;
+          final size = customPaintBox.size;
+          
+          final transform = _transformationController.value;
+          final inverseTransform = Matrix4.inverted(transform);
+          final transformedPoint = MatrixUtils.transformPoint(inverseTransform, event.localPosition);
+          
+          final roomId = painter.hitTestRoom(transformedPoint, size);
+          if (roomId != null) {
+            context.read<MapCubit>().add(SelectRoom(roomId: roomId));
+          }
+        }
+        
+        _pointerDownPosition = null;
+        _pointerDownTime = null;
       },
       child: InteractiveViewer(
+        transformationController: _transformationController,
         boundaryMargin: const EdgeInsets.all(200),
         minScale: 0.1,
         maxScale: 5.0,
@@ -135,13 +175,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         scaleEnabled: true,
         child: RepaintBoundary(
           child: CustomPaint(
-            painter: MapPainter(
-              state: state,
-              onRoomTap: (roomId) {
-                context.read<MapCubit>().add(SelectRoom(roomId: roomId));
-              },
-              colors: colors,
-            ),
+            key: _customPaintKey,
+            painter: painter,
             size: Size.infinite,
           ),
         ),

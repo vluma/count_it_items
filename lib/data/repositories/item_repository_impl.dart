@@ -70,6 +70,30 @@ class ItemRepositoryImpl implements ItemRepository {
       updatedAt: DateTime.now().toIso8601String(),
       isFavorite: false,
     ),
+    ItemModel(
+      id: 'item_007',
+      name: '牛奶',
+      roomId: 'room_002',
+      category: 'other',
+      quantity: 2,
+      description: '鲜牛奶',
+      createdAt: DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+      updatedAt: DateTime.now().toIso8601String(),
+      isFavorite: false,
+      expirationDate: DateTime.now().add(const Duration(days: 3)).toIso8601String(),
+    ),
+    ItemModel(
+      id: 'item_008',
+      name: '酸奶',
+      roomId: 'room_002',
+      category: 'other',
+      quantity: 3,
+      description: '原味酸奶',
+      createdAt: DateTime.now().subtract(const Duration(days: 7)).toIso8601String(),
+      updatedAt: DateTime.now().toIso8601String(),
+      isFavorite: false,
+      expirationDate: DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+    ),
   ];
 
   @override
@@ -142,6 +166,37 @@ class ItemRepositoryImpl implements ItemRepository {
     await Future.delayed(const Duration(milliseconds: 200));
     return _items
         .where((item) => item.category == category.name)
+        .map((model) => model.toEntity())
+        .toList();
+  }
+
+  @override
+  Future<List<ItemEntity>> getExpiringItems({int daysAhead = 7}) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    final now = DateTime.now();
+    final endDate = now.add(Duration(days: daysAhead));
+    
+    return _items
+        .where((item) {
+          if (item.expirationDate == null) return false;
+          final expDate = DateTime.parse(item.expirationDate!);
+          return expDate.isAfter(now) && expDate.isBefore(endDate);
+        })
+        .map((model) => model.toEntity())
+        .toList();
+  }
+
+  @override
+  Future<List<ItemEntity>> getExpiredItems() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    final now = DateTime.now();
+    
+    return _items
+        .where((item) {
+          if (item.expirationDate == null) return false;
+          final expDate = DateTime.parse(item.expirationDate!);
+          return expDate.isBefore(now);
+        })
         .map((model) => model.toEntity())
         .toList();
   }

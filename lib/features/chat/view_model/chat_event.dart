@@ -5,9 +5,20 @@ part 'chat_event.freezed.dart';
 
 @freezed
 class ChatEvent with _$ChatEvent {
+  const factory ChatEvent.initialize() = Initialize;
+
   const factory ChatEvent.sendMessage({
     required String content,
   }) = SendMessage;
+  
+  const factory ChatEvent.sendImage({
+    required String imagePath,
+  }) = SendImage;
+  
+  const factory ChatEvent.sendScanResult({
+    required String value,
+    required String type,
+  }) = SendScanResult;
   
   const factory ChatEvent.loadItems() = LoadItems;
   
@@ -41,4 +52,14 @@ class ChatEvent with _$ChatEvent {
   }) = ShowItemForm;
   
   const factory ChatEvent.clearChat() = ClearChat;
+  
+  const factory ChatEvent.startSpeechRecognition() = StartSpeechRecognition;
+  
+  const factory ChatEvent.stopSpeechRecognition() = StopSpeechRecognition;
+  
+  const factory ChatEvent.speakMessage({
+    required String message,
+  }) = SpeakMessage;
+  
+  const factory ChatEvent.stopSpeaking() = StopSpeaking;
 }

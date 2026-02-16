@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/domain/entities/room_entity.dart';
 import 'package:youwu/features/home/view/room_form_page.dart';
+import 'package:youwu/features/home/view_model/map_cubit.dart';
 
 class RoomCard extends StatelessWidget {
   final RoomEntity room;
@@ -118,7 +120,10 @@ class RoomCard extends StatelessWidget {
   void _navigateToEditPage(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => RoomFormPage(room: room),
+        builder: (context) => BlocProvider.value(
+          value: context.read<MapCubit>(),
+          child: RoomFormPage(room: room),
+        ),
       ),
     );
   }

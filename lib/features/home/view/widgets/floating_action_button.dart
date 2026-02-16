@@ -1,9 +1,16 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:youwu/core/di/di.dart';
 import 'package:youwu/core/theme/app_colors.dart';
-import 'package:youwu/features/home/view/room_form_page.dart';
+import 'package:youwu/features/chat/view_model/chat_cubit.dart';
 import 'package:youwu/features/chat/view/chat_page.dart';
+import 'package:youwu/features/home/view/room_canvas_page.dart';
+import 'package:youwu/features/home/view/room_form_page.dart';
+import 'package:youwu/features/home/view/scanner_page.dart';
+import 'package:youwu/features/home/view_model/map_cubit.dart';
 
 class HomeFloatingActionButton extends StatefulWidget {
   final AnimationController animationController;
@@ -166,24 +173,92 @@ class _HomeFloatingActionButtonState extends State<HomeFloatingActionButton> {
   void _handleAIChat() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const ChatPage(),
+        builder: (context) => BlocProvider(
+          create: (_) => sl<ChatCubit>(),
+          child: const ChatPage(),
+        ),
       ),
     );
   }
 
-  void _handleAddRoom() {
+  void _handleAddRoom() async {
+    final mapState = context.read<MapCubit>().state;
+    final existingRooms = mapState.maybeWhen(
+      success: (space, showOverlay, isSearching, expiredItems, expiringItems) => space.rooms,
+      orElse: () => <dynamic>[],
+    );
+    
+    final points = await Navigator.of(context).push<List<Offset>>(
+      MaterialPageRoute(
+        builder: (context) => RoomCanvasPage(
+          existingRooms: List.from(existingRooms),
+        ),
+      ),
+    );
+    
+    if (points != null && points.isNotEmpty && mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: context.read<MapCubit>(),
+            child: RoomFormPage(initialPoints: points),
+          ),
+        ),
+      );
+    }
+  }
+
+  void _handleCamera() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 85,
+    );
+
+    if (image == null) return;
+
+    final imagePath = image.path;
+    log('Photo taken: $imagePath', name: 'FAB');
+
+    if (!mounted) return;
+
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const RoomFormPage(),
+        builder: (context) => BlocProvider(
+          create: (_) => sl<ChatCubit>(),
+          child: ChatPage(imagePath: imagePath),
+        ),
       ),
     );
   }
 
-  void _handleCamera() {
-    log('Camera tapped', name: 'FAB');
-  }
+  void _handleScan() async {
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute(
+        builder: (context) => const ScannerPage(),
+      ),
+    );
 
-  void _handleScan() {
-    log('Scan tapped', name: 'FAB');
+    if (result == null || !mounted) return;
+
+    final value = result['value'] as String;
+    final format = result['format'] as String;
+    final type = result['type'] as String;
+
+    log('Scanned: $value ($format)', name: 'FAB');
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (_) => sl<ChatCubit>(),
+          child: ChatPage(
+            scanResult: value,
+            scanType: type,
+          ),
+        ),
+      ),
+    );
   }
 }

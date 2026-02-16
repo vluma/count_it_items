@@ -8,22 +8,25 @@ class MapPainter extends CustomPainter {
   final MapState state;
   final Function(String roomId) onRoomTap;
   final AppColorsData colors;
+  final bool isEditMode;
 
   MapPainter({
     required this.state,
     required this.onRoomTap,
     required this.colors,
+    this.isEditMode = false,
   });
 
   static const double wallDepth = 12.0;
   static const double isoAngle = math.pi / 6;
   static const double cornerRadius = 12.0;
   static const double roomScale = 0.94;
+  static const double editPointRadius = 8.0;
 
   @override
   void paint(Canvas canvas, Size size) {
     state.maybeWhen(
-      success: (space, showOverlay, isSearching) {
+      success: (space, showOverlay, isSearching, expiredItems, expiringItems) {
         final allPoints = <Offset>[];
         for (final room in space.rooms) {
           final center = _getCenter(room.points);
@@ -49,9 +52,12 @@ class MapPainter extends CustomPainter {
         }
 
         for (final room in space.rooms) {
-          _drawRoomFloor(canvas, room);
-          _drawRoomData(canvas, room);
+        _drawRoomFloor(canvas, room);
+        _drawRoomData(canvas, room);
+        if (isEditMode) {
+          _drawEditPoints(canvas, room);
         }
+      }
       },
       orElse: () {},
     );
@@ -205,6 +211,25 @@ class MapPainter extends CustomPainter {
     );
   }
 
+  void _drawEditPoints(Canvas canvas, RoomEntity room) {
+    final center = _getCenter(room.points);
+    final List<Offset> isoPoints = room.points
+        .map((p) => _toIso(_shrinkPoint(p, center)))
+        .toList();
+
+    for (final point in isoPoints) {
+      final outerPaint = Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(point, editPointRadius + 2, outerPaint);
+
+      final innerPaint = Paint()
+        ..color = colors.primary
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(point, editPointRadius, innerPaint);
+    }
+  }
+
   void _drawRoomFloor(Canvas canvas, RoomEntity room) {
     final center = _getCenter(room.points);
     final List<Offset> isoPoints = room.points
@@ -310,5 +335,83 @@ class MapPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant MapPainter oldDelegate) =>
-      oldDelegate.state != state || oldDelegate.colors != colors;
+      oldDelegate.state != state || 
+      oldDelegate.colors != colors ||
+      oldDelegate.isEditMode != isEditMode;
+
+  String? hitTestRoom(Offset localPosition, Size size) {
+    String? hitRoomId;
+    
+    state.maybeWhen(
+      success: (space, showOverlay, isSearching, expiredItems, expiringItems) {
+        final allPoints = <Offset>[];
+        for (final room in space.rooms) {
+          final center = _getCenter(room.points);
+          final scaledPoints = room.points.map((p) => _shrinkPoint(p, center)).toList();
+          allPoints.addAll(scaledPoints.map(_toIso));
+        }
+
+        final boundingBox = _calculateBoundingBox(allPoints);
+        final centerX = (boundingBox.left + boundingBox.right) / 2;
+        final centerY = (boundingBox.top + boundingBox.bottom) / 2;
+
+        final translatedX = localPosition.dx - (size.width / 2 - centerX);
+        final translatedY = localPosition.dy - (size.height / 2 - centerY);
+
+        for (final room in space.rooms) {
+          final center = _getCenter(room.points);
+          final List<Offset> isoPoints = room.points
+              .map((p) => _toIso(_shrinkPoint(p, center)))
+              .toList();
+
+          if (_isPointInPolygon(Offset(translatedX, translatedY), isoPoints)) {
+            hitRoomId = room.id;
+            return;
+          }
+        }
+      },
+      orElse: () {},
+    );
+    
+    return hitRoomId;
+  }
+
+  bool _isPointInPolygon(Offset point, List<Offset> polygon) {
+    if (polygon.length < 3) return false;
+
+    int intersections = 0;
+    for (int i = 0; i < polygon.length; i++) {
+      final p1 = polygon[i];
+      final p2 = polygon[(i + 1) % polygon.length];
+
+      if (_rayIntersectsSegment(point, p1, p2)) {
+        intersections++;
+      }
+    }
+
+    return intersections % 2 == 1;
+  }
+
+  bool _rayIntersectsSegment(Offset point, Offset p1, Offset p2) {
+    if (p1.dy > p2.dy) {
+      return _rayIntersectsSegment(point, p2, p1);
+    }
+
+    if (point.dy < p1.dy || point.dy >= p2.dy) {
+      return false;
+    }
+
+    if (point.dx >= math.max(p1.dx, p2.dx)) {
+      return false;
+    }
+
+    if (point.dx < math.min(p1.dx, p2.dx)) {
+      return true;
+    }
+
+    final double segmentSlope = (p2.dx - p1.dx) / (p2.dy - p1.dy);
+    final double raySlope = (point.dx - p1.dx) / (point.dy - p1.dy);
+
+    return raySlope >= segmentSlope;
+  }
 }

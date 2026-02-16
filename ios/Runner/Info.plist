@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>此应用需要语音识别功能来帮助您通过语音管理物品</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>此应用需要麦克风权限来进行语音输入</string>
 </dict>
 </plist>

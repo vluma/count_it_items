@@ -149,11 +149,9 @@ class _ItemFormDialogState extends State<ItemFormDialog> {
                     );
                   }).toList(),
                   onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _selectedRoomId = value;
-                      });
-                    }
+                    setState(() {
+                      _selectedRoomId = value;
+                    });
                   },
                   colors: colors,
                 ),
@@ -168,11 +166,9 @@ class _ItemFormDialogState extends State<ItemFormDialog> {
                     );
                   }).toList(),
                   onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _selectedCategory = value;
-                      });
-                    }
+                    setState(() {
+                      _selectedCategory = value;
+                    });
                   },
                   colors: colors,
                 ),

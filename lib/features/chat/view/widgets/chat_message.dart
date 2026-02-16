@@ -6,11 +6,17 @@ import 'package:youwu/features/chat/view_model/chat_state.dart';
 class ChatMessageWidget extends StatelessWidget {
   final ChatMessage message;
   final VoidCallback? onTap;
+  final bool isSpeaking;
+  final VoidCallback? onSpeak;
+  final VoidCallback? onStopSpeaking;
 
   const ChatMessageWidget({
     super.key,
     required this.message,
     this.onTap,
+    this.isSpeaking = false,
+    this.onSpeak,
+    this.onStopSpeaking,
   });
 
   @override
@@ -61,12 +67,54 @@ class ChatMessageWidget extends StatelessWidget {
               ),
             ),
             SizedBox(height: 4.h),
-            Text(
-              _formatTime(message.timestamp),
-              style: TextStyle(
-                fontSize: 10.sp,
-                color: colors.textTertiary,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!message.isUser && onSpeak != null)
+                  GestureDetector(
+                    onTap: isSpeaking ? onStopSpeaking : onSpeak,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: isSpeaking 
+                            ? colors.error.withValues(alpha: 0.1)
+                            : colors.surface,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: isSpeaking 
+                              ? colors.error.withValues(alpha: 0.3)
+                              : colors.border.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isSpeaking ? Icons.stop_rounded : Icons.volume_up_rounded,
+                            size: 12.sp,
+                            color: isSpeaking ? colors.error : colors.textSecondary,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            isSpeaking ? '停止' : '播放',
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              color: isSpeaking ? colors.error : colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (!message.isUser && onSpeak != null) SizedBox(width: 8.w),
+                Text(
+                  _formatTime(message.timestamp),
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    color: colors.textTertiary,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

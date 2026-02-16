@@ -14,6 +14,7 @@ class ItemModel {
   final String createdAt;
   final String updatedAt;
   final bool isFavorite;
+  final String? expirationDate;
 
   ItemModel({
     required this.id,
@@ -25,6 +26,7 @@ class ItemModel {
     required this.createdAt,
     required this.updatedAt,
     required this.isFavorite,
+    this.expirationDate,
   });
 
   factory ItemModel.fromJson(Map<String, dynamic> json) => _$ItemModelFromJson(json);
@@ -41,6 +43,7 @@ class ItemModel {
     createdAt: DateTime.parse(createdAt),
     updatedAt: DateTime.parse(updatedAt),
     isFavorite: isFavorite,
+    expirationDate: expirationDate != null ? DateTime.parse(expirationDate!) : null,
   );
 
   factory ItemModel.fromEntity(ItemEntity entity) => ItemModel(
@@ -53,6 +56,7 @@ class ItemModel {
     createdAt: entity.createdAt.toIso8601String(),
     updatedAt: entity.updatedAt.toIso8601String(),
     isFavorite: entity.isFavorite,
+    expirationDate: entity.expirationDate?.toIso8601String(),
   );
 
   static ItemCategory _parseCategory(String category) {

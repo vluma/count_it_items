@@ -16,6 +16,7 @@ ItemModel _$ItemModelFromJson(Map<String, dynamic> json) => ItemModel(
       createdAt: json['createdAt'] as String,
       updatedAt: json['updatedAt'] as String,
       isFavorite: json['isFavorite'] as bool,
+      expirationDate: json['expirationDate'] as String?,
     );
 
 Map<String, dynamic> _$ItemModelToJson(ItemModel instance) => <String, dynamic>{
@@ -28,4 +29,5 @@ Map<String, dynamic> _$ItemModelToJson(ItemModel instance) => <String, dynamic>{
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
       'isFavorite': instance.isFavorite,
+      'expirationDate': instance.expirationDate,
     };

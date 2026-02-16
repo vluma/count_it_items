@@ -16,4 +16,8 @@ abstract class ItemRepository {
   Future<List<ItemEntity>> searchItems(String query);
   
   Future<List<ItemEntity>> getItemsByCategory(ItemCategory category);
+  
+  Future<List<ItemEntity>> getExpiringItems({int daysAhead = 7});
+  
+  Future<List<ItemEntity>> getExpiredItems();
 }

@@ -24,6 +24,9 @@ mixin _$ChatMessage {
   List<ItemEntity> get items => throw _privateConstructorUsedError;
   ItemEntity? get selectedItem => throw _privateConstructorUsedError;
   String get actionType => throw _privateConstructorUsedError;
+  String? get imagePath => throw _privateConstructorUsedError;
+  String? get scanValue => throw _privateConstructorUsedError;
+  String? get scanType => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ChatMessageCopyWith<ChatMessage> get copyWith =>
@@ -44,7 +47,10 @@ abstract class $ChatMessageCopyWith<$Res> {
       MessageType type,
       List<ItemEntity> items,
       ItemEntity? selectedItem,
-      String actionType});
+      String actionType,
+      String? imagePath,
+      String? scanValue,
+      String? scanType});
 
   $ItemEntityCopyWith<$Res>? get selectedItem;
 }
@@ -70,6 +76,9 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
     Object? items = null,
     Object? selectedItem = freezed,
     Object? actionType = null,
+    Object? imagePath = freezed,
+    Object? scanValue = freezed,
+    Object? scanType = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -104,6 +113,18 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
           ? _value.actionType
           : actionType // ignore: cast_nullable_to_non_nullable
               as String,
+      imagePath: freezed == imagePath
+          ? _value.imagePath
+          : imagePath // ignore: cast_nullable_to_non_nullable
+              as String?,
+      scanValue: freezed == scanValue
+          ? _value.scanValue
+          : scanValue // ignore: cast_nullable_to_non_nullable
+              as String?,
+      scanType: freezed == scanType
+          ? _value.scanType
+          : scanType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -136,7 +157,10 @@ abstract class _$$ChatMessageImplCopyWith<$Res>
       MessageType type,
       List<ItemEntity> items,
       ItemEntity? selectedItem,
-      String actionType});
+      String actionType,
+      String? imagePath,
+      String? scanValue,
+      String? scanType});
 
   @override
   $ItemEntityCopyWith<$Res>? get selectedItem;
@@ -161,6 +185,9 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
     Object? items = null,
     Object? selectedItem = freezed,
     Object? actionType = null,
+    Object? imagePath = freezed,
+    Object? scanValue = freezed,
+    Object? scanType = freezed,
   }) {
     return _then(_$ChatMessageImpl(
       id: null == id
@@ -195,6 +222,18 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
           ? _value.actionType
           : actionType // ignore: cast_nullable_to_non_nullable
               as String,
+      imagePath: freezed == imagePath
+          ? _value.imagePath
+          : imagePath // ignore: cast_nullable_to_non_nullable
+              as String?,
+      scanValue: freezed == scanValue
+          ? _value.scanValue
+          : scanValue // ignore: cast_nullable_to_non_nullable
+              as String?,
+      scanType: freezed == scanType
+          ? _value.scanType
+          : scanType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -210,7 +249,10 @@ class _$ChatMessageImpl implements _ChatMessage {
       this.type = MessageType.text,
       final List<ItemEntity> items = const [],
       this.selectedItem,
-      this.actionType = ''})
+      this.actionType = '',
+      this.imagePath,
+      this.scanValue,
+      this.scanType})
       : _items = items;
 
   @override
@@ -238,10 +280,16 @@ class _$ChatMessageImpl implements _ChatMessage {
   @override
   @JsonKey()
   final String actionType;
+  @override
+  final String? imagePath;
+  @override
+  final String? scanValue;
+  @override
+  final String? scanType;
 
   @override
   String toString() {
-    return 'ChatMessage(id: $id, content: $content, isUser: $isUser, timestamp: $timestamp, type: $type, items: $items, selectedItem: $selectedItem, actionType: $actionType)';
+    return 'ChatMessage(id: $id, content: $content, isUser: $isUser, timestamp: $timestamp, type: $type, items: $items, selectedItem: $selectedItem, actionType: $actionType, imagePath: $imagePath, scanValue: $scanValue, scanType: $scanType)';
   }
 
   @override
@@ -259,7 +307,13 @@ class _$ChatMessageImpl implements _ChatMessage {
             (identical(other.selectedItem, selectedItem) ||
                 other.selectedItem == selectedItem) &&
             (identical(other.actionType, actionType) ||
-                other.actionType == actionType));
+                other.actionType == actionType) &&
+            (identical(other.imagePath, imagePath) ||
+                other.imagePath == imagePath) &&
+            (identical(other.scanValue, scanValue) ||
+                other.scanValue == scanValue) &&
+            (identical(other.scanType, scanType) ||
+                other.scanType == scanType));
   }
 
   @override
@@ -272,7 +326,10 @@ class _$ChatMessageImpl implements _ChatMessage {
       type,
       const DeepCollectionEquality().hash(_items),
       selectedItem,
-      actionType);
+      actionType,
+      imagePath,
+      scanValue,
+      scanType);
 
   @JsonKey(ignore: true)
   @override
@@ -290,7 +347,10 @@ abstract class _ChatMessage implements ChatMessage {
       final MessageType type,
       final List<ItemEntity> items,
       final ItemEntity? selectedItem,
-      final String actionType}) = _$ChatMessageImpl;
+      final String actionType,
+      final String? imagePath,
+      final String? scanValue,
+      final String? scanType}) = _$ChatMessageImpl;
 
   @override
   String get id;
@@ -309,6 +369,12 @@ abstract class _ChatMessage implements ChatMessage {
   @override
   String get actionType;
   @override
+  String? get imagePath;
+  @override
+  String? get scanValue;
+  @override
+  String? get scanType;
+  @override
   @JsonKey(ignore: true)
   _$$ChatMessageImplCopyWith<_$ChatMessageImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -320,7 +386,14 @@ mixin _$ChatState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ChatMessage> messages, bool isTyping) loaded,
+    required TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -328,7 +401,14 @@ mixin _$ChatState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult? Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -336,7 +416,14 @@ mixin _$ChatState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -425,7 +512,14 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ChatMessage> messages, bool isTyping) loaded,
+    required TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -436,7 +530,14 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult? Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -447,7 +548,14 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -539,7 +647,14 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ChatMessage> messages, bool isTyping) loaded,
+    required TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -550,7 +665,14 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult? Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -561,7 +683,14 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -619,7 +748,13 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<ChatMessage> messages, bool isTyping});
+  $Res call(
+      {List<ChatMessage> messages,
+      bool isTyping,
+      bool isListening,
+      bool isSpeaking,
+      String recognizedText,
+      String? speakingMessageId});
 }
 
 /// @nodoc
@@ -635,6 +770,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? messages = null,
     Object? isTyping = null,
+    Object? isListening = null,
+    Object? isSpeaking = null,
+    Object? recognizedText = null,
+    Object? speakingMessageId = freezed,
   }) {
     return _then(_$LoadedImpl(
       messages: null == messages
@@ -645,6 +784,22 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isTyping
           : isTyping // ignore: cast_nullable_to_non_nullable
               as bool,
+      isListening: null == isListening
+          ? _value.isListening
+          : isListening // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isSpeaking: null == isSpeaking
+          ? _value.isSpeaking
+          : isSpeaking // ignore: cast_nullable_to_non_nullable
+              as bool,
+      recognizedText: null == recognizedText
+          ? _value.recognizedText
+          : recognizedText // ignore: cast_nullable_to_non_nullable
+              as String,
+      speakingMessageId: freezed == speakingMessageId
+          ? _value.speakingMessageId
+          : speakingMessageId // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -653,7 +808,12 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
 class _$LoadedImpl implements _Loaded {
   const _$LoadedImpl(
-      {required final List<ChatMessage> messages, this.isTyping = false})
+      {required final List<ChatMessage> messages,
+      this.isTyping = false,
+      this.isListening = false,
+      this.isSpeaking = false,
+      this.recognizedText = '',
+      this.speakingMessageId})
       : _messages = messages;
 
   final List<ChatMessage> _messages;
@@ -667,10 +827,21 @@ class _$LoadedImpl implements _Loaded {
   @override
   @JsonKey()
   final bool isTyping;
+  @override
+  @JsonKey()
+  final bool isListening;
+  @override
+  @JsonKey()
+  final bool isSpeaking;
+  @override
+  @JsonKey()
+  final String recognizedText;
+  @override
+  final String? speakingMessageId;
 
   @override
   String toString() {
-    return 'ChatState.loaded(messages: $messages, isTyping: $isTyping)';
+    return 'ChatState.loaded(messages: $messages, isTyping: $isTyping, isListening: $isListening, isSpeaking: $isSpeaking, recognizedText: $recognizedText, speakingMessageId: $speakingMessageId)';
   }
 
   @override
@@ -680,12 +851,26 @@ class _$LoadedImpl implements _Loaded {
             other is _$LoadedImpl &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
             (identical(other.isTyping, isTyping) ||
-                other.isTyping == isTyping));
+                other.isTyping == isTyping) &&
+            (identical(other.isListening, isListening) ||
+                other.isListening == isListening) &&
+            (identical(other.isSpeaking, isSpeaking) ||
+                other.isSpeaking == isSpeaking) &&
+            (identical(other.recognizedText, recognizedText) ||
+                other.recognizedText == recognizedText) &&
+            (identical(other.speakingMessageId, speakingMessageId) ||
+                other.speakingMessageId == speakingMessageId));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_messages), isTyping);
+      runtimeType,
+      const DeepCollectionEquality().hash(_messages),
+      isTyping,
+      isListening,
+      isSpeaking,
+      recognizedText,
+      speakingMessageId);
 
   @JsonKey(ignore: true)
   @override
@@ -698,10 +883,18 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ChatMessage> messages, bool isTyping) loaded,
+    required TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(messages, isTyping);
+    return loaded(messages, isTyping, isListening, isSpeaking, recognizedText,
+        speakingMessageId);
   }
 
   @override
@@ -709,10 +902,18 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult? Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(messages, isTyping);
+    return loaded?.call(messages, isTyping, isListening, isSpeaking,
+        recognizedText, speakingMessageId);
   }
 
   @override
@@ -720,12 +921,20 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(messages, isTyping);
+      return loaded(messages, isTyping, isListening, isSpeaking, recognizedText,
+          speakingMessageId);
     }
     return orElse();
   }
@@ -771,10 +980,18 @@ class _$LoadedImpl implements _Loaded {
 abstract class _Loaded implements ChatState {
   const factory _Loaded(
       {required final List<ChatMessage> messages,
-      final bool isTyping}) = _$LoadedImpl;
+      final bool isTyping,
+      final bool isListening,
+      final bool isSpeaking,
+      final String recognizedText,
+      final String? speakingMessageId}) = _$LoadedImpl;
 
   List<ChatMessage> get messages;
   bool get isTyping;
+  bool get isListening;
+  bool get isSpeaking;
+  String get recognizedText;
+  String? get speakingMessageId;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -846,7 +1063,14 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<ChatMessage> messages, bool isTyping) loaded,
+    required TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -857,7 +1081,14 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult? Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -868,7 +1099,14 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<ChatMessage> messages, bool isTyping)? loaded,
+    TResult Function(
+            List<ChatMessage> messages,
+            bool isTyping,
+            bool isListening,
+            bool isSpeaking,
+            String recognizedText,
+            String? speakingMessageId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

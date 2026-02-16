@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,7 +12,18 @@ import 'package:youwu/features/chat/view/widgets/item_form_dialog.dart';
 import 'package:youwu/features/chat/view/widgets/item_list_tile.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  final String? imagePath;
+  final String? scanResult;
+  final String? scanType;
+  final String? initialMessage;
+
+  const ChatPage({
+    super.key,
+    this.imagePath,
+    this.scanResult,
+    this.scanType,
+    this.initialMessage,
+  });
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -20,6 +32,23 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.imagePath != null) {
+        context.read<ChatCubit>().add(SendImage(imagePath: widget.imagePath!));
+      } else if (widget.scanResult != null) {
+        context.read<ChatCubit>().add(SendScanResult(
+          value: widget.scanResult!,
+          type: widget.scanType ?? 'barcode',
+        ));
+      } else if (widget.initialMessage != null) {
+        context.read<ChatCubit>().add(SendMessage(content: widget.initialMessage!));
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -139,14 +168,15 @@ class _ChatPageState extends State<ChatPage> {
       body: BlocBuilder<ChatCubit, ChatState>(
         builder: (context, state) {
           return state.maybeWhen(
-            loaded: (messages, isTyping) => Column(
+            loaded: (messages, isTyping, isListening, isSpeaking, recognizedText, speakingMessageId) => Column(
               children: [
                 Expanded(
-                  child: _buildMessageList(messages, colors),
+                  child: _buildMessageList(messages, colors, speakingMessageId),
                 ),
+                if (isListening) _buildListeningIndicator(colors, recognizedText),
                 if (isTyping) _buildTypingIndicator(colors),
                 _buildQuickActions(colors),
-                _buildInputArea(colors, safePadding),
+                _buildInputArea(colors, safePadding, isListening),
               ],
             ),
             orElse: () => const Center(child: CircularProgressIndicator()),
@@ -156,7 +186,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildMessageList(List<ChatMessage> messages, AppColorsData colors) {
+  Widget _buildMessageList(List<ChatMessage> messages, AppColorsData colors, String? speakingMessageId) {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     
     return ListView.builder(
@@ -168,7 +198,21 @@ class _ChatPageState extends State<ChatPage> {
         
         return Column(
           children: [
-            ChatMessageWidget(message: message),
+            if (message.type == MessageType.image && message.imagePath != null)
+              _buildImageMessage(message, colors)
+            else if (message.type == MessageType.scanResult && message.scanValue != null)
+              _buildScanResultMessage(message, colors)
+            else
+              ChatMessageWidget(
+                message: message,
+                isSpeaking: speakingMessageId == message.id,
+                onSpeak: () {
+                  context.read<ChatCubit>().add(SpeakMessage(message: message.content));
+                },
+                onStopSpeaking: () {
+                  context.read<ChatCubit>().add(const StopSpeaking());
+                },
+              ),
             if (message.type == MessageType.itemList && message.items.isNotEmpty)
               _buildItemList(message.items, colors),
             if (message.type == MessageType.itemDetail && message.selectedItem != null)
@@ -178,6 +222,98 @@ class _ChatPageState extends State<ChatPage> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildImageMessage(ChatMessage message, AppColorsData colors) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: Row(
+        mainAxisAlignment: message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          Container(
+            constraints: BoxConstraints(maxWidth: 200.w),
+            decoration: BoxDecoration(
+              color: message.isUser ? colors.primary.withValues(alpha: 0.1) : colors.card,
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(
+                color: message.isUser ? colors.primary.withValues(alpha: 0.3) : colors.border.withValues(alpha: 0.3),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15.r),
+              child: Image.file(
+                File(message.imagePath!),
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 150.w,
+                    height: 100.h,
+                    color: colors.border,
+                    child: Icon(Icons.broken_image_rounded, color: colors.textTertiary),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScanResultMessage(ChatMessage message, AppColorsData colors) {
+    final typeText = message.scanType == 'qr' ? '二维码' : '商品条形码';
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: colors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      message.scanType == 'qr' ? Icons.qr_code_rounded : Icons.barcode_reader,
+                      size: 16.sp,
+                      color: colors.primary,
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      typeText,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: colors.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 6.h),
+                Container(
+                  constraints: BoxConstraints(maxWidth: 200.w),
+                  child: Text(
+                    message.scanValue!,
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -352,6 +488,42 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  Widget _buildListeningIndicator(AppColorsData colors, String recognizedText) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+            decoration: BoxDecoration(
+              color: colors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.mic_rounded,
+                  size: 16.sp,
+                  color: colors.primary,
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  recognizedText.isEmpty ? '正在聆听...' : recognizedText,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: colors.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildQuickActions(AppColorsData colors) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -405,7 +577,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildInputArea(AppColorsData colors, EdgeInsets safePadding) {
+  Widget _buildInputArea(AppColorsData colors, EdgeInsets safePadding, bool isListening) {
     return Container(
       padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, safePadding.bottom + 8.h),
       decoration: BoxDecoration(
@@ -420,6 +592,32 @@ class _ChatPageState extends State<ChatPage> {
       ),
       child: Row(
         children: [
+          GestureDetector(
+            onTap: () {
+              if (isListening) {
+                context.read<ChatCubit>().add(const StopSpeechRecognition());
+              } else {
+                context.read<ChatCubit>().add(const StartSpeechRecognition());
+              }
+            },
+            child: Container(
+              width: 44.w,
+              height: 44.w,
+              decoration: BoxDecoration(
+                color: isListening ? colors.error.withValues(alpha: 0.1) : colors.surface,
+                borderRadius: BorderRadius.circular(22.r),
+                border: Border.all(
+                  color: isListening ? colors.error : colors.border.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Icon(
+                isListening ? Icons.stop_rounded : Icons.mic_rounded,
+                size: 22.sp,
+                color: isListening ? colors.error : colors.textSecondary,
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w),

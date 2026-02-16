@@ -30,6 +30,9 @@ mixin _$MapEvent {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -46,6 +49,8 @@ mixin _$MapEvent {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -62,6 +67,8 @@ mixin _$MapEvent {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -78,6 +85,8 @@ mixin _$MapEvent {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -93,6 +102,8 @@ mixin _$MapEvent {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -108,6 +119,8 @@ mixin _$MapEvent {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -180,6 +193,9 @@ class _$LoadMapImpl implements LoadMap {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return loadMap();
   }
@@ -199,6 +215,8 @@ class _$LoadMapImpl implements LoadMap {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return loadMap?.call();
   }
@@ -218,6 +236,8 @@ class _$LoadMapImpl implements LoadMap {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (loadMap != null) {
@@ -240,6 +260,8 @@ class _$LoadMapImpl implements LoadMap {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return loadMap(this);
   }
@@ -258,6 +280,8 @@ class _$LoadMapImpl implements LoadMap {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return loadMap?.call(this);
   }
@@ -276,6 +300,8 @@ class _$LoadMapImpl implements LoadMap {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (loadMap != null) {
@@ -365,6 +391,9 @@ class _$SelectRoomImpl implements SelectRoom {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return selectRoom(roomId);
   }
@@ -384,6 +413,8 @@ class _$SelectRoomImpl implements SelectRoom {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return selectRoom?.call(roomId);
   }
@@ -403,6 +434,8 @@ class _$SelectRoomImpl implements SelectRoom {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (selectRoom != null) {
@@ -425,6 +458,8 @@ class _$SelectRoomImpl implements SelectRoom {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return selectRoom(this);
   }
@@ -443,6 +478,8 @@ class _$SelectRoomImpl implements SelectRoom {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return selectRoom?.call(this);
   }
@@ -461,6 +498,8 @@ class _$SelectRoomImpl implements SelectRoom {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (selectRoom != null) {
@@ -529,6 +568,9 @@ class _$DeselectRoomImpl implements DeselectRoom {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return deselectRoom();
   }
@@ -548,6 +590,8 @@ class _$DeselectRoomImpl implements DeselectRoom {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return deselectRoom?.call();
   }
@@ -567,6 +611,8 @@ class _$DeselectRoomImpl implements DeselectRoom {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (deselectRoom != null) {
@@ -589,6 +635,8 @@ class _$DeselectRoomImpl implements DeselectRoom {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return deselectRoom(this);
   }
@@ -607,6 +655,8 @@ class _$DeselectRoomImpl implements DeselectRoom {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return deselectRoom?.call(this);
   }
@@ -625,6 +675,8 @@ class _$DeselectRoomImpl implements DeselectRoom {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (deselectRoom != null) {
@@ -688,6 +740,9 @@ class _$ToggleOverlayImpl implements ToggleOverlay {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return toggleOverlay();
   }
@@ -707,6 +762,8 @@ class _$ToggleOverlayImpl implements ToggleOverlay {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return toggleOverlay?.call();
   }
@@ -726,6 +783,8 @@ class _$ToggleOverlayImpl implements ToggleOverlay {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (toggleOverlay != null) {
@@ -748,6 +807,8 @@ class _$ToggleOverlayImpl implements ToggleOverlay {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return toggleOverlay(this);
   }
@@ -766,6 +827,8 @@ class _$ToggleOverlayImpl implements ToggleOverlay {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return toggleOverlay?.call(this);
   }
@@ -784,6 +847,8 @@ class _$ToggleOverlayImpl implements ToggleOverlay {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (toggleOverlay != null) {
@@ -873,6 +938,9 @@ class _$SearchImpl implements Search {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return search(query);
   }
@@ -892,6 +960,8 @@ class _$SearchImpl implements Search {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return search?.call(query);
   }
@@ -911,6 +981,8 @@ class _$SearchImpl implements Search {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -933,6 +1005,8 @@ class _$SearchImpl implements Search {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return search(this);
   }
@@ -951,6 +1025,8 @@ class _$SearchImpl implements Search {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return search?.call(this);
   }
@@ -969,6 +1045,8 @@ class _$SearchImpl implements Search {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (search != null) {
@@ -1037,6 +1115,9 @@ class _$ClearSearchImpl implements ClearSearch {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return clearSearch();
   }
@@ -1056,6 +1137,8 @@ class _$ClearSearchImpl implements ClearSearch {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return clearSearch?.call();
   }
@@ -1075,6 +1158,8 @@ class _$ClearSearchImpl implements ClearSearch {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (clearSearch != null) {
@@ -1097,6 +1182,8 @@ class _$ClearSearchImpl implements ClearSearch {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return clearSearch(this);
   }
@@ -1115,6 +1202,8 @@ class _$ClearSearchImpl implements ClearSearch {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return clearSearch?.call(this);
   }
@@ -1133,6 +1222,8 @@ class _$ClearSearchImpl implements ClearSearch {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (clearSearch != null) {
@@ -1240,6 +1331,9 @@ class _$UpdateTransformImpl implements UpdateTransform {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return updateTransform(scale, offsetX, offsetY);
   }
@@ -1259,6 +1353,8 @@ class _$UpdateTransformImpl implements UpdateTransform {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return updateTransform?.call(scale, offsetX, offsetY);
   }
@@ -1278,6 +1374,8 @@ class _$UpdateTransformImpl implements UpdateTransform {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (updateTransform != null) {
@@ -1300,6 +1398,8 @@ class _$UpdateTransformImpl implements UpdateTransform {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return updateTransform(this);
   }
@@ -1318,6 +1418,8 @@ class _$UpdateTransformImpl implements UpdateTransform {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return updateTransform?.call(this);
   }
@@ -1336,6 +1438,8 @@ class _$UpdateTransformImpl implements UpdateTransform {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (updateTransform != null) {
@@ -1409,6 +1513,9 @@ class _$DoubleTapEmptyImpl implements DoubleTapEmpty {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return doubleTapEmpty();
   }
@@ -1428,6 +1535,8 @@ class _$DoubleTapEmptyImpl implements DoubleTapEmpty {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return doubleTapEmpty?.call();
   }
@@ -1447,6 +1556,8 @@ class _$DoubleTapEmptyImpl implements DoubleTapEmpty {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (doubleTapEmpty != null) {
@@ -1469,6 +1580,8 @@ class _$DoubleTapEmptyImpl implements DoubleTapEmpty {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return doubleTapEmpty(this);
   }
@@ -1487,6 +1600,8 @@ class _$DoubleTapEmptyImpl implements DoubleTapEmpty {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return doubleTapEmpty?.call(this);
   }
@@ -1505,6 +1620,8 @@ class _$DoubleTapEmptyImpl implements DoubleTapEmpty {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (doubleTapEmpty != null) {
@@ -1604,6 +1721,9 @@ class _$AddRoomImpl implements AddRoom {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return addRoom(room);
   }
@@ -1623,6 +1743,8 @@ class _$AddRoomImpl implements AddRoom {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return addRoom?.call(room);
   }
@@ -1642,6 +1764,8 @@ class _$AddRoomImpl implements AddRoom {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (addRoom != null) {
@@ -1664,6 +1788,8 @@ class _$AddRoomImpl implements AddRoom {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return addRoom(this);
   }
@@ -1682,6 +1808,8 @@ class _$AddRoomImpl implements AddRoom {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return addRoom?.call(this);
   }
@@ -1700,6 +1828,8 @@ class _$AddRoomImpl implements AddRoom {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (addRoom != null) {
@@ -1804,6 +1934,9 @@ class _$UpdateRoomImpl implements UpdateRoom {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return updateRoom(room);
   }
@@ -1823,6 +1956,8 @@ class _$UpdateRoomImpl implements UpdateRoom {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return updateRoom?.call(room);
   }
@@ -1842,6 +1977,8 @@ class _$UpdateRoomImpl implements UpdateRoom {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (updateRoom != null) {
@@ -1864,6 +2001,8 @@ class _$UpdateRoomImpl implements UpdateRoom {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return updateRoom(this);
   }
@@ -1882,6 +2021,8 @@ class _$UpdateRoomImpl implements UpdateRoom {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return updateRoom?.call(this);
   }
@@ -1900,6 +2041,8 @@ class _$UpdateRoomImpl implements UpdateRoom {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (updateRoom != null) {
@@ -1994,6 +2137,9 @@ class _$DeleteRoomImpl implements DeleteRoom {
     required TResult Function(RoomEntity room) addRoom,
     required TResult Function(RoomEntity room) updateRoom,
     required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
   }) {
     return deleteRoom(roomId);
   }
@@ -2013,6 +2159,8 @@ class _$DeleteRoomImpl implements DeleteRoom {
     TResult? Function(RoomEntity room)? addRoom,
     TResult? Function(RoomEntity room)? updateRoom,
     TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
   }) {
     return deleteRoom?.call(roomId);
   }
@@ -2032,6 +2180,8 @@ class _$DeleteRoomImpl implements DeleteRoom {
     TResult Function(RoomEntity room)? addRoom,
     TResult Function(RoomEntity room)? updateRoom,
     TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
     required TResult orElse(),
   }) {
     if (deleteRoom != null) {
@@ -2054,6 +2204,8 @@ class _$DeleteRoomImpl implements DeleteRoom {
     required TResult Function(AddRoom value) addRoom,
     required TResult Function(UpdateRoom value) updateRoom,
     required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
   }) {
     return deleteRoom(this);
   }
@@ -2072,6 +2224,8 @@ class _$DeleteRoomImpl implements DeleteRoom {
     TResult? Function(AddRoom value)? addRoom,
     TResult? Function(UpdateRoom value)? updateRoom,
     TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
   }) {
     return deleteRoom?.call(this);
   }
@@ -2090,6 +2244,8 @@ class _$DeleteRoomImpl implements DeleteRoom {
     TResult Function(AddRoom value)? addRoom,
     TResult Function(UpdateRoom value)? updateRoom,
     TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
     required TResult orElse(),
   }) {
     if (deleteRoom != null) {
@@ -2106,4 +2262,399 @@ abstract class DeleteRoom implements MapEvent {
   @JsonKey(ignore: true)
   _$$DeleteRoomImplCopyWith<_$DeleteRoomImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UpdateRoomPointsImplCopyWith<$Res> {
+  factory _$$UpdateRoomPointsImplCopyWith(_$UpdateRoomPointsImpl value,
+          $Res Function(_$UpdateRoomPointsImpl) then) =
+      __$$UpdateRoomPointsImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String roomId, List<Offset> points});
+}
+
+/// @nodoc
+class __$$UpdateRoomPointsImplCopyWithImpl<$Res>
+    extends _$MapEventCopyWithImpl<$Res, _$UpdateRoomPointsImpl>
+    implements _$$UpdateRoomPointsImplCopyWith<$Res> {
+  __$$UpdateRoomPointsImplCopyWithImpl(_$UpdateRoomPointsImpl _value,
+      $Res Function(_$UpdateRoomPointsImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? roomId = null,
+    Object? points = null,
+  }) {
+    return _then(_$UpdateRoomPointsImpl(
+      roomId: null == roomId
+          ? _value.roomId
+          : roomId // ignore: cast_nullable_to_non_nullable
+              as String,
+      points: null == points
+          ? _value._points
+          : points // ignore: cast_nullable_to_non_nullable
+              as List<Offset>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UpdateRoomPointsImpl implements UpdateRoomPoints {
+  const _$UpdateRoomPointsImpl(
+      {required this.roomId, required final List<Offset> points})
+      : _points = points;
+
+  @override
+  final String roomId;
+  final List<Offset> _points;
+  @override
+  List<Offset> get points {
+    if (_points is EqualUnmodifiableListView) return _points;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_points);
+  }
+
+  @override
+  String toString() {
+    return 'MapEvent.updateRoomPoints(roomId: $roomId, points: $points)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateRoomPointsImpl &&
+            (identical(other.roomId, roomId) || other.roomId == roomId) &&
+            const DeepCollectionEquality().equals(other._points, _points));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, roomId, const DeepCollectionEquality().hash(_points));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateRoomPointsImplCopyWith<_$UpdateRoomPointsImpl> get copyWith =>
+      __$$UpdateRoomPointsImplCopyWithImpl<_$UpdateRoomPointsImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadMap,
+    required TResult Function(String roomId) selectRoom,
+    required TResult Function() deselectRoom,
+    required TResult Function() toggleOverlay,
+    required TResult Function(String query) search,
+    required TResult Function() clearSearch,
+    required TResult Function(double scale, double offsetX, double offsetY)
+        updateTransform,
+    required TResult Function() doubleTapEmpty,
+    required TResult Function(RoomEntity room) addRoom,
+    required TResult Function(RoomEntity room) updateRoom,
+    required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
+  }) {
+    return updateRoomPoints(roomId, points);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadMap,
+    TResult? Function(String roomId)? selectRoom,
+    TResult? Function()? deselectRoom,
+    TResult? Function()? toggleOverlay,
+    TResult? Function(String query)? search,
+    TResult? Function()? clearSearch,
+    TResult? Function(double scale, double offsetX, double offsetY)?
+        updateTransform,
+    TResult? Function()? doubleTapEmpty,
+    TResult? Function(RoomEntity room)? addRoom,
+    TResult? Function(RoomEntity room)? updateRoom,
+    TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
+  }) {
+    return updateRoomPoints?.call(roomId, points);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadMap,
+    TResult Function(String roomId)? selectRoom,
+    TResult Function()? deselectRoom,
+    TResult Function()? toggleOverlay,
+    TResult Function(String query)? search,
+    TResult Function()? clearSearch,
+    TResult Function(double scale, double offsetX, double offsetY)?
+        updateTransform,
+    TResult Function()? doubleTapEmpty,
+    TResult Function(RoomEntity room)? addRoom,
+    TResult Function(RoomEntity room)? updateRoom,
+    TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
+    required TResult orElse(),
+  }) {
+    if (updateRoomPoints != null) {
+      return updateRoomPoints(roomId, points);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LoadMap value) loadMap,
+    required TResult Function(SelectRoom value) selectRoom,
+    required TResult Function(DeselectRoom value) deselectRoom,
+    required TResult Function(ToggleOverlay value) toggleOverlay,
+    required TResult Function(Search value) search,
+    required TResult Function(ClearSearch value) clearSearch,
+    required TResult Function(UpdateTransform value) updateTransform,
+    required TResult Function(DoubleTapEmpty value) doubleTapEmpty,
+    required TResult Function(AddRoom value) addRoom,
+    required TResult Function(UpdateRoom value) updateRoom,
+    required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
+  }) {
+    return updateRoomPoints(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LoadMap value)? loadMap,
+    TResult? Function(SelectRoom value)? selectRoom,
+    TResult? Function(DeselectRoom value)? deselectRoom,
+    TResult? Function(ToggleOverlay value)? toggleOverlay,
+    TResult? Function(Search value)? search,
+    TResult? Function(ClearSearch value)? clearSearch,
+    TResult? Function(UpdateTransform value)? updateTransform,
+    TResult? Function(DoubleTapEmpty value)? doubleTapEmpty,
+    TResult? Function(AddRoom value)? addRoom,
+    TResult? Function(UpdateRoom value)? updateRoom,
+    TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
+  }) {
+    return updateRoomPoints?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LoadMap value)? loadMap,
+    TResult Function(SelectRoom value)? selectRoom,
+    TResult Function(DeselectRoom value)? deselectRoom,
+    TResult Function(ToggleOverlay value)? toggleOverlay,
+    TResult Function(Search value)? search,
+    TResult Function(ClearSearch value)? clearSearch,
+    TResult Function(UpdateTransform value)? updateTransform,
+    TResult Function(DoubleTapEmpty value)? doubleTapEmpty,
+    TResult Function(AddRoom value)? addRoom,
+    TResult Function(UpdateRoom value)? updateRoom,
+    TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
+    required TResult orElse(),
+  }) {
+    if (updateRoomPoints != null) {
+      return updateRoomPoints(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UpdateRoomPoints implements MapEvent {
+  const factory UpdateRoomPoints(
+      {required final String roomId,
+      required final List<Offset> points}) = _$UpdateRoomPointsImpl;
+
+  String get roomId;
+  List<Offset> get points;
+  @JsonKey(ignore: true)
+  _$$UpdateRoomPointsImplCopyWith<_$UpdateRoomPointsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ToggleEditModeImplCopyWith<$Res> {
+  factory _$$ToggleEditModeImplCopyWith(_$ToggleEditModeImpl value,
+          $Res Function(_$ToggleEditModeImpl) then) =
+      __$$ToggleEditModeImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$ToggleEditModeImplCopyWithImpl<$Res>
+    extends _$MapEventCopyWithImpl<$Res, _$ToggleEditModeImpl>
+    implements _$$ToggleEditModeImplCopyWith<$Res> {
+  __$$ToggleEditModeImplCopyWithImpl(
+      _$ToggleEditModeImpl _value, $Res Function(_$ToggleEditModeImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$ToggleEditModeImpl implements ToggleEditMode {
+  const _$ToggleEditModeImpl();
+
+  @override
+  String toString() {
+    return 'MapEvent.toggleEditMode()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$ToggleEditModeImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loadMap,
+    required TResult Function(String roomId) selectRoom,
+    required TResult Function() deselectRoom,
+    required TResult Function() toggleOverlay,
+    required TResult Function(String query) search,
+    required TResult Function() clearSearch,
+    required TResult Function(double scale, double offsetX, double offsetY)
+        updateTransform,
+    required TResult Function() doubleTapEmpty,
+    required TResult Function(RoomEntity room) addRoom,
+    required TResult Function(RoomEntity room) updateRoom,
+    required TResult Function(String roomId) deleteRoom,
+    required TResult Function(String roomId, List<Offset> points)
+        updateRoomPoints,
+    required TResult Function() toggleEditMode,
+  }) {
+    return toggleEditMode();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loadMap,
+    TResult? Function(String roomId)? selectRoom,
+    TResult? Function()? deselectRoom,
+    TResult? Function()? toggleOverlay,
+    TResult? Function(String query)? search,
+    TResult? Function()? clearSearch,
+    TResult? Function(double scale, double offsetX, double offsetY)?
+        updateTransform,
+    TResult? Function()? doubleTapEmpty,
+    TResult? Function(RoomEntity room)? addRoom,
+    TResult? Function(RoomEntity room)? updateRoom,
+    TResult? Function(String roomId)? deleteRoom,
+    TResult? Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult? Function()? toggleEditMode,
+  }) {
+    return toggleEditMode?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loadMap,
+    TResult Function(String roomId)? selectRoom,
+    TResult Function()? deselectRoom,
+    TResult Function()? toggleOverlay,
+    TResult Function(String query)? search,
+    TResult Function()? clearSearch,
+    TResult Function(double scale, double offsetX, double offsetY)?
+        updateTransform,
+    TResult Function()? doubleTapEmpty,
+    TResult Function(RoomEntity room)? addRoom,
+    TResult Function(RoomEntity room)? updateRoom,
+    TResult Function(String roomId)? deleteRoom,
+    TResult Function(String roomId, List<Offset> points)? updateRoomPoints,
+    TResult Function()? toggleEditMode,
+    required TResult orElse(),
+  }) {
+    if (toggleEditMode != null) {
+      return toggleEditMode();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LoadMap value) loadMap,
+    required TResult Function(SelectRoom value) selectRoom,
+    required TResult Function(DeselectRoom value) deselectRoom,
+    required TResult Function(ToggleOverlay value) toggleOverlay,
+    required TResult Function(Search value) search,
+    required TResult Function(ClearSearch value) clearSearch,
+    required TResult Function(UpdateTransform value) updateTransform,
+    required TResult Function(DoubleTapEmpty value) doubleTapEmpty,
+    required TResult Function(AddRoom value) addRoom,
+    required TResult Function(UpdateRoom value) updateRoom,
+    required TResult Function(DeleteRoom value) deleteRoom,
+    required TResult Function(UpdateRoomPoints value) updateRoomPoints,
+    required TResult Function(ToggleEditMode value) toggleEditMode,
+  }) {
+    return toggleEditMode(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LoadMap value)? loadMap,
+    TResult? Function(SelectRoom value)? selectRoom,
+    TResult? Function(DeselectRoom value)? deselectRoom,
+    TResult? Function(ToggleOverlay value)? toggleOverlay,
+    TResult? Function(Search value)? search,
+    TResult? Function(ClearSearch value)? clearSearch,
+    TResult? Function(UpdateTransform value)? updateTransform,
+    TResult? Function(DoubleTapEmpty value)? doubleTapEmpty,
+    TResult? Function(AddRoom value)? addRoom,
+    TResult? Function(UpdateRoom value)? updateRoom,
+    TResult? Function(DeleteRoom value)? deleteRoom,
+    TResult? Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult? Function(ToggleEditMode value)? toggleEditMode,
+  }) {
+    return toggleEditMode?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LoadMap value)? loadMap,
+    TResult Function(SelectRoom value)? selectRoom,
+    TResult Function(DeselectRoom value)? deselectRoom,
+    TResult Function(ToggleOverlay value)? toggleOverlay,
+    TResult Function(Search value)? search,
+    TResult Function(ClearSearch value)? clearSearch,
+    TResult Function(UpdateTransform value)? updateTransform,
+    TResult Function(DoubleTapEmpty value)? doubleTapEmpty,
+    TResult Function(AddRoom value)? addRoom,
+    TResult Function(UpdateRoom value)? updateRoom,
+    TResult Function(DeleteRoom value)? deleteRoom,
+    TResult Function(UpdateRoomPoints value)? updateRoomPoints,
+    TResult Function(ToggleEditMode value)? toggleEditMode,
+    required TResult orElse(),
+  }) {
+    if (toggleEditMode != null) {
+      return toggleEditMode(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ToggleEditMode implements MapEvent {
+  const factory ToggleEditMode() = _$ToggleEditModeImpl;
 }

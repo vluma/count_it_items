@@ -5,6 +5,8 @@ part 'chat_state.freezed.dart';
 
 enum MessageType {
   text,
+  image,
+  scanResult,
   itemList,
   itemDetail,
   itemForm,
@@ -22,6 +24,9 @@ class ChatMessage with _$ChatMessage {
     @Default([]) List<ItemEntity> items,
     ItemEntity? selectedItem,
     @Default('') String actionType,
+    String? imagePath,
+    String? scanValue,
+    String? scanType,
   }) = _ChatMessage;
 }
 
@@ -34,6 +39,10 @@ class ChatState with _$ChatState {
   const factory ChatState.loaded({
     required List<ChatMessage> messages,
     @Default(false) bool isTyping,
+    @Default(false) bool isListening,
+    @Default(false) bool isSpeaking,
+    @Default('') String recognizedText,
+    String? speakingMessageId,
   }) = _Loaded;
   
   const factory ChatState.error({

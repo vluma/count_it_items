@@ -21,7 +21,11 @@ mixin _$MapState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            SpaceEntity space, bool showOverlay, bool isSearching)
+            SpaceEntity space,
+            bool showOverlay,
+            bool isSearching,
+            List<ItemEntity> expiredItems,
+            List<ItemEntity> expiringItems)
         success,
     required TResult Function(String message) error,
     required TResult Function(RoomEntity room) roomSelected,
@@ -32,7 +36,8 @@ mixin _$MapState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult? Function(String message)? error,
     TResult? Function(RoomEntity room)? roomSelected,
@@ -43,7 +48,8 @@ mixin _$MapState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult Function(String message)? error,
     TResult Function(RoomEntity room)? roomSelected,
@@ -142,7 +148,11 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            SpaceEntity space, bool showOverlay, bool isSearching)
+            SpaceEntity space,
+            bool showOverlay,
+            bool isSearching,
+            List<ItemEntity> expiredItems,
+            List<ItemEntity> expiringItems)
         success,
     required TResult Function(String message) error,
     required TResult Function(RoomEntity room) roomSelected,
@@ -156,7 +166,8 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult? Function(String message)? error,
     TResult? Function(RoomEntity room)? roomSelected,
@@ -170,7 +181,8 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult Function(String message)? error,
     TResult Function(RoomEntity room)? roomSelected,
@@ -272,7 +284,11 @@ class _$LoadingImpl implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            SpaceEntity space, bool showOverlay, bool isSearching)
+            SpaceEntity space,
+            bool showOverlay,
+            bool isSearching,
+            List<ItemEntity> expiredItems,
+            List<ItemEntity> expiringItems)
         success,
     required TResult Function(String message) error,
     required TResult Function(RoomEntity room) roomSelected,
@@ -286,7 +302,8 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult? Function(String message)? error,
     TResult? Function(RoomEntity room)? roomSelected,
@@ -300,7 +317,8 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult Function(String message)? error,
     TResult Function(RoomEntity room)? roomSelected,
@@ -367,7 +385,12 @@ abstract class _$$SuccessImplCopyWith<$Res> {
           _$SuccessImpl value, $Res Function(_$SuccessImpl) then) =
       __$$SuccessImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({SpaceEntity space, bool showOverlay, bool isSearching});
+  $Res call(
+      {SpaceEntity space,
+      bool showOverlay,
+      bool isSearching,
+      List<ItemEntity> expiredItems,
+      List<ItemEntity> expiringItems});
 
   $SpaceEntityCopyWith<$Res> get space;
 }
@@ -386,6 +409,8 @@ class __$$SuccessImplCopyWithImpl<$Res>
     Object? space = null,
     Object? showOverlay = null,
     Object? isSearching = null,
+    Object? expiredItems = null,
+    Object? expiringItems = null,
   }) {
     return _then(_$SuccessImpl(
       space: null == space
@@ -400,6 +425,14 @@ class __$$SuccessImplCopyWithImpl<$Res>
           ? _value.isSearching
           : isSearching // ignore: cast_nullable_to_non_nullable
               as bool,
+      expiredItems: null == expiredItems
+          ? _value._expiredItems
+          : expiredItems // ignore: cast_nullable_to_non_nullable
+              as List<ItemEntity>,
+      expiringItems: null == expiringItems
+          ? _value._expiringItems
+          : expiringItems // ignore: cast_nullable_to_non_nullable
+              as List<ItemEntity>,
     ));
   }
 
@@ -418,7 +451,11 @@ class _$SuccessImpl implements _Success {
   const _$SuccessImpl(
       {required this.space,
       required this.showOverlay,
-      required this.isSearching});
+      required this.isSearching,
+      final List<ItemEntity> expiredItems = const [],
+      final List<ItemEntity> expiringItems = const []})
+      : _expiredItems = expiredItems,
+        _expiringItems = expiringItems;
 
   @override
   final SpaceEntity space;
@@ -426,10 +463,27 @@ class _$SuccessImpl implements _Success {
   final bool showOverlay;
   @override
   final bool isSearching;
+  final List<ItemEntity> _expiredItems;
+  @override
+  @JsonKey()
+  List<ItemEntity> get expiredItems {
+    if (_expiredItems is EqualUnmodifiableListView) return _expiredItems;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_expiredItems);
+  }
+
+  final List<ItemEntity> _expiringItems;
+  @override
+  @JsonKey()
+  List<ItemEntity> get expiringItems {
+    if (_expiringItems is EqualUnmodifiableListView) return _expiringItems;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_expiringItems);
+  }
 
   @override
   String toString() {
-    return 'MapState.success(space: $space, showOverlay: $showOverlay, isSearching: $isSearching)';
+    return 'MapState.success(space: $space, showOverlay: $showOverlay, isSearching: $isSearching, expiredItems: $expiredItems, expiringItems: $expiringItems)';
   }
 
   @override
@@ -441,11 +495,21 @@ class _$SuccessImpl implements _Success {
             (identical(other.showOverlay, showOverlay) ||
                 other.showOverlay == showOverlay) &&
             (identical(other.isSearching, isSearching) ||
-                other.isSearching == isSearching));
+                other.isSearching == isSearching) &&
+            const DeepCollectionEquality()
+                .equals(other._expiredItems, _expiredItems) &&
+            const DeepCollectionEquality()
+                .equals(other._expiringItems, _expiringItems));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, space, showOverlay, isSearching);
+  int get hashCode => Object.hash(
+      runtimeType,
+      space,
+      showOverlay,
+      isSearching,
+      const DeepCollectionEquality().hash(_expiredItems),
+      const DeepCollectionEquality().hash(_expiringItems));
 
   @JsonKey(ignore: true)
   @override
@@ -459,13 +523,18 @@ class _$SuccessImpl implements _Success {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            SpaceEntity space, bool showOverlay, bool isSearching)
+            SpaceEntity space,
+            bool showOverlay,
+            bool isSearching,
+            List<ItemEntity> expiredItems,
+            List<ItemEntity> expiringItems)
         success,
     required TResult Function(String message) error,
     required TResult Function(RoomEntity room) roomSelected,
     required TResult Function(List<RoomEntity> results) searchResult,
   }) {
-    return success(space, showOverlay, isSearching);
+    return success(
+        space, showOverlay, isSearching, expiredItems, expiringItems);
   }
 
   @override
@@ -473,13 +542,15 @@ class _$SuccessImpl implements _Success {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult? Function(String message)? error,
     TResult? Function(RoomEntity room)? roomSelected,
     TResult? Function(List<RoomEntity> results)? searchResult,
   }) {
-    return success?.call(space, showOverlay, isSearching);
+    return success?.call(
+        space, showOverlay, isSearching, expiredItems, expiringItems);
   }
 
   @override
@@ -487,7 +558,8 @@ class _$SuccessImpl implements _Success {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult Function(String message)? error,
     TResult Function(RoomEntity room)? roomSelected,
@@ -495,7 +567,8 @@ class _$SuccessImpl implements _Success {
     required TResult orElse(),
   }) {
     if (success != null) {
-      return success(space, showOverlay, isSearching);
+      return success(
+          space, showOverlay, isSearching, expiredItems, expiringItems);
     }
     return orElse();
   }
@@ -548,11 +621,15 @@ abstract class _Success implements MapState {
   const factory _Success(
       {required final SpaceEntity space,
       required final bool showOverlay,
-      required final bool isSearching}) = _$SuccessImpl;
+      required final bool isSearching,
+      final List<ItemEntity> expiredItems,
+      final List<ItemEntity> expiringItems}) = _$SuccessImpl;
 
   SpaceEntity get space;
   bool get showOverlay;
   bool get isSearching;
+  List<ItemEntity> get expiredItems;
+  List<ItemEntity> get expiringItems;
   @JsonKey(ignore: true)
   _$$SuccessImplCopyWith<_$SuccessImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -625,7 +702,11 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            SpaceEntity space, bool showOverlay, bool isSearching)
+            SpaceEntity space,
+            bool showOverlay,
+            bool isSearching,
+            List<ItemEntity> expiredItems,
+            List<ItemEntity> expiringItems)
         success,
     required TResult Function(String message) error,
     required TResult Function(RoomEntity room) roomSelected,
@@ -639,7 +720,8 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult? Function(String message)? error,
     TResult? Function(RoomEntity room)? roomSelected,
@@ -653,7 +735,8 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult Function(String message)? error,
     TResult Function(RoomEntity room)? roomSelected,
@@ -796,7 +879,11 @@ class _$RoomSelectedImpl implements _RoomSelected {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            SpaceEntity space, bool showOverlay, bool isSearching)
+            SpaceEntity space,
+            bool showOverlay,
+            bool isSearching,
+            List<ItemEntity> expiredItems,
+            List<ItemEntity> expiringItems)
         success,
     required TResult Function(String message) error,
     required TResult Function(RoomEntity room) roomSelected,
@@ -810,7 +897,8 @@ class _$RoomSelectedImpl implements _RoomSelected {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult? Function(String message)? error,
     TResult? Function(RoomEntity room)? roomSelected,
@@ -824,7 +912,8 @@ class _$RoomSelectedImpl implements _RoomSelected {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult Function(String message)? error,
     TResult Function(RoomEntity room)? roomSelected,
@@ -965,7 +1054,11 @@ class _$SearchResultImpl implements _SearchResult {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            SpaceEntity space, bool showOverlay, bool isSearching)
+            SpaceEntity space,
+            bool showOverlay,
+            bool isSearching,
+            List<ItemEntity> expiredItems,
+            List<ItemEntity> expiringItems)
         success,
     required TResult Function(String message) error,
     required TResult Function(RoomEntity room) roomSelected,
@@ -979,7 +1072,8 @@ class _$SearchResultImpl implements _SearchResult {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult? Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult? Function(String message)? error,
     TResult? Function(RoomEntity room)? roomSelected,
@@ -993,7 +1087,8 @@ class _$SearchResultImpl implements _SearchResult {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching)?
+    TResult Function(SpaceEntity space, bool showOverlay, bool isSearching,
+            List<ItemEntity> expiredItems, List<ItemEntity> expiringItems)?
         success,
     TResult Function(String message)? error,
     TResult Function(RoomEntity room)? roomSelected,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:youwu/domain/entities/room_entity.dart';
 import 'package:youwu/domain/entities/space_entity.dart';
 import 'package:youwu/domain/repositories/space_repository.dart';
@@ -170,5 +171,22 @@ class MockSpaceRepositoryImpl implements SpaceRepository {
       totalItems: _mockSpace.totalItems - roomToDelete.itemCount,
       lastUpdated: DateTime.now(),
     );
+  }
+  
+  @override
+  Future<RoomEntity> updateRoomPoints(String roomId, List<Offset> points) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    _mockSpace = _mockSpace.copyWith(
+      rooms: _mockSpace.rooms.map((r) {
+        if (r.id == roomId) {
+          return r.copyWith(points: points);
+        }
+        return r;
+      }).toList(),
+      lastUpdated: DateTime.now(),
+    );
+    
+    return _mockSpace.rooms.firstWhere((r) => r.id == roomId);
   }
 }
