@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:youwu/domain/entities/room_entity.dart';
+import 'package:youwu/domain/entities/space_entity.dart';
 import 'package:youwu/features/home/view_model/map_state.dart';
 import 'package:youwu/core/theme/app_colors.dart';
 
@@ -30,7 +31,9 @@ class MapPainter extends CustomPainter {
         final allPoints = <Offset>[];
         for (final room in space.rooms) {
           final center = _getCenter(room.points);
-          final scaledPoints = room.points.map((p) => _shrinkPoint(p, center)).toList();
+          final scaledPoints = room.points
+              .map((p) => _shrinkPoint(p, center))
+              .toList();
           allPoints.addAll(scaledPoints.map(_toIso));
         }
 
@@ -38,26 +41,21 @@ class MapPainter extends CustomPainter {
         final centerX = (boundingBox.left + boundingBox.right) / 2;
         final centerY = (boundingBox.top + boundingBox.bottom) / 2;
 
-        canvas.translate(
-          size.width / 2 - centerX,
-          size.height / 2 - centerY,
-        );
+        canvas.translate(size.width / 2 - centerX, size.height / 2 - centerY);
 
-        for (final room in space.rooms) {
-          _drawRoomShadow(canvas, room);
-        }
+        _drawAllRoomShadows(canvas, space);
 
         for (final room in space.rooms) {
           _drawRoomWalls(canvas, room);
         }
 
         for (final room in space.rooms) {
-        _drawRoomFloor(canvas, room);
-        _drawRoomData(canvas, room);
-        if (isEditMode) {
-          _drawEditPoints(canvas, room);
+          _drawRoomFloor(canvas, room);
+          _drawRoomData(canvas, room);
+          if (isEditMode) {
+            _drawEditPoints(canvas, room);
+          }
         }
-      }
       },
       orElse: () {},
     );
@@ -82,7 +80,10 @@ class MapPainter extends CustomPainter {
       final v1n = v1 / v1.distance;
       final v2n = v2 / v2.distance;
 
-      final double currentRadius = math.min(cornerRadius, math.min(v1.distance / 2, v2.distance / 2));
+      final double currentRadius = math.min(
+        cornerRadius,
+        math.min(v1.distance / 2, v2.distance / 2),
+      );
 
       final cornerP1 = p2 + v1n * currentRadius;
       final cornerP2 = p2 + v2n * currentRadius;
@@ -157,7 +158,10 @@ class MapPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     )..layout();
 
-    statusPainter.paint(canvas, isoCenter.translate(-statusPainter.width / 2, -16));
+    statusPainter.paint(
+      canvas,
+      isoCenter.translate(-statusPainter.width / 2, -16),
+    );
 
     if (room.itemCount > 0) {
       final countPainter = TextPainter(
@@ -172,7 +176,10 @@ class MapPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       )..layout();
 
-      countPainter.paint(canvas, isoCenter.translate(-countPainter.width / 2, -2));
+      countPainter.paint(
+        canvas,
+        isoCenter.translate(-countPainter.width / 2, -2),
+      );
     }
 
     if (room.isSelected) {
@@ -284,9 +291,7 @@ class MapPainter extends CustomPainter {
                 ? colors.textPrimary.withValues(alpha: 0.15)
                 : colors.textPrimary.withValues(alpha: 0.1),
           ],
-        ).createShader(
-          Rect.fromPoints(topPoints[i], bottomPoints[i]),
-        )
+        ).createShader(Rect.fromPoints(topPoints[i], bottomPoints[i]))
         ..style = PaintingStyle.fill;
 
       Path wallPath = Path()
@@ -299,19 +304,25 @@ class MapPainter extends CustomPainter {
     }
   }
 
-  void _drawRoomShadow(Canvas canvas, RoomEntity room) {
-    final center = _getCenter(room.points);
-    final List<Offset> shadowPoints = room.points
-        .map((p) => _toIso(_shrinkPoint(p.translate(6, 6), center)))
-        .toList();
+  void _drawAllRoomShadows(Canvas canvas, SpaceEntity space) {
+    final shadowPath = Path();
 
-    final path = _buildRoundedPath(shadowPoints);
+    for (final room in space.rooms) {
+      final center = _getCenter(room.points);
+      // Align shadow to the bottom of the walls (base of the room)
+      final List<Offset> shadowPoints = room.points
+          .map((p) => _toIso(_shrinkPoint(p.translate(0, wallDepth), center)))
+          .toList();
+
+      shadowPath.addPath(_buildRoundedPath(shadowPoints), Offset.zero);
+    }
 
     canvas.drawPath(
-      path,
+      shadowPath,
       Paint()
         ..color = colors.shadow.withValues(alpha: 0.2)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+        // Use BlurStyle.outer to prevent shadows from darkening the transparent rooms from underneath
+        ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 8),
     );
   }
 
@@ -348,19 +359,21 @@ class MapPainter extends CustomPainter {
   bool shouldRepaint(covariant MapPainter oldDelegate) {
     if (oldDelegate.colors != colors) return true;
     if (oldDelegate.isEditMode != isEditMode) return true;
-    
+
     return oldDelegate.state != state;
   }
 
   String? hitTestRoom(Offset localPosition, Size size) {
     String? hitRoomId;
-    
+
     state.maybeWhen(
       success: (space, showOverlay, isSearching, expiredItems, expiringItems) {
         final allPoints = <Offset>[];
         for (final room in space.rooms) {
           final center = _getCenter(room.points);
-          final scaledPoints = room.points.map((p) => _shrinkPoint(p, center)).toList();
+          final scaledPoints = room.points
+              .map((p) => _shrinkPoint(p, center))
+              .toList();
           allPoints.addAll(scaledPoints.map(_toIso));
         }
 
@@ -371,17 +384,20 @@ class MapPainter extends CustomPainter {
         final translateX = size.width / 2 - centerX;
         final translateY = size.height / 2 - centerY;
 
-        final canvasPoint = Offset(localPosition.dx - translateX, localPosition.dy - translateY);
+        final canvasPoint = Offset(
+          localPosition.dx - translateX,
+          localPosition.dy - translateY,
+        );
 
         // Iterate rooms in reverse order so the ones painted last (on top) are tested first.
         for (final room in space.rooms.reversed) {
           final center = _getCenter(room.points);
-          
+
           // Test Floor
           final List<Offset> topPoints = room.points
               .map((p) => _toIso(_shrinkPoint(p, center)))
               .toList();
-              
+
           final floorPath = _buildRoundedPath(topPoints);
           if (floorPath.contains(canvasPoint)) {
             hitRoomId = room.id;
@@ -390,7 +406,9 @@ class MapPainter extends CustomPainter {
 
           // Test Walls
           final List<Offset> bottomPoints = room.points
-              .map((p) => _toIso(_shrinkPoint(p.translate(0, wallDepth), center)))
+              .map(
+                (p) => _toIso(_shrinkPoint(p.translate(0, wallDepth), center)),
+              )
               .toList();
 
           for (int i = 0; i < topPoints.length; i++) {
@@ -401,7 +419,7 @@ class MapPainter extends CustomPainter {
               ..lineTo(bottomPoints[next].dx, bottomPoints[next].dy)
               ..lineTo(bottomPoints[i].dx, bottomPoints[i].dy)
               ..close();
-              
+
             if (wallPath.contains(canvasPoint)) {
               hitRoomId = room.id;
               return; // Break out of maybeWhen block
@@ -411,7 +429,7 @@ class MapPainter extends CustomPainter {
       },
       orElse: () {},
     );
-    
+
     return hitRoomId;
   }
 }

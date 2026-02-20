@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/core/localization/l10n/app_localizations.dart';
 import 'package:youwu/features/settings/view/settings_page.dart';
+import 'package:youwu/features/home/view/room_editor_page.dart';
+import 'package:youwu/features/home/view_model/map_cubit.dart';
 import 'package:youwu/features/notification/view/notification_page.dart';
 import 'package:youwu/features/notification/view_model/notification_cubit.dart';
 import 'package:youwu/features/notification/view_model/notification_state.dart';
@@ -36,6 +38,8 @@ class HomeAppBar extends StatelessWidget {
             children: [
               _buildTitle(context, colors),
               const Spacer(),
+              _buildEditMapButton(context, colors),
+              SizedBox(width: 8.w),
               _buildNotificationButton(context, colors),
               SizedBox(width: 8.w),
               _buildSettingsButton(context, colors),
@@ -140,6 +144,37 @@ class HomeAppBar extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEditMapButton(BuildContext context, AppColorsData colors) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => BlocProvider.value(
+              value: context.read<MapCubit>(),
+              child: const RoomEditorPage(),
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.all(10.w),
+        decoration: BoxDecoration(
+          color: colors.surface.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: colors.border.withValues(alpha: 0.3),
+            width: 1,
+          ),
+        ),
+        child: Icon(
+          Icons.edit_location_alt_outlined,
+          size: 20.sp,
+          color: colors.textPrimary,
+        ),
+      ),
     );
   }
 

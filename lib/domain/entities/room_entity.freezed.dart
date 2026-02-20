@@ -24,7 +24,8 @@ mixin _$RoomEntity {
   SpaceLoadStatus get load => throw _privateConstructorUsedError; // 装载状态
   Offset get centerPoint => throw _privateConstructorUsedError; // 预计算的中心点
   bool get isSelected => throw _privateConstructorUsedError; // 是否被选中
-  bool get isHighlighted => throw _privateConstructorUsedError;
+  bool get isHighlighted => throw _privateConstructorUsedError; // 是否被高亮
+  bool get isLocked => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $RoomEntityCopyWith<RoomEntity> get copyWith =>
@@ -46,7 +47,8 @@ abstract class $RoomEntityCopyWith<$Res> {
       SpaceLoadStatus load,
       Offset centerPoint,
       bool isSelected,
-      bool isHighlighted});
+      bool isHighlighted,
+      bool isLocked});
 }
 
 /// @nodoc
@@ -71,6 +73,7 @@ class _$RoomEntityCopyWithImpl<$Res, $Val extends RoomEntity>
     Object? centerPoint = null,
     Object? isSelected = null,
     Object? isHighlighted = null,
+    Object? isLocked = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -109,6 +112,10 @@ class _$RoomEntityCopyWithImpl<$Res, $Val extends RoomEntity>
           ? _value.isHighlighted
           : isHighlighted // ignore: cast_nullable_to_non_nullable
               as bool,
+      isLocked: null == isLocked
+          ? _value.isLocked
+          : isLocked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -130,7 +137,8 @@ abstract class _$$RoomEntityImplCopyWith<$Res>
       SpaceLoadStatus load,
       Offset centerPoint,
       bool isSelected,
-      bool isHighlighted});
+      bool isHighlighted,
+      bool isLocked});
 }
 
 /// @nodoc
@@ -153,6 +161,7 @@ class __$$RoomEntityImplCopyWithImpl<$Res>
     Object? centerPoint = null,
     Object? isSelected = null,
     Object? isHighlighted = null,
+    Object? isLocked = null,
   }) {
     return _then(_$RoomEntityImpl(
       id: null == id
@@ -191,6 +200,10 @@ class __$$RoomEntityImplCopyWithImpl<$Res>
           ? _value.isHighlighted
           : isHighlighted // ignore: cast_nullable_to_non_nullable
               as bool,
+      isLocked: null == isLocked
+          ? _value.isLocked
+          : isLocked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -207,7 +220,8 @@ class _$RoomEntityImpl implements _RoomEntity {
       required this.load,
       this.centerPoint = Offset.zero,
       this.isSelected = false,
-      this.isHighlighted = false})
+      this.isHighlighted = false,
+      this.isLocked = false})
       : _points = points;
 
   @override
@@ -246,10 +260,14 @@ class _$RoomEntityImpl implements _RoomEntity {
   @override
   @JsonKey()
   final bool isHighlighted;
+// 是否被高亮
+  @override
+  @JsonKey()
+  final bool isLocked;
 
   @override
   String toString() {
-    return 'RoomEntity(id: $id, name: $name, type: $type, points: $points, itemCount: $itemCount, load: $load, centerPoint: $centerPoint, isSelected: $isSelected, isHighlighted: $isHighlighted)';
+    return 'RoomEntity(id: $id, name: $name, type: $type, points: $points, itemCount: $itemCount, load: $load, centerPoint: $centerPoint, isSelected: $isSelected, isHighlighted: $isHighlighted, isLocked: $isLocked)';
   }
 
   @override
@@ -269,7 +287,9 @@ class _$RoomEntityImpl implements _RoomEntity {
             (identical(other.isSelected, isSelected) ||
                 other.isSelected == isSelected) &&
             (identical(other.isHighlighted, isHighlighted) ||
-                other.isHighlighted == isHighlighted));
+                other.isHighlighted == isHighlighted) &&
+            (identical(other.isLocked, isLocked) ||
+                other.isLocked == isLocked));
   }
 
   @override
@@ -283,7 +303,8 @@ class _$RoomEntityImpl implements _RoomEntity {
       load,
       centerPoint,
       isSelected,
-      isHighlighted);
+      isHighlighted,
+      isLocked);
 
   @JsonKey(ignore: true)
   @override
@@ -302,7 +323,8 @@ abstract class _RoomEntity implements RoomEntity {
       required final SpaceLoadStatus load,
       final Offset centerPoint,
       final bool isSelected,
-      final bool isHighlighted}) = _$RoomEntityImpl;
+      final bool isHighlighted,
+      final bool isLocked}) = _$RoomEntityImpl;
 
   @override
   String get id;
@@ -322,6 +344,8 @@ abstract class _RoomEntity implements RoomEntity {
   bool get isSelected;
   @override // 是否被选中
   bool get isHighlighted;
+  @override // 是否被高亮
+  bool get isLocked;
   @override
   @JsonKey(ignore: true)
   _$$RoomEntityImplCopyWith<_$RoomEntityImpl> get copyWith =>

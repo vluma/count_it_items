@@ -70,6 +70,8 @@ dependencies:
   # 拍照和扫码
   image_picker: ^1.0.7
   mobile_scanner: ^5.1.1
+  uuid: ^4.5.2
+  vector_math: ^2.2.0
 
 dev_dependencies:
   flutter_test:

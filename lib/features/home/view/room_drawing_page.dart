@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/domain/entities/room_entity.dart';
+import 'package:vector_math/vector_math_64.dart' show Vector3;
 import 'dart:math' as math;
 
+/// 2D 平面图房间绘制页 —— 类似设计工具的拖拽编辑器
+///
+/// 交互方式:
+///   单指: 拖拽房间本体/角点/边 → 移动/调整大小
+///   双指: 缩放 + 平移画布 (InteractiveViewer)
+///   底部面板: 手动输入 X, Y, W, H 精确定位
 class RoomDrawingPage extends StatefulWidget {
   final List<RoomEntity> existingRooms;
   final List<Offset>? initialPoints;
@@ -19,246 +26,382 @@ class RoomDrawingPage extends StatefulWidget {
 }
 
 class _RoomDrawingPageState extends State<RoomDrawingPage> {
-  List<Offset> _points = [];
-  bool _isDrawing = true;
-  int? _draggingPointIndex;
+  // ---- 房间矩形 ----
+  // [topLeft, topRight, bottomRight, bottomLeft]
+  late List<Offset> _roomPoints;
+  bool _hasRoom = false;
+
+  // ---- 拖拽 ----
+  _DragMode? _dragMode;
+  Offset _dragStartCanvas = Offset.zero;
+  List<Offset> _dragInitialPoints = [];
+
+  // ---- 状态 ----
   bool _hasOverlap = false;
-  static const double _pointRadius = 12.0;
-  static const double _snapDistance = 20.0;
-  static const double _isoAngle = math.pi / 6;
-  static const double _gridSpacing = 30.0;
+  bool _isLocked = false;
+  bool _showXYWH = false;
+
+  // ---- 画布 ----
+  final TransformationController _transformCtrl = TransformationController();
+
+  // ---- XYWH 输入 ----
+  final _xCtrl = TextEditingController();
+  final _yCtrl = TextEditingController();
+  final _wCtrl = TextEditingController();
+  final _hCtrl = TextEditingController();
+
+  // ---- 常量 ----
+  static const double _gridSize = 20.0;
+  static const double _snapDist = 12.0;
+  static const double _defaultW = 150.0;
+  static const double _defaultH = 100.0;
+  static const double _minSize = 40.0;
+  /// 画布整体偏移，让 (0,0) 大致在中间
+  static const double _canvasOffset = 1000.0;
 
   @override
   void initState() {
     super.initState();
-    if (widget.initialPoints != null && widget.initialPoints!.isNotEmpty) {
-      _points = List.from(widget.initialPoints!);
-      _isDrawing = false;
+    if (widget.initialPoints != null && widget.initialPoints!.length >= 4) {
+      _roomPoints = List.from(widget.initialPoints!.take(4));
+      _hasRoom = true;
+      _syncXYWH();
+    } else {
+      _roomPoints = [];
     }
-  }
-
-  Offset _toIso(Offset p) {
-    return Offset(
-      (p.dx - p.dy) * math.cos(_isoAngle),
-      (p.dx + p.dy) * math.sin(_isoAngle),
-    );
-  }
-
-  Offset _fromIso(Offset p) {
-    final cosA = math.cos(_isoAngle);
-    final sinA = math.sin(_isoAngle);
-    return Offset(
-      (p.dx / cosA + p.dy / sinA) / 2,
-      (p.dy / sinA - p.dx / cosA) / 2,
-    );
-  }
-
-  void _handleTap(TapDownDetails details, Size size) {
-    if (!_isDrawing) return;
-
-    final renderBox = context.findRenderObject() as RenderBox;
-    final localPosition = renderBox.globalToLocal(details.globalPosition);
-
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-    final translatedPoint = Offset(
-      localPosition.dx - centerX,
-      localPosition.dy - centerY,
-    );
-    final gridPoint = _fromIso(translatedPoint);
-
-    final snappedPoint = _snapToExistingPoints(gridPoint);
-
-    setState(() {
-      _points.add(snappedPoint);
-      _hasOverlap = _checkOverlap();
+    // 初始时将画布移动，让 offset 区域居中显示
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final size = MediaQuery.of(context).size;
+      _transformCtrl.value = Matrix4.identity()
+        ..setTranslation(Vector3(
+          size.width / 2 - _canvasOffset,
+          size.height / 2 - _canvasOffset,
+          0,
+        ));
     });
   }
 
-  Offset _snapToExistingPoints(Offset point) {
-    final snappedToGrid = _snapToGrid(point);
-    
-    for (final room in widget.existingRooms) {
-      for (final existingPoint in room.points) {
-        if ((existingPoint - snappedToGrid).distance < _snapDistance) {
-          return existingPoint;
-        }
-      }
-    }
-    for (int i = 0; i < _points.length - 1; i++) {
-      if ((_points[i] - snappedToGrid).distance < _snapDistance) {
-        return _points[i];
-      }
-    }
-    return snappedToGrid;
+  @override
+  void dispose() {
+    _transformCtrl.dispose();
+    _xCtrl.dispose();
+    _yCtrl.dispose();
+    _wCtrl.dispose();
+    _hCtrl.dispose();
+    super.dispose();
   }
 
-  Offset _snapToGrid(Offset point) {
-    final snappedX = (point.dx / _gridSpacing).round() * _gridSpacing;
-    final snappedY = (point.dy / _gridSpacing).round() * _gridSpacing;
-    return Offset(snappedX, snappedY);
+  // ===========================================================================
+  // 坐标转换
+  // ===========================================================================
+
+  /// 从屏幕坐标（相对于 Listener widget）转换到画布坐标
+  Offset _screenToCanvas(Offset screenLocal) {
+    final matrix = _transformCtrl.value;
+    final inverse = Matrix4.tryInvert(matrix);
+    if (inverse == null) return screenLocal;
+    return MatrixUtils.transformPoint(inverse, screenLocal);
+  }
+
+  // ===========================================================================
+  // 吸附
+  // ===========================================================================
+
+  double _snapAxis(double value, List<double> targets) {
+    for (final t in targets) {
+      if ((t - value).abs() < _snapDist) return t;
+    }
+    // 网格吸附
+    return (value / _gridSize).round() * _gridSize;
+  }
+
+  ({List<double> xs, List<double> ys}) _existingEdges() {
+    final xs = <double>[];
+    final ys = <double>[];
+    for (final room in widget.existingRooms) {
+      for (final p in room.points) {
+        if (!xs.contains(p.dx)) xs.add(p.dx);
+        if (!ys.contains(p.dy)) ys.add(p.dy);
+      }
+    }
+    return (xs: xs, ys: ys);
+  }
+
+  // ===========================================================================
+  // 碰撞检测 (AABB)
+  // ===========================================================================
+
+  Rect _rectFrom(List<Offset> pts) {
+    if (pts.length < 4) return Rect.zero;
+    double l = pts[0].dx, r = pts[0].dx, t = pts[0].dy, b = pts[0].dy;
+    for (final p in pts) {
+      l = math.min(l, p.dx);
+      r = math.max(r, p.dx);
+      t = math.min(t, p.dy);
+      b = math.max(b, p.dy);
+    }
+    return Rect.fromLTRB(l, t, r, b);
   }
 
   bool _checkOverlap() {
-    if (_points.length < 3) return false;
-    
+    if (!_hasRoom || _roomPoints.length < 4) return false;
+    final nr = _rectFrom(_roomPoints).deflate(1.0);
     for (final room in widget.existingRooms) {
-      if (_polygonsOverlap(_points, room.points)) {
-        return true;
-      }
+      if (room.points.length < 4) continue;
+      if (nr.overlaps(_rectFrom(room.points))) return true;
     }
     return false;
   }
 
-  bool _polygonsOverlap(List<Offset> poly1, List<Offset> poly2) {
-    for (int i = 0; i < poly1.length; i++) {
-      final p1 = poly1[i];
-      final p2 = poly1[(i + 1) % poly1.length];
-      
-      for (int j = 0; j < poly2.length; j++) {
-        final p3 = poly2[j];
-        final p4 = poly2[(j + 1) % poly2.length];
-        
-        if (_linesIntersect(p1, p2, p3, p4)) {
-          return true;
+  // ===========================================================================
+  // 添加默认房间
+  // ===========================================================================
+
+  void _addDefaultRoom() {
+    Offset base = Offset(_canvasOffset, _canvasOffset);
+    if (widget.existingRooms.isNotEmpty) {
+      double maxRight = double.negativeInfinity;
+      double topY = _canvasOffset;
+      for (final room in widget.existingRooms) {
+        final rect = _rectFrom(room.points);
+        if (rect.right > maxRight) {
+          maxRight = rect.right;
+          topY = rect.top;
         }
       }
+      base = Offset(maxRight, topY);
     }
-    
-    if (_isPointInPolygon(poly1[0], poly2) || _isPointInPolygon(poly2[0], poly1)) {
-      return true;
-    }
-    
-    return false;
+    setState(() {
+      _roomPoints = [
+        base,
+        Offset(base.dx + _defaultW, base.dy),
+        Offset(base.dx + _defaultW, base.dy + _defaultH),
+        Offset(base.dx, base.dy + _defaultH),
+      ];
+      _hasRoom = true;
+      _hasOverlap = _checkOverlap();
+      _syncXYWH();
+    });
   }
 
-  bool _linesIntersect(Offset p1, Offset p2, Offset p3, Offset p4) {
-    double d1 = _direction(p3, p4, p1);
-    double d2 = _direction(p3, p4, p2);
-    double d3 = _direction(p1, p2, p3);
-    double d4 = _direction(p1, p2, p4);
+  // ===========================================================================
+  // Hit Testing（使用画布坐标）
+  // ===========================================================================
 
-    if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
-        ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) {
-      return true;
-    }
+  static const double _touchSlop = 24.0; // 手指触控容差区域
 
-    if (d1 == 0 && _onSegment(p3, p4, p1)) return true;
-    if (d2 == 0 && _onSegment(p3, p4, p2)) return true;
-    if (d3 == 0 && _onSegment(p1, p2, p3)) return true;
-    if (d4 == 0 && _onSegment(p1, p2, p4)) return true;
+  _DragMode? _hitTest(Offset canvasPos) {
+    if (!_hasRoom || _roomPoints.length < 4 || _isLocked) return null;
 
-    return false;
-  }
-
-  double _direction(Offset pi, Offset pj, Offset pk) {
-    return (pk.dx - pi.dx) * (pj.dy - pi.dy) - (pj.dx - pi.dx) * (pk.dy - pi.dy);
-  }
-
-  bool _onSegment(Offset pi, Offset pj, Offset pk) {
-    return pk.dx >= math.min(pi.dx, pj.dx) &&
-           pk.dx <= math.max(pi.dx, pj.dx) &&
-           pk.dy >= math.min(pi.dy, pj.dy) &&
-           pk.dy <= math.max(pi.dy, pj.dy);
-  }
-
-  bool _isPointInPolygon(Offset point, List<Offset> polygon) {
-    int crossings = 0;
-    for (int i = 0; i < polygon.length; i++) {
-      final j = (i + 1) % polygon.length;
-      if (((polygon[i].dy <= point.dy && polygon[j].dy > point.dy) ||
-           (polygon[j].dy <= point.dy && polygon[i].dy > point.dy)) &&
-          (point.dx < (polygon[j].dx - polygon[i].dx) * (point.dy - polygon[i].dy) /
-              (polygon[j].dy - polygon[i].dy) + polygon[i].dx)) {
-        crossings++;
+    // 1) 角点 (最高优先级)
+    for (int i = 0; i < 4; i++) {
+      if ((_roomPoints[i] - canvasPos).distance <= _touchSlop) {
+        return _DragMode.corner(i);
       }
     }
-    return crossings % 2 == 1;
+
+    // 2) 边中点
+    for (int i = 0; i < 4; i++) {
+      final next = (i + 1) % 4;
+      final mid = (_roomPoints[i] + _roomPoints[next]) / 2;
+      if ((mid - canvasPos).distance <= _touchSlop) {
+        return _DragMode.edge(i);
+      }
+    }
+
+    // 3) 房间内部
+    if (_rectFrom(_roomPoints).inflate(4).contains(canvasPos)) {
+      return _DragMode.body();
+    }
+
+    return null;
   }
 
-  void _finishDrawing() {
-    if (_points.length >= 3 && !_hasOverlap) {
+  // ===========================================================================
+  // Pointer 事件处理 (使用 Listener 绕过手势竞争)
+  // ===========================================================================
+
+  void _onPointerDown(PointerDownEvent event) {
+    if (_isLocked || !_hasRoom) return;
+    final canvasPos = _screenToCanvas(event.localPosition);
+    final mode = _hitTest(canvasPos);
+    if (mode != null) {
       setState(() {
-        _isDrawing = false;
+        _dragMode = mode;
+        _dragStartCanvas = canvasPos;
+        _dragInitialPoints = List.from(_roomPoints);
       });
     }
   }
 
-  void _handlePanStart(DragStartDetails details, Size size) {
-    if (_isDrawing) return;
+  void _onPointerMove(PointerMoveEvent event) {
+    if (_dragMode == null) return;
+    final canvasPos = _screenToCanvas(event.localPosition);
+    final delta = canvasPos - _dragStartCanvas;
 
-    final renderBox = context.findRenderObject() as RenderBox;
-    final localPosition = renderBox.globalToLocal(details.globalPosition);
+    setState(() {
+      _roomPoints = _applyDrag(_dragInitialPoints, _dragMode!, delta);
+      _hasOverlap = _checkOverlap();
+      _syncXYWH();
+    });
+  }
 
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-
-    for (int i = 0; i < _points.length; i++) {
-      final isoPoint = _toIso(_points[i]);
-      final screenPoint = Offset(
-        isoPoint.dx + centerX,
-        isoPoint.dy + centerY,
-      );
-
-      if ((screenPoint - localPosition).distance < _pointRadius * 1.5) {
-        setState(() {
-          _draggingPointIndex = i;
-        });
-        return;
-      }
+  void _onPointerUp(PointerUpEvent event) {
+    if (_dragMode != null) {
+      setState(() {
+        _dragMode = null;
+      });
     }
   }
 
-  void _handlePanUpdate(DragUpdateDetails details, Size size) {
-    if (_draggingPointIndex == null) return;
+  // ===========================================================================
+  // 拖拽计算
+  // ===========================================================================
 
-    final renderBox = context.findRenderObject() as RenderBox;
-    final localPosition = renderBox.globalToLocal(details.globalPosition);
+  List<Offset> _applyDrag(List<Offset> initial, _DragMode mode, Offset delta) {
+    final res = List<Offset>.from(initial);
+    final edges = _existingEdges();
 
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-    final translatedPoint = Offset(
-      localPosition.dx - centerX,
-      localPosition.dy - centerY,
-    );
-    final gridPoint = _fromIso(translatedPoint);
+    if (mode.type == 'body') {
+      for (int i = 0; i < 4; i++) {
+        res[i] = initial[i] + delta;
+      }
+      // 吸附左上角
+      final snX = _snapAxis(res[0].dx, edges.xs);
+      final snY = _snapAxis(res[0].dy, edges.ys);
+      final diff = Offset(snX, snY) - res[0];
+      for (int i = 0; i < 4; i++) {
+        res[i] = res[i] + diff;
+      }
+      return res;
+    }
 
+    if (mode.type == 'corner') {
+      final moved = initial[mode.index] + delta;
+      final snapped = Offset(
+        _snapAxis(moved.dx, edges.xs),
+        _snapAxis(moved.dy, edges.ys),
+      );
+      res[mode.index] = snapped;
+      // 保持矩形
+      if (mode.index == 0) {
+        res[1] = Offset(res[1].dx, snapped.dy);
+        res[3] = Offset(snapped.dx, res[3].dy);
+      } else if (mode.index == 1) {
+        res[0] = Offset(res[0].dx, snapped.dy);
+        res[2] = Offset(snapped.dx, res[2].dy);
+      } else if (mode.index == 2) {
+        res[1] = Offset(snapped.dx, res[1].dy);
+        res[3] = Offset(res[3].dx, snapped.dy);
+      } else if (mode.index == 3) {
+        res[0] = Offset(snapped.dx, res[0].dy);
+        res[2] = Offset(res[2].dx, snapped.dy);
+      }
+      return _enforceMin(res);
+    }
+
+    if (mode.type == 'edge') {
+      if (mode.index == 0) {
+        final ny = _snapAxis(initial[0].dy + delta.dy, edges.ys);
+        res[0] = Offset(res[0].dx, ny);
+        res[1] = Offset(res[1].dx, ny);
+      } else if (mode.index == 1) {
+        final nx = _snapAxis(initial[1].dx + delta.dx, edges.xs);
+        res[1] = Offset(nx, res[1].dy);
+        res[2] = Offset(nx, res[2].dy);
+      } else if (mode.index == 2) {
+        final ny = _snapAxis(initial[2].dy + delta.dy, edges.ys);
+        res[2] = Offset(res[2].dx, ny);
+        res[3] = Offset(res[3].dx, ny);
+      } else if (mode.index == 3) {
+        final nx = _snapAxis(initial[3].dx + delta.dx, edges.xs);
+        res[3] = Offset(nx, res[3].dy);
+        res[0] = Offset(nx, res[0].dy);
+      }
+      return _enforceMin(res);
+    }
+
+    return res;
+  }
+
+  List<Offset> _enforceMin(List<Offset> pts) {
+    final r = _rectFrom(pts);
+    final w = math.max(r.width, _minSize);
+    final h = math.max(r.height, _minSize);
+    return [
+      r.topLeft,
+      Offset(r.left + w, r.top),
+      Offset(r.left + w, r.top + h),
+      Offset(r.left, r.top + h),
+    ];
+  }
+
+  // ===========================================================================
+  // XYWH 输入同步
+  // ===========================================================================
+
+  void _syncXYWH() {
+    if (_roomPoints.length < 4) return;
+    final r = _rectFrom(_roomPoints);
+    _xCtrl.text = r.left.round().toString();
+    _yCtrl.text = r.top.round().toString();
+    _wCtrl.text = r.width.round().toString();
+    _hCtrl.text = r.height.round().toString();
+  }
+
+  void _applyXYWH() {
+    final x = double.tryParse(_xCtrl.text) ?? 0;
+    final y = double.tryParse(_yCtrl.text) ?? 0;
+    final w = math.max(double.tryParse(_wCtrl.text) ?? _defaultW, _minSize);
+    final h = math.max(double.tryParse(_hCtrl.text) ?? _defaultH, _minSize);
     setState(() {
-      _points[_draggingPointIndex!] = _snapToExistingPoints(gridPoint);
+      _roomPoints = [
+        Offset(x, y),
+        Offset(x + w, y),
+        Offset(x + w, y + h),
+        Offset(x, y + h),
+      ];
+      _hasRoom = true;
       _hasOverlap = _checkOverlap();
     });
   }
 
-  void _handlePanEnd(DragEndDetails details) {
-    setState(() {
-      _draggingPointIndex = null;
-    });
-  }
+  // ===========================================================================
+  // 操作
+  // ===========================================================================
 
   void _resetDrawing() {
     setState(() {
-      _points = [];
-      _isDrawing = true;
+      _roomPoints = [];
+      _hasRoom = false;
       _hasOverlap = false;
+      _isLocked = false;
+      _dragMode = null;
     });
   }
 
+  void _toggleLock() => setState(() => _isLocked = !_isLocked);
+
   void _confirmDrawing() {
-    if (_points.length >= 3) {
-      Navigator.of(context).pop(_points);
+    if (_roomPoints.length >= 4 && !_hasOverlap) {
+      Navigator.of(context).pop(_roomPoints);
     }
   }
+
+  // ===========================================================================
+  // Build
+  // ===========================================================================
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: colors.background,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
-          _isDrawing ? '绘制房间' : '调整房间',
+          '编辑房间',
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.w600,
@@ -272,436 +415,556 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          if (_points.isNotEmpty)
+          if (_hasRoom)
             IconButton(
               icon: Icon(Icons.refresh_rounded, color: colors.textSecondary),
               onPressed: _resetDrawing,
+              tooltip: '重置',
             ),
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          GestureDetector(
-            onTapDown: (details) => _handleTap(details, size),
-            onPanStart: (details) => _handlePanStart(details, size),
-            onPanUpdate: (details) => _handlePanUpdate(details, size),
-            onPanEnd: _handlePanEnd,
-            child: CustomPaint(
-              painter: _RoomDrawingPainter(
-                existingRooms: widget.existingRooms,
-                points: _points,
-                isDrawing: _isDrawing,
-                draggingPointIndex: _draggingPointIndex,
-                hasOverlap: _hasOverlap,
-                colors: colors,
-              ),
-              size: Size.infinite,
+          // ---- 画布区域 ----
+          Expanded(
+            child: Stack(
+              children: [
+                // Listener 在 InteractiveViewer 外面，拦截 pointer 进行房间拖拽
+                Listener(
+                  behavior: HitTestBehavior.translucent,
+                  onPointerDown: _onPointerDown,
+                  onPointerMove: _onPointerMove,
+                  onPointerUp: _onPointerUp,
+                  child: InteractiveViewer(
+                    transformationController: _transformCtrl,
+                    boundaryMargin: const EdgeInsets.all(2000),
+                    minScale: 0.15,
+                    maxScale: 5.0,
+                    // 关键：禁止单指平移，避免与房间拖拽冲突
+                    // 双指缩放+平移仍然有效 (scaleEnabled: true)
+                    panEnabled: _dragMode == null,
+                    scaleEnabled: true,
+                    child: CustomPaint(
+                      painter: _FloorPlanPainter(
+                        existingRooms: widget.existingRooms,
+                        newRoomPoints: _hasRoom ? _roomPoints : [],
+                        hasOverlap: _hasOverlap,
+                        isLocked: _isLocked,
+                        dragMode: _dragMode,
+                        colors: colors,
+                      ),
+                      size: const Size(2000, 2000),
+                    ),
+                  ),
+                ),
+
+                // ---- 顶部提示 ----
+                Positioned(
+                  left: 16.w,
+                  right: 16.w,
+                  top: 12.h,
+                  child: _buildInstructions(colors),
+                ),
+              ],
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: MediaQuery.of(context).padding.bottom + 16.h,
-            child: _buildBottomControls(colors),
-          ),
-          Positioned(
-            left: 16.w,
-            right: 16.w,
-            top: 16.h,
-            child: _buildInstructions(colors),
-          ),
+
+          // ---- XYWH 输入面板 ----
+          if (_showXYWH && _hasRoom) _buildXYWHPanel(colors),
+
+          // ---- 底部操作栏 ----
+          _buildBottomBar(colors),
         ],
       ),
     );
   }
 
+  // ===========================================================================
+  // 提示条
+  // ===========================================================================
+
   Widget _buildInstructions(AppColorsData colors) {
-    String instruction;
+    String text;
     Color iconColor = colors.primary;
-    IconData iconData = Icons.info_outline_rounded;
-    
+    IconData icon = Icons.info_outline_rounded;
+
     if (_hasOverlap) {
-      instruction = '房间与现有房间重叠，请调整位置';
+      text = '房间与现有房间重叠，请调整';
       iconColor = colors.error;
-      iconData = Icons.warning_rounded;
-    } else if (_isDrawing) {
-      if (_points.isEmpty) {
-        instruction = '点击地图添加第一个顶点';
-      } else if (_points.length < 3) {
-        instruction = '继续点击添加顶点（至少需要3个）';
-      } else {
-        instruction = '点击"完成绘制"或继续添加顶点';
-      }
+      icon = Icons.warning_rounded;
+    } else if (!_hasRoom) {
+      text = '点击下方「添加房间」放置新房间';
+    } else if (_isLocked) {
+      text = '已锁定 — 解锁后可拖拽';
+      iconColor = colors.warning;
+      icon = Icons.lock_rounded;
     } else {
-      instruction = '拖拽顶点调整房间形状';
+      text = '单指拖拽移动/调整 · 双指缩放画布';
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.9),
+        color: colors.surface.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: colors.shadow.withValues(alpha: 0.1),
-            blurRadius: 8,
+            color: colors.shadow.withValues(alpha: 0.08),
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
-          Icon(
-            iconData,
-            color: iconColor,
-            size: 20.sp,
-          ),
+          Icon(icon, color: iconColor, size: 18.sp),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
-              instruction,
+              text,
               style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: 13.sp,
                 color: _hasOverlap ? colors.error : colors.textPrimary,
               ),
             ),
           ),
-          if (_points.isNotEmpty) ...[
+          if (_hasRoom)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
               decoration: BoxDecoration(
-                color: _hasOverlap 
-                    ? colors.error.withValues(alpha: 0.1)
-                    : colors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8.r),
+                color: (_hasOverlap ? colors.error : colors.primary)
+                    .withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6.r),
               ),
               child: Text(
-                '${_points.length} 个顶点',
+                _sizeLabel(),
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: 11.sp,
                   color: _hasOverlap ? colors.error : colors.primary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-          ],
         ],
       ),
     );
   }
 
-  Widget _buildBottomControls(AppColorsData colors) {
+  String _sizeLabel() {
+    if (_roomPoints.length < 4) return '';
+    final r = _rectFrom(_roomPoints);
+    return '${r.width.round()} × ${r.height.round()}';
+  }
+
+  // ===========================================================================
+  // XYWH 输入面板
+  // ===========================================================================
+
+  Widget _buildXYWHPanel(AppColorsData colors) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: colors.surface.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(16.r),
+        color: colors.surface,
+        border: Border(top: BorderSide(color: colors.border.withValues(alpha: 0.3))),
+      ),
+      child: Row(
+        children: [
+          _xywhField('X', _xCtrl, colors),
+          SizedBox(width: 8.w),
+          _xywhField('Y', _yCtrl, colors),
+          SizedBox(width: 8.w),
+          _xywhField('W', _wCtrl, colors),
+          SizedBox(width: 8.w),
+          _xywhField('H', _hCtrl, colors),
+          SizedBox(width: 8.w),
+          GestureDetector(
+            onTap: _applyXYWH,
+            child: Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: colors.primary,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Icon(Icons.check, color: Colors.white, size: 20.sp),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _xywhField(String label, TextEditingController ctrl, AppColorsData colors) {
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: TextStyle(
+                  fontSize: 10.sp,
+                  color: colors.textTertiary,
+                  fontWeight: FontWeight.w600)),
+          SizedBox(height: 4.h),
+          SizedBox(
+            height: 36.h,
+            child: TextField(
+              controller: ctrl,
+              keyboardType: TextInputType.number,
+              style: TextStyle(fontSize: 13.sp, color: colors.textPrimary),
+              decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                isDense: true,
+                filled: true,
+                fillColor: colors.background,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: colors.border.withValues(alpha: 0.3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: colors.border.withValues(alpha: 0.3)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: colors.primary),
+                ),
+              ),
+              onSubmitted: (_) => _applyXYWH(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // 底部操作栏
+  // ===========================================================================
+
+  Widget _buildBottomBar(AppColorsData colors) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        16.w,
+        12.h,
+        16.w,
+        MediaQuery.of(context).padding.bottom + 12.h,
+      ),
+      decoration: BoxDecoration(
+        color: colors.surface,
         boxShadow: [
           BoxShadow(
-            color: colors.shadow.withValues(alpha: 0.15),
-            blurRadius: 12,
+            color: colors.shadow.withValues(alpha: 0.1),
+            blurRadius: 10,
             offset: const Offset(0, -2),
           ),
         ],
       ),
-      child: Row(
+      child: !_hasRoom
+          ? SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _addDefaultRoom,
+                icon: Icon(Icons.add_rounded, size: 20.sp),
+                label: Text('添加房间', style: TextStyle(fontSize: 14.sp)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.primary,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
+              ),
+            )
+          : Row(
+              children: [
+                // 锁定
+                _toolBtn(
+                  icon: _isLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
+                  label: _isLocked ? '解锁' : '锁定',
+                  color: _isLocked ? colors.warning : colors.textSecondary,
+                  onTap: _toggleLock,
+                  colors: colors,
+                ),
+                SizedBox(width: 10.w),
+                // XYWH 输入
+                _toolBtn(
+                  icon: Icons.straighten_rounded,
+                  label: 'XYWH',
+                  color: _showXYWH ? colors.primary : colors.textSecondary,
+                  onTap: () => setState(() => _showXYWH = !_showXYWH),
+                  colors: colors,
+                ),
+                SizedBox(width: 10.w),
+                // 重置
+                _toolBtn(
+                  icon: Icons.refresh_rounded,
+                  label: '重置',
+                  color: colors.textSecondary,
+                  onTap: _resetDrawing,
+                  colors: colors,
+                ),
+                SizedBox(width: 12.w),
+                // 确认
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: !_hasOverlap && _hasRoom ? _confirmDrawing : null,
+                    icon: Icon(Icons.check_circle_rounded, size: 18.sp),
+                    label: Text('确认', style: TextStyle(fontSize: 14.sp)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          _hasOverlap ? colors.error : colors.primary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: colors.border,
+                      padding: EdgeInsets.symmetric(vertical: 14.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget _toolBtn({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+    required AppColorsData colors,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: _points.isNotEmpty ? _resetDrawing : null,
-              icon: Icon(Icons.refresh_rounded, size: 18.sp),
-              label: Text(
-                '重新绘制',
-                style: TextStyle(fontSize: 14.sp),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: colors.textSecondary,
-                side: BorderSide(color: colors.border),
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-              ),
+          Container(
+            padding: EdgeInsets.all(10.w),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: color.withValues(alpha: 0.3)),
             ),
+            child: Icon(icon, color: color, size: 20.sp),
           ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: ElevatedButton.icon(
-              onPressed: _points.length >= 3 && !_hasOverlap
-                  ? (_isDrawing ? _finishDrawing : _confirmDrawing)
-                  : null,
-              icon: Icon(
-                _isDrawing ? Icons.check_rounded : Icons.check_circle_rounded,
-                size: 18.sp,
-              ),
-              label: Text(
-                _isDrawing ? '完成绘制' : '确认形状',
-                style: TextStyle(fontSize: 14.sp),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _hasOverlap ? colors.error : colors.primary,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: colors.border,
-                padding: EdgeInsets.symmetric(vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-              ),
-            ),
-          ),
+          SizedBox(height: 3.h),
+          Text(label, style: TextStyle(fontSize: 10.sp, color: color)),
         ],
       ),
     );
   }
 }
 
-class _RoomDrawingPainter extends CustomPainter {
+// =============================================================================
+// 拖拽模式
+// =============================================================================
+
+class _DragMode {
+  final String type; // 'body', 'corner', 'edge'
+  final int index;
+
+  const _DragMode._(this.type, this.index);
+  factory _DragMode.body() => const _DragMode._('body', 0);
+  factory _DragMode.corner(int i) => _DragMode._('corner', i);
+  factory _DragMode.edge(int i) => _DragMode._('edge', i);
+}
+
+// =============================================================================
+// Painter —— 2D 平面图
+// =============================================================================
+
+class _FloorPlanPainter extends CustomPainter {
   final List<RoomEntity> existingRooms;
-  final List<Offset> points;
-  final bool isDrawing;
-  final int? draggingPointIndex;
+  final List<Offset> newRoomPoints;
   final bool hasOverlap;
+  final bool isLocked;
+  final _DragMode? dragMode;
   final AppColorsData colors;
 
-  static const double _isoAngle = math.pi / 6;
-  static const double _cornerRadius = 12.0;
-  static const double _roomScale = 0.94;
-  static const double _gridSpacing = 30.0;
+  static const double _gridSize = 20.0;
 
-  _RoomDrawingPainter({
+  _FloorPlanPainter({
     required this.existingRooms,
-    required this.points,
-    required this.isDrawing,
-    this.draggingPointIndex,
+    required this.newRoomPoints,
     required this.hasOverlap,
+    required this.isLocked,
+    this.dragMode,
     required this.colors,
   });
 
-  Offset _toIso(Offset p) {
-    return Offset(
-      (p.dx - p.dy) * math.cos(_isoAngle),
-      (p.dx + p.dy) * math.sin(_isoAngle),
-    );
-  }
-
-  Offset _getCenter(List<Offset> pts) {
-    if (pts.isEmpty) return Offset.zero;
-    double x = pts.map((p) => p.dx).reduce((a, b) => a + b) / pts.length;
-    double y = pts.map((p) => p.dy).reduce((a, b) => a + b) / pts.length;
-    return Offset(x, y);
-  }
-
-  Offset _shrinkPoint(Offset p, Offset center) {
-    return center + (p - center) * _roomScale;
-  }
-
   @override
   void paint(Canvas canvas, Size size) {
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-    canvas.translate(centerX, centerY);
-
     _drawGrid(canvas, size);
-
     for (final room in existingRooms) {
-      _drawExistingRoom(canvas, room);
+      _drawExisting(canvas, room);
     }
-
-    if (points.isNotEmpty) {
+    if (newRoomPoints.length >= 4) {
       _drawNewRoom(canvas);
     }
   }
 
   void _drawGrid(Canvas canvas, Size size) {
-    final gridPaint = Paint()
-      ..color = colors.border.withValues(alpha: 0.3)
-      ..strokeWidth = 0.5
-      ..style = PaintingStyle.stroke;
+    final paint = Paint()
+      ..color = colors.border.withValues(alpha: 0.08)
+      ..strokeWidth = 1;
 
-    final dotPaint = Paint()
-      ..color = colors.border.withValues(alpha: 0.6)
-      ..style = PaintingStyle.fill;
-
-    final gridRange = size.width.toInt();
-    final spacing = _gridSpacing.toInt();
-
-    for (int x = -gridRange; x <= gridRange; x += spacing) {
-      for (int y = -gridRange; y <= gridRange; y += spacing) {
-        final isoPoint = _toIso(Offset(x.toDouble(), y.toDouble()));
-        canvas.drawCircle(isoPoint, 2, dotPaint);
-      }
+    for (double x = 0; x <= size.width; x += _gridSize) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
     }
-
-    for (int i = -gridRange; i <= gridRange; i += spacing) {
-      final start = _toIso(Offset(i.toDouble(), -gridRange.toDouble()));
-      final end = _toIso(Offset(i.toDouble(), gridRange.toDouble()));
-      canvas.drawLine(start, end, gridPaint);
-
-      final start2 = _toIso(Offset(-gridRange.toDouble(), i.toDouble()));
-      final end2 = _toIso(Offset(gridRange.toDouble(), i.toDouble()));
-      canvas.drawLine(start2, end2, gridPaint);
+    for (double y = 0; y <= size.height; y += _gridSize) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }
   }
 
-  void _drawExistingRoom(Canvas canvas, RoomEntity room) {
-    final center = _getCenter(room.points);
-    final List<Offset> isoPoints = room.points
-        .map((p) => _toIso(_shrinkPoint(p, center)))
-        .toList();
+  void _drawExisting(Canvas canvas, RoomEntity room) {
+    if (room.points.length < 4) return;
+    final rect = _rectOf(room.points);
+    final rr = RRect.fromRectAndRadius(rect, const Radius.circular(4));
 
-    final path = _buildRoundedPath(isoPoints);
+    canvas.drawRRect(
+        rr,
+        Paint()
+          ..color = colors.surface.withValues(alpha: 0.65)
+          ..style = PaintingStyle.fill);
+    canvas.drawRRect(
+        rr,
+        Paint()
+          ..color = colors.border.withValues(alpha: 0.55)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0);
 
-    final paint = Paint()
-      ..color = colors.textPrimary.withValues(alpha: 0.05)
-      ..style = PaintingStyle.fill;
-    canvas.drawPath(path, paint);
-
-    final borderPaint = Paint()
-      ..color = colors.border.withValues(alpha: 0.5)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    canvas.drawPath(path, borderPaint);
-
-    final textPainter = TextPainter(
+    final tp = TextPainter(
       text: TextSpan(
-        text: room.name,
-        style: TextStyle(
-          color: colors.textTertiary,
-          fontSize: 10,
-        ),
-      ),
+          text: room.name,
+          style: TextStyle(color: colors.textSecondary, fontSize: 12)),
       textDirection: TextDirection.ltr,
     )..layout();
-    final isoCenter = _toIso(center);
-    textPainter.paint(canvas, isoCenter.translate(-textPainter.width / 2, -5));
+    tp.paint(canvas, rect.center - Offset(tp.width / 2, tp.height / 2));
   }
 
   void _drawNewRoom(Canvas canvas) {
-    final center = _getCenter(points);
-    final List<Offset> isoPoints = points.map(_toIso).toList();
+    final rect = _rectOf(newRoomPoints);
+    final rr = RRect.fromRectAndRadius(rect, const Radius.circular(4));
+    final rc = hasOverlap ? colors.error : colors.primary;
 
-    final roomColor = hasOverlap ? colors.error : colors.primary;
+    // 阴影
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+          rect.shift(const Offset(3, 3)), const Radius.circular(4)),
+      Paint()
+        ..color = colors.shadow.withValues(alpha: 0.12)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
 
-    if (points.length >= 3) {
-      final scaledPoints = points.map((p) => _shrinkPoint(p, center)).toList();
-      final scaledIsoPoints = scaledPoints.map(_toIso).toList();
-      final path = _buildRoundedPath(scaledIsoPoints);
+    // 填充
+    canvas.drawRRect(
+        rr,
+        Paint()
+          ..color = rc.withValues(alpha: 0.15)
+          ..style = PaintingStyle.fill);
 
-      final fillPaint = Paint()
-        ..color = roomColor.withValues(alpha: 0.15)
-        ..style = PaintingStyle.fill;
-      canvas.drawPath(path, fillPaint);
+    // 描边
+    canvas.drawRRect(
+        rr,
+        Paint()
+          ..color = rc
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.0);
 
-      final borderPaint = Paint()
-        ..color = roomColor
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2;
-      canvas.drawPath(path, borderPaint);
-    }
-
-    final linePaint = Paint()
-      ..color = roomColor
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    for (int i = 0; i < isoPoints.length; i++) {
-      final p1 = isoPoints[i];
-      final p2 = isoPoints[(i + 1) % isoPoints.length];
-      if (i < isoPoints.length - 1 || !isDrawing) {
-        canvas.drawLine(p1, p2, linePaint);
-      }
-    }
-
-    for (int i = 0; i < isoPoints.length; i++) {
-      final point = isoPoints[i];
-      final isDragging = i == draggingPointIndex;
-
-      final pointPaint = Paint()
-        ..color = isDragging ? colors.error : roomColor
-        ..style = PaintingStyle.fill;
-
-      final outerPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.fill;
-
-      canvas.drawCircle(point, isDragging ? 14 : 10, outerPaint);
-      canvas.drawCircle(point, isDragging ? 12 : 8, pointPaint);
-
-      if (isDragging) {
-        final glowPaint = Paint()
-          ..color = colors.primary.withValues(alpha: 0.3)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-        canvas.drawCircle(point, 18, glowPaint);
-      }
-    }
-
-    final isoCenter = _toIso(center);
-    final areaText = _calculateArea();
-    final areaPainter = TextPainter(
+    // 尺寸标注
+    final label = '${rect.width.round()} × ${rect.height.round()}';
+    final tp = TextPainter(
       text: TextSpan(
-        text: '${areaText.toStringAsFixed(1)} 平方单位',
-        style: TextStyle(
-          color: colors.primary,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+          text: label,
+          style: TextStyle(
+              color: rc, fontSize: 11, fontWeight: FontWeight.w500)),
       textDirection: TextDirection.ltr,
     )..layout();
-    areaPainter.paint(canvas, isoCenter.translate(-areaPainter.width / 2, 10));
-  }
+    tp.paint(canvas, Offset(rect.center.dx - tp.width / 2, rect.bottom + 6));
 
-  double _calculateArea() {
-    if (points.length < 3) return 0;
+    // 手柄
+    if (!isLocked) _drawHandles(canvas, rc);
 
-    double area = 0;
-    for (int i = 0; i < points.length; i++) {
-      final j = (i + 1) % points.length;
-      area += points[i].dx * points[j].dy;
-      area -= points[j].dx * points[i].dy;
+    // 锁定图标
+    if (isLocked) {
+      final lk = TextPainter(
+        text: TextSpan(
+          text: String.fromCharCode(Icons.lock.codePoint),
+          style: TextStyle(
+            color: colors.warning,
+            fontSize: 22,
+            fontFamily: Icons.lock.fontFamily,
+            package: Icons.lock.fontPackage,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      lk.paint(canvas, rect.center - Offset(lk.width / 2, lk.height / 2));
     }
-    return (area / 2).abs();
   }
 
-  Path _buildRoundedPath(List<Offset> pts) {
-    final path = Path();
-    if (pts.length < 3) return path;
+  void _drawHandles(Canvas canvas, Color rc) {
+    final white = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    final fill = Paint()
+      ..color = rc
+      ..style = PaintingStyle.fill;
+    final stroke = Paint()
+      ..color = rc
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
 
-    for (int i = 0; i < pts.length; i++) {
-      final p1 = pts[i];
-      final p2 = pts[(i + 1) % pts.length];
-      final p3 = pts[(i + 2) % pts.length];
-
-      final v1 = p1 - p2;
-      final v2 = p3 - p2;
-
-      final v1n = v1 / v1.distance;
-      final v2n = v2 / v2.distance;
-
-      final double currentRadius = math.min(
-        _cornerRadius,
-        math.min(v1.distance / 2, v2.distance / 2),
-      );
-
-      final cornerP1 = p2 + v1n * currentRadius;
-      final cornerP2 = p2 + v2n * currentRadius;
-
-      if (i == 0) {
-        path.moveTo(cornerP1.dx, cornerP1.dy);
-      } else {
-        path.lineTo(cornerP1.dx, cornerP1.dy);
+    // 角点 — 方形手柄，更直观
+    for (int i = 0; i < 4; i++) {
+      final p = newRoomPoints[i];
+      final active = dragMode?.type == 'corner' && dragMode?.index == i;
+      final s = active ? 12.0 : 9.0;
+      canvas.drawRect(
+          Rect.fromCenter(center: p, width: s + 4, height: s + 4), white);
+      canvas.drawRect(
+          Rect.fromCenter(center: p, width: s, height: s), fill);
+      if (active) {
+        canvas.drawCircle(
+            p,
+            18,
+            Paint()
+              ..color = rc.withValues(alpha: 0.2)
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
       }
-      path.quadraticBezierTo(p2.dx, p2.dy, cornerP2.dx, cornerP2.dy);
     }
-    path.close();
-    return path;
+
+    // 边中点 — 圆形手柄
+    for (int i = 0; i < 4; i++) {
+      final next = (i + 1) % 4;
+      final mid = (newRoomPoints[i] + newRoomPoints[next]) / 2;
+      final active = dragMode?.type == 'edge' && dragMode?.index == i;
+      final r = active ? 7.0 : 5.0;
+      canvas.drawCircle(mid, r + 2, white);
+      canvas.drawCircle(mid, r, stroke);
+    }
+  }
+
+  Rect _rectOf(List<Offset> pts) {
+    double l = pts[0].dx, r = pts[0].dx, t = pts[0].dy, b = pts[0].dy;
+    for (final p in pts) {
+      l = math.min(l, p.dx);
+      r = math.max(r, p.dx);
+      t = math.min(t, p.dy);
+      b = math.max(b, p.dy);
+    }
+    return Rect.fromLTRB(l, t, r, b);
   }
 
   @override
-  bool shouldRepaint(covariant _RoomDrawingPainter oldDelegate) {
-    return oldDelegate.points != points ||
-        oldDelegate.isDrawing != isDrawing ||
-        oldDelegate.draggingPointIndex != draggingPointIndex;
+  bool shouldRepaint(covariant _FloorPlanPainter old) {
+    return old.newRoomPoints != newRoomPoints ||
+        old.hasOverlap != hasOverlap ||
+        old.isLocked != isLocked ||
+        old.dragMode != dragMode ||
+        old.existingRooms != existingRooms;
   }
 }
