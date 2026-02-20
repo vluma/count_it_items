@@ -83,18 +83,14 @@ class SpaceRepositoryImpl implements SpaceRepository {
   
   @override
   Future<SpaceEntity> getSpaceData() async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    // 如果已经有当前空间状态，返回它
     if (_currentSpace != null) {
       return _currentSpace!;
     }
     
-    // 转换为领域实体
+    await Future.delayed(const Duration(milliseconds: 500));
+    
     final spaceEntity = _mockSpace.toEntity();
     
-    // 保存当前空间状态
     _currentSpace = spaceEntity;
     
     return spaceEntity;
@@ -116,20 +112,14 @@ class SpaceRepositoryImpl implements SpaceRepository {
   
   @override
   Future<RoomEntity> selectRoom(String roomId) async {
-    // 模拟网络延迟
-    await Future.delayed(const Duration(milliseconds: 200));
-    
-    // 更新选中状态
     _selectedRoomId = roomId;
     
-    // 更新当前空间状态
     _currentSpace = _currentSpace?.copyWith(
       rooms: _currentSpace!.rooms.map((room) => room.copyWith(
         isSelected: room.id == roomId,
       )).toList(),
     );
     
-    // 返回选中的房间
     return _currentSpace!.rooms.firstWhere((room) => room.id == roomId);
   }
   

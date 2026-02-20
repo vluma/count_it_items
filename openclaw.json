@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.1.30",
+    "lastTouchedAt": "2026-02-02T01:45:36.000Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-02-02T01:45:35.968Z",
+    "lastRunVersion": "2026.1.30",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "google:default": {
+        "provider": "google",
+        "mode": "api_key"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai-local/gemini-3-flash"
+      },
+      "models": {
+        "openai-local/gemini-3-flash": {
+          "alias": "gemini-flash",
+          "baseUrl": "http://127.0.0.1:8045/v1",
+          "apiKey": "sk-0ac1337e59434b41b2db27fc0c925bfd"
+        }
+      },
+      "workspace": "/Users/maluwei/clawd",
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto"
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "command-logger": {
+          "enabled": true
+        },
+        "session-memory": {
+          "enabled": true
+        },
+        "boot-md": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "channels": {
+    "imessage": {
+      "enabled": true,
+      "cliPath": "Woaini121007.",
+      "dmPolicy": "pairing",
+      "groupPolicy": "allowlist"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "592554e9cfe0dacd78e0d0610ca17ed28c937011fb045b17"
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "plugins": {
+    "entries": {
+      "imessage": {
+        "enabled": true
+      }
+    }
+  },
+  "skills": {
+    "install": {
+      "nodeManager": "npm"
+    }
+  }
+}

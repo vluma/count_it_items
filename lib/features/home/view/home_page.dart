@@ -25,8 +25,6 @@ class _HomePageState extends State<HomePage> {
   ViewMode _viewMode = ViewMode.map;
   final TransformationController _transformationController = TransformationController();
   final GlobalKey _customPaintKey = GlobalKey();
-  Offset? _pointerDownPosition;
-  int? _pointerDownTime;
 
   @override
   void initState() {
@@ -62,14 +60,12 @@ class _HomePageState extends State<HomePage> {
                       top: safePadding.top,
                       left: 0,
                       right: 0,
-                      child: HomeAppBar(
-                        viewMode: _viewMode,
-                        onViewModeChanged: (mode) {
-                          setState(() {
-                            _viewMode = mode;
-                          });
-                        },
-                      ),
+                      child: const HomeAppBar(),
+                    ),
+                    Positioned(
+                      right: 16.w,
+                      bottom: 16.h,
+                      child: _buildViewModeFAB(colors),
                     ),
                   ],
                 ),
@@ -86,14 +82,14 @@ class _HomePageState extends State<HomePage> {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
             colors.background,
-            colors.background.withValues(alpha: 0.95),
-            colors.surface.withValues(alpha: 0.3),
+            colors.surface.withValues(alpha: 0.5),
+            colors.background.withValues(alpha: 0.8),
           ],
-          stops: const [0.0, 0.6, 1.0],
+          stops: const [0.0, 0.4, 1.0],
         ),
       ),
     );
@@ -115,9 +111,15 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               Expanded(
-                child: _viewMode == ViewMode.map
-                    ? _buildMapView(state, context)
-                    : _buildListView(space.rooms, colors),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  child: _viewMode == ViewMode.map
+                      ? _buildMapView(state, context)
+                      : _buildListView(space.rooms, colors),
+                ),
               ),
             ],
           );
@@ -137,48 +139,35 @@ class _HomePageState extends State<HomePage> {
       colors: colors,
     );
 
-    return Listener(
-      onPointerDown: (event) {
-        _pointerDownPosition = event.localPosition;
-        _pointerDownTime = DateTime.now().millisecondsSinceEpoch;
-      },
-      onPointerUp: (event) {
-        if (_pointerDownPosition == null || _pointerDownTime == null) return;
-        
-        final timeDiff = DateTime.now().millisecondsSinceEpoch - _pointerDownTime!;
-        final distance = (event.localPosition - _pointerDownPosition!).distance;
-        
-        if (timeDiff < 500 && distance < 20) {
-          final RenderBox? customPaintBox = _customPaintKey.currentContext?.findRenderObject() as RenderBox?;
-          if (customPaintBox == null) return;
-          final size = customPaintBox.size;
-          
-          final transform = _transformationController.value;
-          final inverseTransform = Matrix4.inverted(transform);
-          final transformedPoint = MatrixUtils.transformPoint(inverseTransform, event.localPosition);
-          
-          final roomId = painter.hitTestRoom(transformedPoint, size);
-          if (roomId != null) {
-            context.read<MapCubit>().add(SelectRoom(roomId: roomId));
+    return InteractiveViewer(
+      transformationController: _transformationController,
+      boundaryMargin: const EdgeInsets.all(200),
+      minScale: 0.1,
+      maxScale: 5.0,
+      panEnabled: true,
+      scaleEnabled: true,
+      child: RepaintBoundary(
+        child: Builder(
+          builder: (context) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (details) {
+                final RenderBox? customPaintBox = _customPaintKey.currentContext?.findRenderObject() as RenderBox?;
+                if (customPaintBox == null) return;
+                final size = customPaintBox.size;
+                
+                final roomId = painter.hitTestRoom(details.localPosition, size);
+                if (roomId != null) {
+                  context.read<MapCubit>().add(SelectRoom(roomId: roomId));
+                }
+              },
+              child: CustomPaint(
+                key: _customPaintKey,
+                painter: painter,
+                size: Size.infinite,
+              ),
+            );
           }
-        }
-        
-        _pointerDownPosition = null;
-        _pointerDownTime = null;
-      },
-      child: InteractiveViewer(
-        transformationController: _transformationController,
-        boundaryMargin: const EdgeInsets.all(200),
-        minScale: 0.1,
-        maxScale: 5.0,
-        panEnabled: true,
-        scaleEnabled: true,
-        child: RepaintBoundary(
-          child: CustomPaint(
-            key: _customPaintKey,
-            painter: painter,
-            size: Size.infinite,
-          ),
         ),
       ),
     );
@@ -194,6 +183,30 @@ class _HomePageState extends State<HomePage> {
           child: RoomCard(room: rooms[index]),
         );
       },
+    );
+  }
+
+  Widget _buildViewModeFAB(AppColorsData colors) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _viewMode = _viewMode == ViewMode.map ? ViewMode.list : ViewMode.map;
+        });
+      },
+      child: Container(
+        width: 48.w,
+        height: 48.w,
+        decoration: BoxDecoration(
+          gradient: colors.primaryGradient,
+          borderRadius: BorderRadius.circular(14.r),
+          boxShadow: colors.primaryGlow,
+        ),
+        child: Icon(
+          _viewMode == ViewMode.map ? Icons.list_rounded : Icons.map_outlined,
+          size: 22.sp,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }

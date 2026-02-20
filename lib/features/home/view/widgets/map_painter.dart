@@ -273,9 +273,20 @@ class MapPainter extends CustomPainter {
       final isRightWall = vector.dx > 0;
 
       final wallPaint = Paint()
-        ..color = isRightWall
-            ? colors.textPrimary.withValues(alpha: 0.06)
-            : colors.textPrimary.withValues(alpha: 0.03)
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            isRightWall
+                ? colors.textPrimary.withValues(alpha: 0.08)
+                : colors.textPrimary.withValues(alpha: 0.04),
+            isRightWall
+                ? colors.textPrimary.withValues(alpha: 0.15)
+                : colors.textPrimary.withValues(alpha: 0.1),
+          ],
+        ).createShader(
+          Rect.fromPoints(topPoints[i], bottomPoints[i]),
+        )
         ..style = PaintingStyle.fill;
 
       Path wallPath = Path()
@@ -334,10 +345,12 @@ class MapPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant MapPainter oldDelegate) =>
-      oldDelegate.state != state || 
-      oldDelegate.colors != colors ||
-      oldDelegate.isEditMode != isEditMode;
+  bool shouldRepaint(covariant MapPainter oldDelegate) {
+    if (oldDelegate.colors != colors) return true;
+    if (oldDelegate.isEditMode != isEditMode) return true;
+    
+    return oldDelegate.state != state;
+  }
 
   String? hitTestRoom(Offset localPosition, Size size) {
     String? hitRoomId;
@@ -355,18 +368,44 @@ class MapPainter extends CustomPainter {
         final centerX = (boundingBox.left + boundingBox.right) / 2;
         final centerY = (boundingBox.top + boundingBox.bottom) / 2;
 
-        final translatedX = localPosition.dx - (size.width / 2 - centerX);
-        final translatedY = localPosition.dy - (size.height / 2 - centerY);
+        final translateX = size.width / 2 - centerX;
+        final translateY = size.height / 2 - centerY;
 
-        for (final room in space.rooms) {
+        final canvasPoint = Offset(localPosition.dx - translateX, localPosition.dy - translateY);
+
+        // Iterate rooms in reverse order so the ones painted last (on top) are tested first.
+        for (final room in space.rooms.reversed) {
           final center = _getCenter(room.points);
-          final List<Offset> isoPoints = room.points
+          
+          // Test Floor
+          final List<Offset> topPoints = room.points
               .map((p) => _toIso(_shrinkPoint(p, center)))
               .toList();
-
-          if (_isPointInPolygon(Offset(translatedX, translatedY), isoPoints)) {
+              
+          final floorPath = _buildRoundedPath(topPoints);
+          if (floorPath.contains(canvasPoint)) {
             hitRoomId = room.id;
-            return;
+            return; // Break out of maybeWhen block
+          }
+
+          // Test Walls
+          final List<Offset> bottomPoints = room.points
+              .map((p) => _toIso(_shrinkPoint(p.translate(0, wallDepth), center)))
+              .toList();
+
+          for (int i = 0; i < topPoints.length; i++) {
+            int next = (i + 1) % topPoints.length;
+            final wallPath = Path()
+              ..moveTo(topPoints[i].dx, topPoints[i].dy)
+              ..lineTo(topPoints[next].dx, topPoints[next].dy)
+              ..lineTo(bottomPoints[next].dx, bottomPoints[next].dy)
+              ..lineTo(bottomPoints[i].dx, bottomPoints[i].dy)
+              ..close();
+              
+            if (wallPath.contains(canvasPoint)) {
+              hitRoomId = room.id;
+              return; // Break out of maybeWhen block
+            }
           }
         }
       },
@@ -374,44 +413,5 @@ class MapPainter extends CustomPainter {
     );
     
     return hitRoomId;
-  }
-
-  bool _isPointInPolygon(Offset point, List<Offset> polygon) {
-    if (polygon.length < 3) return false;
-
-    int intersections = 0;
-    for (int i = 0; i < polygon.length; i++) {
-      final p1 = polygon[i];
-      final p2 = polygon[(i + 1) % polygon.length];
-
-      if (_rayIntersectsSegment(point, p1, p2)) {
-        intersections++;
-      }
-    }
-
-    return intersections % 2 == 1;
-  }
-
-  bool _rayIntersectsSegment(Offset point, Offset p1, Offset p2) {
-    if (p1.dy > p2.dy) {
-      return _rayIntersectsSegment(point, p2, p1);
-    }
-
-    if (point.dy < p1.dy || point.dy >= p2.dy) {
-      return false;
-    }
-
-    if (point.dx >= math.max(p1.dx, p2.dx)) {
-      return false;
-    }
-
-    if (point.dx < math.min(p1.dx, p2.dx)) {
-      return true;
-    }
-
-    final double segmentSlope = (p2.dx - p1.dx) / (p2.dy - p1.dy);
-    final double raySlope = (point.dx - p1.dx) / (point.dy - p1.dy);
-
-    return raySlope >= segmentSlope;
   }
 }

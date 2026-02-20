@@ -191,10 +191,10 @@ class _AiInputBarState extends State<AiInputBar> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final safePadding = MediaQuery.of(context).padding;
+    final viewPadding = MediaQuery.of(context).viewPadding;
 
     return Container(
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, safePadding.bottom + 8.h),
+      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, viewPadding.bottom + 8.h),
       decoration: BoxDecoration(
         color: colors.surface,
         boxShadow: [

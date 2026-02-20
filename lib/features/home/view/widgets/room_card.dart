@@ -23,16 +23,33 @@ class RoomCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => _navigateToEditPage(context),
-      child: Container(
-        padding: EdgeInsets.all(16.w),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.all(18.w),
+        margin: EdgeInsets.symmetric(horizontal: 4.w),
         decoration: BoxDecoration(
           color: colors.card,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: room.isSelected ? colors.primary : colors.border.withValues(alpha: 0.5),
-            width: room.isSelected ? 2 : 1,
+            color: room.isSelected ? colors.primary : colors.border.withValues(alpha: 0.3),
+            width: room.isSelected ? 2 : 1.5,
           ),
-          boxShadow: colors.cardShadow,
+          boxShadow: room.isSelected 
+            ? [
+                BoxShadow(
+                  color: colors.primary.withValues(alpha: 0.15),
+                  blurRadius: 12,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                )
+              ]
+            : [
+                BoxShadow(
+                  color: colors.shadow.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
         ),
         child: Row(
           children: [
@@ -109,7 +126,6 @@ class RoomCard extends StatelessWidget {
             Icon(
               Icons.chevron_right_rounded,
               size: 20.sp,
-              color: colors.textTertiary,
             ),
           ],
         ),
@@ -133,18 +149,11 @@ class RoomCard extends StatelessWidget {
       width: 52.w,
       height: 52.w,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            statusColor.withValues(alpha: 0.15),
-            statusColor.withValues(alpha: 0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(14.r),
+        color: statusColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: statusColor.withValues(alpha: 0.2),
-          width: 1,
+          color: statusColor.withValues(alpha: 0.15),
+          width: 1.5,
         ),
       ),
       child: Icon(

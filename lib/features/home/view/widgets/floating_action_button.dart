@@ -7,7 +7,7 @@ import 'package:youwu/core/di/di.dart';
 import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/features/chat/view_model/chat_cubit.dart';
 import 'package:youwu/features/chat/view/chat_page.dart';
-import 'package:youwu/features/home/view/room_canvas_page.dart';
+import 'package:youwu/features/home/view/room_drawing_page.dart';
 import 'package:youwu/features/home/view/room_form_page.dart';
 import 'package:youwu/features/home/view/scanner_page.dart';
 import 'package:youwu/features/home/view_model/map_cubit.dart';
@@ -190,7 +190,7 @@ class _HomeFloatingActionButtonState extends State<HomeFloatingActionButton> {
     
     final points = await Navigator.of(context).push<List<Offset>>(
       MaterialPageRoute(
-        builder: (context) => RoomCanvasPage(
+        builder: (context) => RoomDrawingPage(
           existingRooms: List.from(existingRooms),
         ),
       ),

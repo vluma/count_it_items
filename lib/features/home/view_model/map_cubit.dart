@@ -57,8 +57,7 @@ class MapCubit extends Bloc<MapEvent, MapState> {
   
   Future<void> _onSelectRoom(SelectRoom event, Emitter<MapState> emit) async {
     try {
-      final room = await spaceRepository.selectRoom(event.roomId);
-      emit(MapState.roomSelected(room: room));
+      await spaceRepository.selectRoom(event.roomId);
       
       final space = await spaceRepository.getSpaceData();
       emit(MapState.success(
