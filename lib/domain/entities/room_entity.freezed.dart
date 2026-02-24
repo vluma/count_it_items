@@ -221,7 +221,7 @@ class _$RoomEntityImpl implements _RoomEntity {
       this.centerPoint = Offset.zero,
       this.isSelected = false,
       this.isHighlighted = false,
-      this.isLocked = false})
+      this.isLocked = true})
       : _points = points;
 
   @override

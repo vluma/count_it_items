@@ -8,7 +8,7 @@ import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/features/chat/view_model/chat_cubit.dart';
 import 'package:youwu/features/chat/view/chat_page.dart';
 import 'package:youwu/features/home/view/room_drawing_page.dart';
-import 'package:youwu/features/home/view/room_form_page.dart';
+
 import 'package:youwu/features/home/view/scanner_page.dart';
 import 'package:youwu/features/home/view_model/map_cubit.dart';
 
@@ -21,7 +21,8 @@ class HomeFloatingActionButton extends StatefulWidget {
   });
 
   @override
-  State<HomeFloatingActionButton> createState() => _HomeFloatingActionButtonState();
+  State<HomeFloatingActionButton> createState() =>
+      _HomeFloatingActionButtonState();
 }
 
 class _HomeFloatingActionButtonState extends State<HomeFloatingActionButton> {
@@ -66,11 +67,7 @@ class _HomeFloatingActionButtonState extends State<HomeFloatingActionButton> {
         child: AnimatedRotation(
           turns: _isExpanded ? 0.125 : 0,
           duration: const Duration(milliseconds: 200),
-          child: Icon(
-            Icons.add_rounded,
-            size: 28.sp,
-            color: Colors.white,
-          ),
+          child: Icon(Icons.add_rounded, size: 28.sp, color: Colors.white),
         ),
       ),
     );
@@ -159,11 +156,7 @@ class _HomeFloatingActionButtonState extends State<HomeFloatingActionButton> {
                 ),
               ],
             ),
-            child: Icon(
-              icon,
-              size: 22.sp,
-              color: Colors.white,
-            ),
+            child: Icon(icon, size: 22.sp, color: Colors.white),
           ),
         ),
       ],
@@ -184,28 +177,19 @@ class _HomeFloatingActionButtonState extends State<HomeFloatingActionButton> {
   void _handleAddRoom() async {
     final mapState = context.read<MapCubit>().state;
     final existingRooms = mapState.maybeWhen(
-      success: (space, showOverlay, isSearching, expiredItems, expiringItems) => space.rooms,
+      success: (space, showOverlay, isSearching, expiredItems, expiringItems) =>
+          space.rooms,
       orElse: () => <dynamic>[],
     );
-    
-    final points = await Navigator.of(context).push<List<Offset>>(
+
+    await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => RoomDrawingPage(
-          existingRooms: List.from(existingRooms),
+        builder: (context) => BlocProvider.value(
+          value: context.read<MapCubit>(),
+          child: RoomDrawingPage(existingRooms: List.from(existingRooms)),
         ),
       ),
     );
-    
-    if (points != null && points.isNotEmpty && mounted) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: context.read<MapCubit>(),
-            child: RoomFormPage(initialPoints: points),
-          ),
-        ),
-      );
-    }
   }
 
   void _handleCamera() async {
@@ -236,9 +220,7 @@ class _HomeFloatingActionButtonState extends State<HomeFloatingActionButton> {
 
   void _handleScan() async {
     final result = await Navigator.of(context).push<Map<String, dynamic>>(
-      MaterialPageRoute(
-        builder: (context) => const ScannerPage(),
-      ),
+      MaterialPageRoute(builder: (context) => const ScannerPage()),
     );
 
     if (result == null || !mounted) return;
@@ -253,10 +235,7 @@ class _HomeFloatingActionButtonState extends State<HomeFloatingActionButton> {
       MaterialPageRoute(
         builder: (context) => BlocProvider(
           create: (_) => sl<ChatCubit>(),
-          child: ChatPage(
-            scanResult: value,
-            scanType: type,
-          ),
+          child: ChatPage(scanResult: value, scanType: type),
         ),
       ),
     );

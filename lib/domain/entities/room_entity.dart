@@ -22,6 +22,6 @@ class RoomEntity with _$RoomEntity {
     @Default(Offset.zero) Offset centerPoint, // 预计算的中心点
     @Default(false) bool isSelected,  // 是否被选中
     @Default(false) bool isHighlighted, // 是否被高亮
-    @Default(false) bool isLocked,    // 是否锁定，锁定后不能移动、修改大小或删除
+    @Default(true) bool isLocked,    // 是否锁定，锁定后不能移动、修改大小或删除
   }) = _RoomEntity;
 }

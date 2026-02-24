@@ -59,6 +59,7 @@ class _RoomEditorPageState extends State<RoomEditorPage> {
       type: 'other',
       itemCount: 0,
       load: SpaceLoadStatus.empty,
+      isLocked: false,
       points: [
         Offset(baseX, baseY),
         Offset(baseX + 150, baseY),

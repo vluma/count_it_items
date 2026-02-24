@@ -10,7 +10,7 @@ import 'package:youwu/core/services/speech_service.dart';
 import 'package:youwu/features/chat/view_model/chat_cubit.dart';
 import 'package:youwu/features/chat/view/chat_page.dart';
 import 'package:youwu/features/home/view/room_drawing_page.dart';
-import 'package:youwu/features/home/view/room_form_page.dart';
+
 import 'package:youwu/features/home/view/scanner_page.dart';
 import 'package:youwu/features/home/view_model/map_cubit.dart';
 import 'package:youwu/shared/widgets/glass_card.dart';
@@ -136,24 +136,16 @@ class _AiInputBarState extends State<AiInputBar> with SingleTickerProviderStateM
       orElse: () => <dynamic>[],
     );
 
-    final points = await Navigator.of(context).push<List<Offset>>(
+    await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => RoomDrawingPage(
-          existingRooms: List.from(existingRooms),
+        builder: (context) => BlocProvider.value(
+          value: context.read<MapCubit>(),
+          child: RoomDrawingPage(
+            existingRooms: List.from(existingRooms),
+          ),
         ),
       ),
     );
-
-    if (points != null && points.isNotEmpty && mounted) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: context.read<MapCubit>(),
-            child: RoomFormPage(initialPoints: points),
-          ),
-        ),
-      );
-    }
   }
 
   void _handleCamera() async {

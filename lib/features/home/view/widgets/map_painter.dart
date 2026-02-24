@@ -305,7 +305,9 @@ class MapPainter extends CustomPainter {
   }
 
   void _drawAllRoomShadows(Canvas canvas, SpaceEntity space) {
-    final shadowPath = Path();
+    if (space.rooms.isEmpty) return;
+
+    final footprintPath = Path();
 
     for (final room in space.rooms) {
       final center = _getCenter(room.points);
@@ -314,16 +316,31 @@ class MapPainter extends CustomPainter {
           .map((p) => _toIso(_shrinkPoint(p.translate(0, wallDepth), center)))
           .toList();
 
-      shadowPath.addPath(_buildRoundedPath(shadowPoints), Offset.zero);
+      footprintPath.addPath(_buildRoundedPath(shadowPoints), Offset.zero);
     }
 
+    canvas.save();
+    
+    // Create an inverted clip path to avoid darkening the transparent rooms
+    // This ensures shadows only appear on the empty ground, not under any rooms.
+    final clipOutPath = Path.combine(
+      PathOperation.difference,
+      Path()..addRect(const Rect.fromLTRB(-100000, -100000, 100000, 100000)),
+      footprintPath,
+    );
+    canvas.clipPath(clipOutPath);
+
+    // Draw a normal blurred shadow, shifted slightly to cast a drop shadow
+    final shadowPath = footprintPath.shift(const Offset(4, 6));
+    
     canvas.drawPath(
       shadowPath,
       Paint()
-        ..color = colors.shadow.withValues(alpha: 0.2)
-        // Use BlurStyle.outer to prevent shadows from darkening the transparent rooms from underneath
-        ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 8),
+        ..color = colors.shadow.withValues(alpha: 0.3)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
     );
+
+    canvas.restore();
   }
 
   Offset _getCenter(List<Offset> points) {

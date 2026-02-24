@@ -4,6 +4,10 @@ import 'package:youwu/core/theme/app_colors.dart';
 import 'package:youwu/domain/entities/room_entity.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 import 'dart:math' as math;
+import 'package:uuid/uuid.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:youwu/features/home/view_model/map_cubit.dart';
+import 'package:youwu/features/home/view_model/map_event.dart';
 
 /// 2D 平面图房间绘制页 —— 类似设计工具的拖拽编辑器
 ///
@@ -40,6 +44,7 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
   bool _hasOverlap = false;
   bool _isLocked = false;
   bool _showXYWH = false;
+  String? _editingRoomId;
 
   // ---- 画布 ----
   final TransformationController _transformCtrl = TransformationController();
@@ -50,12 +55,28 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
   final _wCtrl = TextEditingController();
   final _hCtrl = TextEditingController();
 
+  // ---- 属性表单 ----
+  final _nameCtrl = TextEditingController(text: '新房间');
+  String _selectedType = '卧室';
+  final List<String> _roomTypes = [
+    '卧室',
+    '厨房',
+    '客厅',
+    '浴室',
+    '书房',
+    '储藏室',
+    '阳台',
+    '车库',
+    '其他',
+  ];
+
   // ---- 常量 ----
   static const double _gridSize = 20.0;
   static const double _snapDist = 12.0;
   static const double _defaultW = 150.0;
   static const double _defaultH = 100.0;
   static const double _minSize = 40.0;
+
   /// 画布整体偏移，让 (0,0) 大致在中间
   static const double _canvasOffset = 1000.0;
 
@@ -69,15 +90,52 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
     } else {
       _roomPoints = [];
     }
-    // 初始时将画布移动，让 offset 区域居中显示
+    // 初始时居中显示现有房间和新增房间
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final size = MediaQuery.of(context).size;
-      _transformCtrl.value = Matrix4.identity()
-        ..setTranslation(Vector3(
-          size.width / 2 - _canvasOffset,
-          size.height / 2 - _canvasOffset,
-          0,
-        ));
+
+      Rect? bounds;
+      void addPoints(List<Offset> pts) {
+        if (pts.length < 4) return;
+        final r = _rectFrom(pts);
+        if (bounds == null) {
+          bounds = r;
+        } else {
+          bounds = Rect.fromLTRB(
+            math.min(bounds!.left, r.left),
+            math.min(bounds!.top, r.top),
+            math.max(bounds!.right, r.right),
+            math.max(bounds!.bottom, r.bottom),
+          );
+        }
+      }
+
+      for (final r in widget.existingRooms) {
+        addPoints(r.points);
+      }
+      if (_hasRoom && _roomPoints.isNotEmpty) {
+        addPoints(_roomPoints);
+      }
+
+      if (bounds != null) {
+        _transformCtrl.value = Matrix4.identity()
+          ..setTranslation(
+            Vector3(
+              size.width / 2 - bounds!.center.dx,
+              size.height / 2 - bounds!.center.dy,
+              0,
+            ),
+          );
+      } else {
+        _transformCtrl.value = Matrix4.identity()
+          ..setTranslation(
+            Vector3(
+              size.width / 2 - _canvasOffset,
+              size.height / 2 - _canvasOffset,
+              0,
+            ),
+          );
+      }
     });
   }
 
@@ -88,6 +146,7 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
     _yCtrl.dispose();
     _wCtrl.dispose();
     _hCtrl.dispose();
+    _nameCtrl.dispose();
     super.dispose();
   }
 
@@ -119,6 +178,7 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
     final xs = <double>[];
     final ys = <double>[];
     for (final room in widget.existingRooms) {
+      if (room.id == _editingRoomId) continue;
       for (final p in room.points) {
         if (!xs.contains(p.dx)) xs.add(p.dx);
         if (!ys.contains(p.dy)) ys.add(p.dy);
@@ -147,6 +207,7 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
     if (!_hasRoom || _roomPoints.length < 4) return false;
     final nr = _rectFrom(_roomPoints).deflate(1.0);
     for (final room in widget.existingRooms) {
+      if (room.id == _editingRoomId) continue;
       if (room.points.length < 4) continue;
       if (nr.overlaps(_rectFrom(room.points))) return true;
     }
@@ -169,9 +230,11 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
           topY = rect.top;
         }
       }
-      base = Offset(maxRight, topY);
+      base = Offset(maxRight + 20.0, topY);
     }
     setState(() {
+      _editingRoomId = null;
+      _nameCtrl.text = '新房间';
       _roomPoints = [
         base,
         Offset(base.dx + _defaultW, base.dy),
@@ -179,6 +242,7 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
         Offset(base.dx, base.dy + _defaultH),
       ];
       _hasRoom = true;
+      _isLocked = false;
       _hasOverlap = _checkOverlap();
       _syncXYWH();
     });
@@ -191,27 +255,34 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
   static const double _touchSlop = 24.0; // 手指触控容差区域
 
   _DragMode? _hitTest(Offset canvasPos) {
-    if (!_hasRoom || _roomPoints.length < 4 || _isLocked) return null;
-
-    // 1) 角点 (最高优先级)
-    for (int i = 0; i < 4; i++) {
-      if ((_roomPoints[i] - canvasPos).distance <= _touchSlop) {
-        return _DragMode.corner(i);
+    if (_hasRoom && _roomPoints.length >= 4 && !_isLocked) {
+      // 1) 角点 (最高优先级)
+      for (int i = 0; i < 4; i++) {
+        if ((_roomPoints[i] - canvasPos).distance <= _touchSlop) {
+          return _DragMode.corner(i);
+        }
+      }
+      // 2) 边中点
+      for (int i = 0; i < 4; i++) {
+        final next = (i + 1) % 4;
+        final mid = (_roomPoints[i] + _roomPoints[next]) / 2;
+        if ((mid - canvasPos).distance <= _touchSlop) {
+          return _DragMode.edge(i);
+        }
+      }
+      // 3) 房间内部
+      if (_rectFrom(_roomPoints).inflate(4).contains(canvasPos)) {
+        return _DragMode.body();
       }
     }
 
-    // 2) 边中点
-    for (int i = 0; i < 4; i++) {
-      final next = (i + 1) % 4;
-      final mid = (_roomPoints[i] + _roomPoints[next]) / 2;
-      if ((mid - canvasPos).distance <= _touchSlop) {
-        return _DragMode.edge(i);
+    // 4) 检查是否点击了现有房间
+    for (int i = widget.existingRooms.length - 1; i >= 0; i--) {
+      final r = widget.existingRooms[i];
+      if (r.id == _editingRoomId) continue;
+      if (r.points.length >= 4 && _rectFrom(r.points).contains(canvasPos)) {
+        return _DragMode.selectExisting(r.id);
       }
-    }
-
-    // 3) 房间内部
-    if (_rectFrom(_roomPoints).inflate(4).contains(canvasPos)) {
-      return _DragMode.body();
     }
 
     return null;
@@ -222,9 +293,16 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
   // ===========================================================================
 
   void _onPointerDown(PointerDownEvent event) {
-    if (_isLocked || !_hasRoom) return;
     final canvasPos = _screenToCanvas(event.localPosition);
     final mode = _hitTest(canvasPos);
+
+    if (mode?.type == 'selectExisting') {
+      _selectExistingRoom(mode!.id!);
+      return;
+    }
+
+    if (_isLocked || !_hasRoom) return;
+
     if (mode != null) {
       setState(() {
         _dragMode = mode;
@@ -232,6 +310,20 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
         _dragInitialPoints = List.from(_roomPoints);
       });
     }
+  }
+
+  void _selectExistingRoom(String id) {
+    final r = widget.existingRooms.firstWhere((e) => e.id == id);
+    setState(() {
+      _editingRoomId = r.id;
+      _roomPoints = List.from(r.points);
+      _hasRoom = true;
+      _nameCtrl.text = r.name;
+      _selectedType = _roomTypes.contains(r.type) ? r.type : '其他';
+      _isLocked = true; // 默认是锁定状态
+      _syncXYWH();
+      _hasOverlap = _checkOverlap();
+    });
   }
 
   void _onPointerMove(PointerMoveEvent event) {
@@ -377,6 +469,8 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
       _hasOverlap = false;
       _isLocked = false;
       _dragMode = null;
+      _editingRoomId = null;
+      _nameCtrl.text = '新房间';
     });
   }
 
@@ -384,7 +478,31 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
 
   void _confirmDrawing() {
     if (_roomPoints.length >= 4 && !_hasOverlap) {
-      Navigator.of(context).pop(_roomPoints);
+      RoomEntity? existing;
+      if (_editingRoomId != null) {
+        try {
+          existing = widget.existingRooms.firstWhere(
+            (r) => r.id == _editingRoomId,
+          );
+        } catch (_) {}
+      }
+
+      final room = RoomEntity(
+        id: existing?.id ?? const Uuid().v4(),
+        name: _nameCtrl.text.trim().isEmpty ? '新房间' : _nameCtrl.text.trim(),
+        type: _selectedType,
+        points: _roomPoints,
+        itemCount: existing?.itemCount ?? 0,
+        load: existing?.load ?? SpaceLoadStatus.empty,
+        centerPoint: Offset.zero,
+      );
+
+      if (existing != null) {
+        context.read<MapCubit>().add(UpdateRoom(room: room));
+      } else {
+        context.read<MapCubit>().add(AddRoom(room: room));
+      }
+      Navigator.of(context).pop();
     }
   }
 
@@ -446,7 +564,9 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
                     scaleEnabled: true,
                     child: CustomPaint(
                       painter: _FloorPlanPainter(
-                        existingRooms: widget.existingRooms,
+                        existingRooms: widget.existingRooms
+                            .where((r) => r.id != _editingRoomId)
+                            .toList(),
                         newRoomPoints: _hasRoom ? _roomPoints : [],
                         hasOverlap: _hasOverlap,
                         isLocked: _isLocked,
@@ -532,8 +652,9 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
               decoration: BoxDecoration(
-                color: (_hasOverlap ? colors.error : colors.primary)
-                    .withValues(alpha: 0.1),
+                color: (_hasOverlap ? colors.error : colors.primary).withValues(
+                  alpha: 0.1,
+                ),
                 borderRadius: BorderRadius.circular(6.r),
               ),
               child: Text(
@@ -565,7 +686,9 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: colors.surface,
-        border: Border(top: BorderSide(color: colors.border.withValues(alpha: 0.3))),
+        border: Border(
+          top: BorderSide(color: colors.border.withValues(alpha: 0.3)),
+        ),
       ),
       child: Row(
         children: [
@@ -593,17 +716,24 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
     );
   }
 
-  Widget _xywhField(String label, TextEditingController ctrl, AppColorsData colors) {
+  Widget _xywhField(
+    String label,
+    TextEditingController ctrl,
+    AppColorsData colors,
+  ) {
     return Expanded(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: TextStyle(
-                  fontSize: 10.sp,
-                  color: colors.textTertiary,
-                  fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.sp,
+              color: colors.textTertiary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           SizedBox(height: 4.h),
           SizedBox(
             height: 36.h,
@@ -612,18 +742,24 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
               keyboardType: TextInputType.number,
               style: TextStyle(fontSize: 13.sp, color: colors.textPrimary),
               decoration: InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                  vertical: 8.h,
+                ),
                 isDense: true,
                 filled: true,
                 fillColor: colors.background,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.r),
-                  borderSide: BorderSide(color: colors.border.withValues(alpha: 0.3)),
+                  borderSide: BorderSide(
+                    color: colors.border.withValues(alpha: 0.3),
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.r),
-                  borderSide: BorderSide(color: colors.border.withValues(alpha: 0.3)),
+                  borderSide: BorderSide(
+                    color: colors.border.withValues(alpha: 0.3),
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.r),
@@ -666,7 +802,7 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
               child: ElevatedButton.icon(
                 onPressed: _addDefaultRoom,
                 icon: Icon(Icons.add_rounded, size: 20.sp),
-                label: Text('添加房间', style: TextStyle(fontSize: 14.sp)),
+                label: Text('放置房间', style: TextStyle(fontSize: 14.sp)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colors.primary,
                   foregroundColor: Colors.white,
@@ -677,52 +813,138 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
                 ),
               ),
             )
-          : Row(
+          : Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // 锁定
-                _toolBtn(
-                  icon: _isLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
-                  label: _isLocked ? '解锁' : '锁定',
-                  color: _isLocked ? colors.warning : colors.textSecondary,
-                  onTap: _toggleLock,
-                  colors: colors,
-                ),
-                SizedBox(width: 10.w),
-                // XYWH 输入
-                _toolBtn(
-                  icon: Icons.straighten_rounded,
-                  label: 'XYWH',
-                  color: _showXYWH ? colors.primary : colors.textSecondary,
-                  onTap: () => setState(() => _showXYWH = !_showXYWH),
-                  colors: colors,
-                ),
-                SizedBox(width: 10.w),
-                // 重置
-                _toolBtn(
-                  icon: Icons.refresh_rounded,
-                  label: '重置',
-                  color: colors.textSecondary,
-                  onTap: _resetDrawing,
-                  colors: colors,
-                ),
-                SizedBox(width: 12.w),
-                // 确认
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: !_hasOverlap && _hasRoom ? _confirmDrawing : null,
-                    icon: Icon(Icons.check_circle_rounded, size: 18.sp),
-                    label: Text('确认', style: TextStyle(fontSize: 14.sp)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          _hasOverlap ? colors.error : colors.primary,
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: colors.border,
-                      padding: EdgeInsets.symmetric(vertical: 14.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
+                // === 房间属性区域 ===
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        height: 44.h,
+                        decoration: BoxDecoration(
+                          color: colors.background,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: colors.border.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: TextField(
+                          controller: _nameCtrl,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: colors.textPrimary,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: '房间名称',
+                            hintStyle: TextStyle(color: colors.textTertiary),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        height: 44.h,
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        decoration: BoxDecoration(
+                          color: colors.background,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: colors.border.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _selectedType,
+                            isExpanded: true,
+                            icon: Icon(
+                              Icons.expand_more_rounded,
+                              color: colors.textSecondary,
+                              size: 20.sp,
+                            ),
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: colors.textPrimary,
+                            ),
+                            dropdownColor: colors.surface,
+                            items: _roomTypes.map((type) {
+                              return DropdownMenuItem(
+                                value: type,
+                                child: Text(type),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              if (value != null)
+                                setState(() => _selectedType = value);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                // === 操作按钮区域 ===
+                Row(
+                  children: [
+                    // 锁定
+                    _toolBtn(
+                      icon: _isLocked
+                          ? Icons.lock_rounded
+                          : Icons.lock_open_rounded,
+                      label: _isLocked ? '解锁' : '锁定',
+                      color: _isLocked ? colors.warning : colors.textSecondary,
+                      onTap: _toggleLock,
+                      colors: colors,
+                    ),
+                    SizedBox(width: 8.w),
+                    // XYWH 输入
+                    _toolBtn(
+                      icon: Icons.straighten_rounded,
+                      label: '坐标',
+                      color: _showXYWH ? colors.primary : colors.textSecondary,
+                      onTap: () => setState(() => _showXYWH = !_showXYWH),
+                      colors: colors,
+                    ),
+                    SizedBox(width: 8.w),
+                    // 重置
+                    _toolBtn(
+                      icon: Icons.refresh_rounded,
+                      label: '重置',
+                      color: colors.textSecondary,
+                      onTap: _resetDrawing,
+                      colors: colors,
+                    ),
+                    SizedBox(width: 12.w),
+                    // 确认保存
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: !_hasOverlap && _hasRoom
+                            ? _confirmDrawing
+                            : null,
+                        icon: Icon(Icons.check_circle_rounded, size: 18.sp),
+                        label: Text('保存房间', style: TextStyle(fontSize: 14.sp)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _hasOverlap
+                              ? colors.error
+                              : colors.primary,
+                          foregroundColor: Colors.white,
+                          disabledBackgroundColor: colors.border,
+                          padding: EdgeInsets.symmetric(vertical: 14.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -751,7 +973,10 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
             child: Icon(icon, color: color, size: 20.sp),
           ),
           SizedBox(height: 3.h),
-          Text(label, style: TextStyle(fontSize: 10.sp, color: color)),
+          Text(
+            label,
+            style: TextStyle(fontSize: 10.sp, color: color),
+          ),
         ],
       ),
     );
@@ -763,13 +988,16 @@ class _RoomDrawingPageState extends State<RoomDrawingPage> {
 // =============================================================================
 
 class _DragMode {
-  final String type; // 'body', 'corner', 'edge'
+  final String type; // 'body', 'corner', 'edge', 'selectExisting'
   final int index;
+  final String? id;
 
-  const _DragMode._(this.type, this.index);
+  const _DragMode._(this.type, this.index, [this.id]);
   factory _DragMode.body() => const _DragMode._('body', 0);
   factory _DragMode.corner(int i) => _DragMode._('corner', i);
   factory _DragMode.edge(int i) => _DragMode._('edge', i);
+  factory _DragMode.selectExisting(String id) =>
+      _DragMode._('selectExisting', 0, id);
 }
 
 // =============================================================================
@@ -825,21 +1053,24 @@ class _FloorPlanPainter extends CustomPainter {
     final rr = RRect.fromRectAndRadius(rect, const Radius.circular(4));
 
     canvas.drawRRect(
-        rr,
-        Paint()
-          ..color = colors.surface.withValues(alpha: 0.65)
-          ..style = PaintingStyle.fill);
+      rr,
+      Paint()
+        ..color = colors.surface.withValues(alpha: 0.65)
+        ..style = PaintingStyle.fill,
+    );
     canvas.drawRRect(
-        rr,
-        Paint()
-          ..color = colors.border.withValues(alpha: 0.55)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.0);
+      rr,
+      Paint()
+        ..color = colors.border.withValues(alpha: 0.55)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
+    );
 
     final tp = TextPainter(
       text: TextSpan(
-          text: room.name,
-          style: TextStyle(color: colors.textSecondary, fontSize: 12)),
+        text: room.name,
+        style: TextStyle(color: colors.textSecondary, fontSize: 12),
+      ),
       textDirection: TextDirection.ltr,
     )..layout();
     tp.paint(canvas, rect.center - Offset(tp.width / 2, tp.height / 2));
@@ -853,7 +1084,9 @@ class _FloorPlanPainter extends CustomPainter {
     // 阴影
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-          rect.shift(const Offset(3, 3)), const Radius.circular(4)),
+        rect.shift(const Offset(3, 3)),
+        const Radius.circular(4),
+      ),
       Paint()
         ..color = colors.shadow.withValues(alpha: 0.12)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
@@ -861,26 +1094,28 @@ class _FloorPlanPainter extends CustomPainter {
 
     // 填充
     canvas.drawRRect(
-        rr,
-        Paint()
-          ..color = rc.withValues(alpha: 0.15)
-          ..style = PaintingStyle.fill);
+      rr,
+      Paint()
+        ..color = rc.withValues(alpha: 0.15)
+        ..style = PaintingStyle.fill,
+    );
 
     // 描边
     canvas.drawRRect(
-        rr,
-        Paint()
-          ..color = rc
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.0);
+      rr,
+      Paint()
+        ..color = rc
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0,
+    );
 
     // 尺寸标注
     final label = '${rect.width.round()} × ${rect.height.round()}';
     final tp = TextPainter(
       text: TextSpan(
-          text: label,
-          style: TextStyle(
-              color: rc, fontSize: 11, fontWeight: FontWeight.w500)),
+        text: label,
+        style: TextStyle(color: rc, fontSize: 11, fontWeight: FontWeight.w500),
+      ),
       textDirection: TextDirection.ltr,
     )..layout();
     tp.paint(canvas, Offset(rect.center.dx - tp.width / 2, rect.bottom + 6));
@@ -924,16 +1159,18 @@ class _FloorPlanPainter extends CustomPainter {
       final active = dragMode?.type == 'corner' && dragMode?.index == i;
       final s = active ? 12.0 : 9.0;
       canvas.drawRect(
-          Rect.fromCenter(center: p, width: s + 4, height: s + 4), white);
-      canvas.drawRect(
-          Rect.fromCenter(center: p, width: s, height: s), fill);
+        Rect.fromCenter(center: p, width: s + 4, height: s + 4),
+        white,
+      );
+      canvas.drawRect(Rect.fromCenter(center: p, width: s, height: s), fill);
       if (active) {
         canvas.drawCircle(
-            p,
-            18,
-            Paint()
-              ..color = rc.withValues(alpha: 0.2)
-              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+          p,
+          18,
+          Paint()
+            ..color = rc.withValues(alpha: 0.2)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+        );
       }
     }
 
